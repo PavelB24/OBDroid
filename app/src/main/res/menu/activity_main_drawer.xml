@@ -5,5 +5,26 @@
 
     <group android:checkableBehavior="single">
 
+        <item
+            android:id="@+id/homeFragment"
+            android:title="Main"/>
+
+        <item
+            android:id="@+id/settingsFragment"
+            android:title="Settings"/>
+
+
+        <item
+            android:id="@+id/connectionsFragment"
+            android:title="Connection"/>
+
+        <item
+            android:id="@+id/terminalFragment"
+            android:title="Terminal"/>
+
     </group>
+
+    <item
+        android:id="@+id/exit_menu"
+        android:title="Exit"/>
 </menu>

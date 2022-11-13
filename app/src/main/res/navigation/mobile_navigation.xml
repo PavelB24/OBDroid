@@ -3,23 +3,29 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/nav_home">
-
+    app:startDestination="@id/homeFragment">
     <fragment
-        android:id="@+id/nav_home"
-        android:name="ru.barinov.obdroid.ui.home.HomeFragment"
-        android:label="@string/menu_home"
-        tools:layout="@layout/fragment_home" />
-
+        android:id="@+id/homeFragment"
+        android:name="ru.barinov.obdroid.HomeFragment"
+        android:label="HomeFragment" >
+        <action
+            android:id="@+id/action_homeFragment_to_sensorsFragment"
+            app:destination="@id/sensorsFragment" />
+    </fragment>
     <fragment
-        android:id="@+id/nav_gallery"
-        android:name="ru.barinov.obdroid.ui.gallery.GalleryFragment"
-        android:label="@string/menu_gallery"
-        tools:layout="@layout/fragment_gallery" />
-
+        android:id="@+id/settingsFragment"
+        android:name="ru.barinov.obdroid.SettingsFragment"
+        android:label="SettingsFragment" />
     <fragment
-        android:id="@+id/nav_slideshow"
-        android:name="ru.barinov.obdroid.ui.slideshow.SlideshowFragment"
-        android:label="@string/menu_slideshow"
-        tools:layout="@layout/fragment_slideshow" />
+        android:id="@+id/connectionsFragment"
+        android:name="ru.barinov.obdroid.ConnectionsFragment"
+        android:label="ConnectionsFragment" />
+    <fragment
+        android:id="@+id/terminalFragment"
+        android:name="ru.barinov.obdroid.TerminalFragment"
+        android:label="TerminalFragment" />
+    <fragment
+        android:id="@+id/sensorsFragment"
+        android:name="ru.barinov.obdroid.SensorsFragment"
+        android:label="SensorsFragment" />
 </navigation>
