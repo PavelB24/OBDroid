@@ -2,8 +2,16 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/homeFragment"
+        android:id="@+id/mainFragment"
         android:title="Main"/>
+
+    <item
+        android:id="@+id/diagnosticFragment"
+        android:title="Troubles"/>
+
+    <item
+        android:id="@+id/sensorsFragment"
+        android:title="Current Data"/>
 
 
 </menu>

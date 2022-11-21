@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main_navigation"
+    app:startDestination="@id/mainFragment">
+    <fragment
+        android:id="@+id/mainFragment"
+        android:name="ru.barinov.obdroid.MainFragment"
+        android:label="MainFragment" >
+        <action
+            android:id="@+id/action_mainFragment_to_speedFragment"
+            app:destination="@id/speedFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/sensorsFragment"
+        android:name="ru.barinov.obdroid.SensorsFragment"
+        android:label="SensorsFragment" >
+        <action
+            android:id="@+id/action_sensorsFragment_to_sensorDetailsFragment"
+            app:destination="@id/sensorDetailsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/diagnosticFragment"
+        android:name="ru.barinov.obdroid.DiagnosticFragment"
+        android:label="TroublesFragment" >
+        <action
+            android:id="@+id/action_diagnosticFragment_to_troubleDescriptionDialogFragment"
+            app:destination="@id/troubleDescriptionDialogFragment" />
+        <action
+            android:id="@+id/action_diagnosticFragment_to_troubleHistory"
+            app:destination="@id/troubleHistory" />
+    </fragment>
+    <fragment
+        android:id="@+id/sensorDetailsFragment"
+        android:name="ru.barinov.obdroid.SensorDetailsFragment"
+        android:label="SensorDetailsFragment" />
+    <dialog
+        android:id="@+id/troubleDescriptionDialogFragment"
+        android:name="ru.barinov.obdroid.TroubleDescriptionDialogFragment"
+        android:label="TroubleDescriptionDialogFragment" />
+    <fragment
+        android:id="@+id/speedFragment"
+        android:name="ru.barinov.obdroid.SpeedFragment"
+        android:label="SpeedFragment" />
+    <fragment
+        android:id="@+id/troubleHistory"
+        android:name="ru.barinov.obdroid.TroubleHistory"
+        android:label="TroubleHistory" />
+</navigation>

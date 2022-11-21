@@ -5,18 +5,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import ru.barinov.obdroid.databinding.TerminalFragmentBinding
+import ru.barinov.obdroid.databinding.MainFragmentBinding
 
-class TerminalFragment : Fragment() {
+class MainFragment : Fragment() {
 
-    private lateinit var binding : TerminalFragmentBinding
+    private lateinit var binding : MainFragmentBinding
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = TerminalFragmentBinding.inflate(inflater, container, false)
+        binding = MainFragmentBinding.inflate(inflater, container, false)
         return binding.root
     }
 }

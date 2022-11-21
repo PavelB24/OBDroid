@@ -24,7 +24,13 @@
 
     </group>
 
+    <group
+        android:id="@+id/single_select"
+        android:checkableBehavior="none">
+
     <item
         android:id="@+id/exit_menu"
         android:title="Exit"/>
+
+    </group>
 </menu>
