@@ -14,6 +14,7 @@ import androidx.navigation.ui.setupWithNavController
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout.LOCK_MODE_LOCKED_CLOSED
+import androidx.drawerlayout.widget.DrawerLayout.LOCK_MODE_UNLOCKED
 import androidx.navigation.NavController
 import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.Navigation
@@ -36,6 +37,10 @@ class MainActivity : AppCompatActivity() {
                 "${resources.getString(R.string.app_name)}"
         drawerLayout.setDrawerLockMode(LOCK_MODE_LOCKED_CLOSED)
         navView.setupWithNavController(navController)
+    }
+
+    fun unlockDrawer(){
+        binding.drawerLayout.setDrawerLockMode(LOCK_MODE_UNLOCKED)
     }
 
 
