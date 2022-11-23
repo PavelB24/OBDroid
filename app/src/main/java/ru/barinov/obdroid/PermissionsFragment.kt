@@ -2,6 +2,7 @@ package ru.barinov.obdroid
 
 import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.Manifest.permission.ACCESS_FINE_LOCATION
+import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -31,19 +32,52 @@ class PermissionsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         PermissionsUtil.apply {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                bindBTLauncher(
+                    registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
+                        val result = it.containsKey(android.Manifest.permission.BLUETOOTH_SCAN) &&
+                                it.containsKey(android.Manifest.permission.BLUETOOTH_CONNECT)
+                        resultFlow.value = PermissionType.BluetoothPermission(result)
+                    }
+                )
+            } else {
+                bindOldBtLauncher(
+                    registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+                        resultFlow.value = PermissionType.BluetoothPermission(
+                            result.resultCode == PackageManager.PERMISSION_GRANTED
+                        )
+                    }
+                )
+            }
+
+
             bindBackGroundLocationLauncher(
                 registerForActivityResult(ActivityResultContracts.RequestPermission()) {
-                    locationResultFlow.value = PermissionType.BackGroundLocation(it)
+                    resultFlow.value = PermissionType.BackGroundLocation(it)
                 }
             )
             bindRuntimeLocationLauncher(
                 registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
-                    PermissionsUtil.locationResultFlow.value = PermissionType.RuntimeLocation(
-                        it.getOrDefault(ACCESS_FINE_LOCATION, false) &&
-                                it.getOrDefault(ACCESS_COARSE_LOCATION, false)
-                    )
-                })
-            if (hasLocationPermission(requireContext()) && hasBackgroundLocation(requireContext())) {
+                    if (it.containsKey(android.Manifest.permission.BLUETOOTH_SCAN) ||
+                        it.containsKey(android.Manifest.permission.BLUETOOTH_CONNECT)
+                    ) {
+                        resultFlow.value = PermissionType.BluetoothPermission(true)
+                    } else {
+                        resultFlow.value = PermissionType.RuntimeLocation(
+                            it.getOrDefault(ACCESS_FINE_LOCATION, false) &&
+                                    it.getOrDefault(ACCESS_COARSE_LOCATION, false)
+                        )
+                    }
+                }
+            )
+
+            val hasWorkPermission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                hasBluetoothPermission(requireContext()) &&
+                        hasBTAdminPermission(requireContext())
+            } else {
+                true
+            }
+            if (hasWorkPermission) {
                 rebase()
             } else {
                 subscribe()
@@ -65,26 +99,29 @@ class PermissionsFragment : Fragment() {
 
     }
 
+
     private fun subscribe() {
         lifecycleScope.launchWhenStarted {
             PermissionsUtil.apply {
-                locationResultFlow.collectLatest { result ->
+                resultFlow.collectLatest { result ->
                     result?.let {
                         when (it) {
                             is PermissionType.BackGroundLocation -> {}
                             is PermissionType.RuntimeLocation -> {
                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-
+                                    requestBackgroundLocationPermission()
                                 } else {
 
                                 }
-                                }
                             }
+                            is PermissionType.BluetoothPermission -> TODO()
+                            is PermissionType.Doze -> TODO()
                         }
                     }
                 }
             }
         }
+    }
 
     private fun rebase() {
         (requireActivity() as MainActivity).unlockDrawer()

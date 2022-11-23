@@ -6,4 +6,12 @@ sealed class PermissionType{
 
     data class BackGroundLocation(val granted : Boolean) : PermissionType()
 
+    data class Doze(val granted : Boolean) : PermissionType()
+
+    data class BluetoothPermission(val granted : Boolean) : PermissionType()
+
+
+
+
+
 }

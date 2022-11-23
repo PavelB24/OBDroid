@@ -6,11 +6,14 @@ import android.os.Environment
 import androidx.core.content.ContextCompat
 import android.Manifest
 import android.annotation.SuppressLint
-import android.app.Activity
+import android.bluetooth.BluetoothAdapter
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.os.PowerManager
 import androidx.activity.result.ActivityResultLauncher
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
+import androidx.core.content.getSystemService
 import kotlinx.coroutines.flow.MutableStateFlow
 
 
@@ -18,7 +21,9 @@ object PermissionsUtil {
 
     private var runtimeLocLauncher : ActivityResultLauncher<Array<String>>? = null
     private var backGroundLocLauncher : ActivityResultLauncher<String>? = null
-    val locationResultFlow : MutableStateFlow<PermissionType?> = MutableStateFlow(null)
+    val resultFlow : MutableStateFlow<PermissionType?> = MutableStateFlow(null)
+    private var btLauncher : ActivityResultLauncher<Array<String>>? = null
+    private var oldBtLauncher :  ActivityResultLauncher<Intent>? = null
 
     fun hasLocationPermission(context: Context): Boolean {
         val locPermissions =
@@ -82,6 +87,46 @@ object PermissionsUtil {
         } else {
             true
         }
+
+
+    @RequiresApi(Build.VERSION_CODES.S)
+    fun hasBluetoothPermission(context: Context) =
+        ContextCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_CONNECT) ==
+                PackageManager.PERMISSION_GRANTED
+
+    fun hasBTAdminPermission(context: Context) =
+        ContextCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_ADMIN) ==
+                PackageManager.PERMISSION_GRANTED
+
+    fun bindBTLauncher(launcher : ActivityResultLauncher<Array<String>>){
+        this.btLauncher = launcher
+    }
+
+    fun bindOldBtLauncher(launcher : ActivityResultLauncher<Intent>){
+        this.oldBtLauncher = launcher
+    }
+
+
+    fun requestBTPermission(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            btLauncher?.launch(
+                arrayOf(
+                    Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.BLUETOOTH_CONNECT
+                )
+            )
+        } else {
+            oldBtLauncher?.launch(Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE))
+        }
+    }
+
+    fun requestDoze(context: Context){
+
+    }
+
+    fun hasDozeOff(context: Context) : Boolean {
+       val pm = context.getSystemService(PowerManager::class.java)
+       return pm.isIgnoringBatteryOptimizations("package:${context.packageName}")
+    }
 
     @RequiresApi(Build.VERSION_CODES.Q)
     fun requestBackgroundLocationPermission() {
