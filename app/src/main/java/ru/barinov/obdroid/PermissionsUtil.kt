@@ -9,21 +9,31 @@ import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.media.audiofx.Equalizer.Settings
+import android.net.Uri
+import android.os.Bundle
 import android.os.PowerManager
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContract
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.MainThread
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.content.getSystemService
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentFactory
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleRegistry
+import androidx.lifecycle.repeatOnLifecycle
 import kotlinx.coroutines.flow.MutableStateFlow
+import java.lang.reflect.Method
 
 
 object PermissionsUtil {
 
-    private var runtimeLocLauncher : ActivityResultLauncher<Array<String>>? = null
-    private var backGroundLocLauncher : ActivityResultLauncher<String>? = null
-    val resultFlow : MutableStateFlow<PermissionType?> = MutableStateFlow(null)
-    private var btLauncher : ActivityResultLauncher<Array<String>>? = null
-    private var oldBtLauncher :  ActivityResultLauncher<Intent>? = null
+    val resultFlow: MutableStateFlow<PermissionType?> = MutableStateFlow(null)
 
     fun hasLocationPermission(context: Context): Boolean {
         val locPermissions =
@@ -46,12 +56,17 @@ object PermissionsUtil {
         }
     }
 
-    fun bindRuntimeLocationLauncher(launcher: ActivityResultLauncher<Array<String>>){
-        this.runtimeLocLauncher = launcher
-    }
+    fun checkExternalStoragePermission(context: Context) =
+        ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) ==
+                PackageManager.PERMISSION_GRANTED
 
-    fun bindBackGroundLocationLauncher(launcher: ActivityResultLauncher<String>){
-        this.backGroundLocLauncher = launcher
+    @MainThread
+    fun requestExternalStoragePermission(fragment: Fragment) {
+        val launcher =
+            fragment.registerForActivityResult(ActivityResultContracts.RequestPermission()) {
+                resultFlow.value = PermissionType.FileSystemPermission(it)
+            }
+        launcher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
     }
 
 
@@ -71,19 +86,29 @@ object PermissionsUtil {
         }
     }
 
-    fun requestLocationPermission(){
-        runtimeLocLauncher?.launch(arrayOf(
-            Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.ACCESS_COARSE_LOCATION
-        ))
+    @MainThread
+    fun requestLocationPermission(fragment: Fragment) {
+        val launcher =
+            fragment.registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
+                resultFlow.value = PermissionType.RuntimeLocation(
+                    it.containsKey(Manifest.permission.ACCESS_FINE_LOCATION) &&
+                            it.containsKey(Manifest.permission.ACCESS_COARSE_LOCATION)
+                )
+            }
+        launcher.launch(
+            arrayOf(
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            )
+        )
     }
 
     fun hasBackgroundLocation(context: Context) =
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            ActivityCompat.checkSelfPermission(
-                     context,
-                     Manifest.permission.ACCESS_BACKGROUND_LOCATION
-                 ) == PackageManager.PERMISSION_GRANTED
+            ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.ACCESS_BACKGROUND_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
         } else {
             true
         }
@@ -98,55 +123,66 @@ object PermissionsUtil {
         ContextCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_ADMIN) ==
                 PackageManager.PERMISSION_GRANTED
 
-    fun bindBTLauncher(launcher : ActivityResultLauncher<Array<String>>){
-        this.btLauncher = launcher
-    }
 
-    fun bindOldBtLauncher(launcher : ActivityResultLauncher<Intent>){
-        this.oldBtLauncher = launcher
-    }
-
-
-    fun requestBTPermission(){
+    @MainThread
+    fun requestBTPermission(fragment: Fragment) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            btLauncher?.launch(
+            val launcher =
+                fragment.registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
+                    resultFlow.value = PermissionType.BluetoothPermission(
+                        it.containsKey(Manifest.permission.BLUETOOTH_SCAN) &&
+                                it.containsKey(Manifest.permission.BLUETOOTH_CONNECT)
+                    )
+                }
+            launcher.launch(
                 arrayOf(
-                    Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.BLUETOOTH_CONNECT
+                    Manifest.permission.BLUETOOTH_SCAN,
+                    Manifest.permission.BLUETOOTH_CONNECT
                 )
             )
         } else {
-            oldBtLauncher?.launch(Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE))
+            val launcher =
+                fragment.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+
+                }
+            launcher.launch(Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE))
         }
     }
 
-    fun requestDoze(context: Context){
-
+    @MainThread
+    @SuppressLint("BatteryLife")
+    fun requestDoze(fragment: Fragment, context: Context) {
+        val pm = context.getSystemService(PowerManager::class.java)
+        if (!pm.isIgnoringBatteryOptimizations(context.packageName)) {
+            val launcher =
+                fragment.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+                    resultFlow.value = PermissionType.Doze(
+                        result.resultCode == PackageManager.PERMISSION_GRANTED
+                    )
+                }
+            launcher.launch(Intent().apply {
+                action = android.provider.Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
+                data = Uri.parse("package:${context.packageName}")
+            })
+        }
     }
 
-    fun hasDozeOff(context: Context) : Boolean {
-       val pm = context.getSystemService(PowerManager::class.java)
-       return pm.isIgnoringBatteryOptimizations("package:${context.packageName}")
+    fun hasDozeOff(context: Context): Boolean {
+        val pm = context.getSystemService(PowerManager::class.java)
+        return pm.isIgnoringBatteryOptimizations("package:${context.packageName}")
     }
 
-    @RequiresApi(Build.VERSION_CODES.Q)
-    fun requestBackgroundLocationPermission() {
-        backGroundLocLauncher?.launch(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-//            ActivityCompat.requestPermissions(
-//                activity,
-//                arrayOf(
-//                    Manifest.permission.ACCESS_BACKGROUND_LOCATION
-//                ),
-//                101
-//            )
-//        } else {
-//            ActivityCompat.requestPermissions(
-//                activity,
-//                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-//                101
-//            )
-//        }
-    }
 
+    @MainThread
+    fun requestBackgroundLocationPermission(fragment: Fragment) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            val launcher =
+                fragment.registerForActivityResult(ActivityResultContracts.RequestPermission()) {
+                    resultFlow.value = PermissionType.BackGroundLocation(it)
+                }
+            launcher.launch(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+        }
+
+    }
 
 }

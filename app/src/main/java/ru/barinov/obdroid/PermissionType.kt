@@ -10,6 +10,10 @@ sealed class PermissionType{
 
     data class BluetoothPermission(val granted : Boolean) : PermissionType()
 
+    data class WiFiPermission(val granted : Boolean) : PermissionType()
+
+    data class FileSystemPermission(val granted : Boolean) : PermissionType()
+
 
 
 
