@@ -6,67 +6,104 @@ import android.os.Environment
 import androidx.core.content.ContextCompat
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.Activity
+import android.app.Instrumentation.ActivityResult
 import android.bluetooth.BluetoothAdapter
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.media.audiofx.Equalizer.Settings
 import android.net.Uri
-import android.os.Bundle
 import android.os.PowerManager
-import androidx.activity.result.ActivityResult
-import androidx.activity.result.ActivityResultCallback
+import android.util.Log
 import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.MainThread
 import androidx.annotation.RequiresApi
-import androidx.core.app.ActivityCompat
-import androidx.core.content.getSystemService
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentFactory
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleRegistry
-import androidx.lifecycle.repeatOnLifecycle
 import kotlinx.coroutines.flow.MutableStateFlow
-import java.lang.reflect.Method
 
 
 object PermissionsUtil {
 
     val resultFlow: MutableStateFlow<PermissionType?> = MutableStateFlow(null)
-
-    fun hasLocationPermission(context: Context): Boolean {
-        val locPermissions =
-            ContextCompat.checkSelfPermission(
-                context,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED &&
-                    ContextCompat.checkSelfPermission(
-                        context,
-                        Manifest.permission.ACCESS_COARSE_LOCATION
-                    ) == PackageManager.PERMISSION_GRANTED
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            locPermissions &&
-                    ContextCompat.checkSelfPermission(
-                        context,
-                        Manifest.permission.ACCESS_BACKGROUND_LOCATION
-                    ) == PackageManager.PERMISSION_GRANTED
-        } else {
-            locPermissions
-        }
-    }
-
-    fun checkExternalStoragePermission(context: Context) =
-        ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) ==
-                PackageManager.PERMISSION_GRANTED
+    private var btLauncher: ActivityResultLauncher<Array<String>>? = null
+    private var oldBtLauncher: ActivityResultLauncher<Intent>? = null
+    private var dozeLauncher: ActivityResultLauncher<Intent>? = null
+    private var locationLauncher: ActivityResultLauncher<Array<String>>? = null
+    private var backLocationLauncher: ActivityResultLauncher<String>? = null
+    private var externalLauncher: ActivityResultLauncher<String>? = null
 
     @MainThread
-    fun requestExternalStoragePermission(fragment: Fragment) {
-        val launcher =
+    fun initLaunchers(fragment: Fragment) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            backLocationLauncher =
+                fragment.registerForActivityResult(ActivityResultContracts.RequestPermission()) {
+                    resultFlow.value = PermissionType.BackGroundLocation(it)
+                }
+        }
+        dozeLauncher =
+            fragment.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+                resultFlow.value = PermissionType.Doze(
+                    result.resultCode == PackageManager.PERMISSION_GRANTED
+                )
+            }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            btLauncher =
+                fragment.registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
+                    resultFlow.value = PermissionType.BluetoothPermission(
+                        it.getOrDefault(Manifest.permission.BLUETOOTH_SCAN, false) &&
+                                it.getOrDefault(Manifest.permission.BLUETOOTH_CONNECT, false)
+                    )
+                }
+        } else {
+            oldBtLauncher =
+                fragment.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+                    resultFlow.value = PermissionType.BluetoothPermission(
+                        it.resultCode == PackageManager.PERMISSION_GRANTED
+                    )
+                }
+        }
+        externalLauncher =
             fragment.registerForActivityResult(ActivityResultContracts.RequestPermission()) {
                 resultFlow.value = PermissionType.FileSystemPermission(it)
             }
-        launcher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        locationLauncher =
+            fragment.registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
+                resultFlow.value = PermissionType.RuntimeLocation(
+                    it.getOrDefault(Manifest.permission.ACCESS_FINE_LOCATION, false) &&
+                            it.getOrDefault(Manifest.permission.ACCESS_COARSE_LOCATION, false)
+                )
+            }
+
+    }
+
+    fun hasLocationPermission(context: Context): Boolean =
+        ContextCompat
+            .checkSelfPermission(
+                context,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(
+                    context,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ) == PackageManager.PERMISSION_GRANTED
+
+    @MainThread
+    fun hasBackgroundLocPermission(context: Context): Boolean {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            ContextCompat
+                .checkSelfPermission(
+                    context,
+                    Manifest.permission.ACCESS_BACKGROUND_LOCATION
+                ) == PackageManager.PERMISSION_GRANTED
+        } else {
+            true
+        }
+    }
+
+
+    @MainThread
+    fun requestExternalStoragePermission() {
+        externalLauncher?.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
     }
 
 
@@ -87,15 +124,8 @@ object PermissionsUtil {
     }
 
     @MainThread
-    fun requestLocationPermission(fragment: Fragment) {
-        val launcher =
-            fragment.registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
-                resultFlow.value = PermissionType.RuntimeLocation(
-                    it.containsKey(Manifest.permission.ACCESS_FINE_LOCATION) &&
-                            it.containsKey(Manifest.permission.ACCESS_COARSE_LOCATION)
-                )
-            }
-        launcher.launch(
+    fun requestLocationPermission() {
+        locationLauncher?.launch(
             arrayOf(
                 Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.ACCESS_COARSE_LOCATION
@@ -114,53 +144,48 @@ object PermissionsUtil {
         }
 
 
-    @RequiresApi(Build.VERSION_CODES.S)
     fun hasBluetoothPermission(context: Context) =
-        ContextCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_CONNECT) ==
-                PackageManager.PERMISSION_GRANTED
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            ContextCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_CONNECT) ==
+                    PackageManager.PERMISSION_GRANTED
+        } else {
+            hasBTAdminPermission(context)
+        }
 
-    fun hasBTAdminPermission(context: Context) =
+    private fun hasBTAdminPermission(context: Context) =
         ContextCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_ADMIN) ==
                 PackageManager.PERMISSION_GRANTED
 
 
     @MainThread
-    fun requestBTPermission(fragment: Fragment) {
+    fun requestBTPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            val launcher =
-                fragment.registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
-                    resultFlow.value = PermissionType.BluetoothPermission(
-                        it.containsKey(Manifest.permission.BLUETOOTH_SCAN) &&
-                                it.containsKey(Manifest.permission.BLUETOOTH_CONNECT)
-                    )
-                }
-            launcher.launch(
+            btLauncher?.launch(
                 arrayOf(
                     Manifest.permission.BLUETOOTH_SCAN,
                     Manifest.permission.BLUETOOTH_CONNECT
                 )
             )
-        } else {
-            val launcher =
-                fragment.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+        } else oldBtLauncher?.launch(Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE))
+    }
 
-                }
-            launcher.launch(Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE))
+    fun hasNecessaryPermissions(context: Context): Boolean {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            hasBTAdminPermission(context) && hasBluetoothPermission(context)
+                    && hasLocationPermission(context) && hasBackgroundLocation(context)
+        } else {
+            hasBTAdminPermission(context) && hasLocationPermission(context)
+                    && hasBackgroundLocation(context)
         }
     }
 
+
     @MainThread
     @SuppressLint("BatteryLife")
-    fun requestDoze(fragment: Fragment, context: Context) {
+    fun requestDoze(context: Context) {
         val pm = context.getSystemService(PowerManager::class.java)
         if (!pm.isIgnoringBatteryOptimizations(context.packageName)) {
-            val launcher =
-                fragment.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-                    resultFlow.value = PermissionType.Doze(
-                        result.resultCode == PackageManager.PERMISSION_GRANTED
-                    )
-                }
-            launcher.launch(Intent().apply {
+            dozeLauncher?.launch(Intent().apply {
                 action = android.provider.Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
                 data = Uri.parse("package:${context.packageName}")
             })
@@ -174,13 +199,9 @@ object PermissionsUtil {
 
 
     @MainThread
-    fun requestBackgroundLocationPermission(fragment: Fragment) {
+    fun requestBackgroundLocationPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            val launcher =
-                fragment.registerForActivityResult(ActivityResultContracts.RequestPermission()) {
-                    resultFlow.value = PermissionType.BackGroundLocation(it)
-                }
-            launcher.launch(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+            backLocationLauncher?.launch(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
         }
 
     }

@@ -1,21 +1,17 @@
 package ru.barinov.obdroid
 
-sealed class PermissionType{
+sealed class PermissionType(open val granted: Boolean){
 
-    data class RuntimeLocation(val granted : Boolean) : PermissionType()
+    data class RuntimeLocation(override val granted : Boolean) : PermissionType(granted)
 
-    data class BackGroundLocation(val granted : Boolean) : PermissionType()
+    data class BackGroundLocation(override val granted : Boolean) : PermissionType(granted)
 
-    data class Doze(val granted : Boolean) : PermissionType()
+    data class Doze(override val granted : Boolean) : PermissionType(granted)
 
-    data class BluetoothPermission(val granted : Boolean) : PermissionType()
+    data class BluetoothPermission(override val granted : Boolean) : PermissionType(granted)
 
-    data class WiFiPermission(val granted : Boolean) : PermissionType()
+    data class WiFiPermission(override val granted : Boolean) : PermissionType(granted) //
 
-    data class FileSystemPermission(val granted : Boolean) : PermissionType()
-
-
-
-
+    data class FileSystemPermission(override val granted : Boolean) : PermissionType(granted)
 
 }

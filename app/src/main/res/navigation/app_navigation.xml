@@ -26,7 +26,7 @@
         android:label="TerminalFragment" />
     <fragment
         android:id="@+id/permissionsFragment"
-        android:name="ru.barinov.obdroid.PermissionsFragment"
+        android:name="ru.barinov.obdroid.startFragment.PermissionsFragment"
         android:label="PermissionsFragment" >
         <action
             android:id="@+id/action_permissionsFragment_to_homeFragment"
