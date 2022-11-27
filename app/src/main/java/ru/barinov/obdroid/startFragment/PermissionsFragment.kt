@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
 import android.view.ViewGroup
+import androidx.appcompat.widget.SwitchCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -51,14 +52,14 @@ class PermissionsFragment : Fragment() {
         }
         PermissionsUtil.apply {
             if (hasBluetoothPermission(requireContext())) {
-                PermissionVisibilityUtil.hideBt(binding)
+                PermissionViewHelper.hideBt(binding)
             } else {
                 binding.btPermissionSwitch.setOnClickListener {
                     requestBTPermission()
                 }
             }
             if (hasLocationPermission(requireContext()) && hasBackgroundLocation(requireContext())) {
-                PermissionVisibilityUtil.hideLocation(binding)
+                PermissionViewHelper.hideLocation(binding)
             } else {
                 binding.locationPermissionSwitch.setOnClickListener {
                     if (hasLocationPermission(requireContext())) {
@@ -67,14 +68,14 @@ class PermissionsFragment : Fragment() {
                 }
             }
             if (hasDozeOff(requireContext()) || prefs.isDozeAsked) {
-                PermissionVisibilityUtil.hideDoze(binding)
+                PermissionViewHelper.hideDoze(binding)
             } else {
                 binding.dozePermissionSwitch.setOnClickListener {
                     requestDoze(requireContext())
                 }
             }
             if (hasExternalStoragePermission(requireContext())) {
-                PermissionVisibilityUtil.hideExternalStorage(binding)
+                PermissionViewHelper.hideExternalStorage(binding)
             } else {
                 binding.fileSystemSwitch.setOnClickListener {
                     requestExternalStoragePermission()
@@ -99,41 +100,57 @@ class PermissionsFragment : Fragment() {
     }
 
     private fun handleNegative(type: PermissionType) {
-
+        binding.apply {
+            when (type) {
+                is PermissionType.BackGroundLocation -> locationPermissionSwitch.isChecked = false
+                is PermissionType.BluetoothPermission -> btPermissionSwitch.isChecked = false
+                is PermissionType.Doze -> dozePermissionSwitch.isChecked = false
+                is PermissionType.FileSystemPermission -> fileSystemSwitch.isChecked = false
+                is PermissionType.RuntimeLocation -> locationPermissionSwitch.isChecked = false
+                is PermissionType.WiFiPermission -> TODO()
+            }
+        }
     }
+
 
     private fun handlePositive(type : PermissionType) {
         when (type) {
             is PermissionType.BackGroundLocation -> {
-                PermissionVisibilityUtil.hideLocationAnimate(binding)
+                PermissionViewHelper.hideLocationAnimate(binding)
                 if (PermissionsUtil.hasNecessaryPermissions(requireContext())) {
-                    PermissionVisibilityUtil.showButtonAnimate(binding.onStartButtonFrame, binding.onStartButton)
+                    PermissionViewHelper.showButtonAnimate(binding.onStartButtonFrame, binding.onStartButton)
                 }
             }
             is PermissionType.RuntimeLocation -> {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                     PermissionsUtil.requestBackgroundLocationPermission()
                 } else {
-                    PermissionVisibilityUtil.hideLocationAnimate(binding)
+                    PermissionViewHelper.hideLocationAnimate(binding)
                     if (PermissionsUtil.hasNecessaryPermissions(requireContext())) {
                         binding.line.visibility = GONE
-                        PermissionVisibilityUtil.showButtonAnimate(binding.onStartButtonFrame, binding.onStartButton)
+                        PermissionViewHelper.showButtonAnimate(
+                            binding.onStartButtonFrame,
+                            binding.onStartButton
+                        )
                     }
                 }
             }
             is PermissionType.BluetoothPermission -> {
-                PermissionVisibilityUtil.hideBtAnimate(binding)
+                PermissionViewHelper.hideBtAnimate(binding)
                 if (PermissionsUtil.hasNecessaryPermissions(requireContext())) {
-                    PermissionVisibilityUtil.showButtonAnimate(binding.onStartButtonFrame, binding.onStartButton)
+                    PermissionViewHelper.showButtonAnimate(
+                        binding.onStartButtonFrame,
+                        binding.onStartButton
+                    )
                 }
             }
             is PermissionType.Doze -> {
-                PermissionVisibilityUtil.hideDozeAnimate(binding)
+                PermissionViewHelper.hideDozeAnimate(binding)
                 prefs.isDozeAsked = true
                 Snackbar.make(requireView(), "", Snackbar.LENGTH_SHORT).show()
             }
             is PermissionType.FileSystemPermission -> {
-                PermissionVisibilityUtil.hideExternalStorageAnimate(binding)
+                PermissionViewHelper.hideExternalStorageAnimate(binding)
             }
             is PermissionType.WiFiPermission -> TODO()
         }

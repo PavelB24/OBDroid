@@ -1,19 +1,21 @@
 package ru.barinov.obdroid.startFragment
 
 import android.transition.Fade
-import android.transition.Transition
 import android.transition.TransitionManager
 import android.transition.TransitionSet
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AccelerateInterpolator
-import androidx.core.transition.addListener
 import androidx.core.transition.doOnEnd
 import com.google.android.material.button.MaterialButton
 import ru.barinov.obdroid.databinding.PermissionsFragmentBinding
 
-object PermissionVisibilityUtil {
+object PermissionViewHelper {
+
+
+    fun animateOnStart(){}
+
+    fun animateRebase(){}
 
 
     private fun shouldHideLine(binding: PermissionsFragmentBinding): Boolean {
