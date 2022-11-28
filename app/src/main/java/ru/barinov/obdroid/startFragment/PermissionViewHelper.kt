@@ -21,6 +21,9 @@ object PermissionViewHelper {
     }
 
 
+    fun isLastCardGone() : Boolean{}
+
+
     private fun shouldHideLine(binding: PermissionsFragmentBinding): Boolean {
         binding.apply {
             return btIcon.visibility == View.GONE &&
