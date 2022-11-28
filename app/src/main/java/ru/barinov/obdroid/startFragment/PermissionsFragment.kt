@@ -1,5 +1,6 @@
 package ru.barinov.obdroid.startFragment
 
+import android.graphics.drawable.AnimatedVectorDrawable
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -89,6 +90,7 @@ class PermissionsFragment : Fragment() {
         lifecycleScope.launchWhenStarted {
             PermissionsUtil.apply {
                 resultFlow.collectLatest { result ->
+                    PermissionViewHelper.animateLogo(binding.headImage.drawable as AnimatedVectorDrawable)
                     result?.let {
                         if (it.granted) {
                             handlePositive(it)

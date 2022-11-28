@@ -1,5 +1,6 @@
 package ru.barinov.obdroid.startFragment
 
+import android.graphics.drawable.AnimatedVectorDrawable
 import android.transition.Fade
 import android.transition.TransitionManager
 import android.transition.TransitionSet
@@ -13,9 +14,11 @@ import ru.barinov.obdroid.databinding.PermissionsFragmentBinding
 object PermissionViewHelper {
 
 
-    fun animateOnStart(){}
-
     fun animateRebase(){}
+
+    fun animateLogo(anim : AnimatedVectorDrawable){
+        anim.start()
+    }
 
 
     private fun shouldHideLine(binding: PermissionsFragmentBinding): Boolean {
