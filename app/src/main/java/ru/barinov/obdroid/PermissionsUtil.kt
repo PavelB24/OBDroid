@@ -1,23 +1,21 @@
 package ru.barinov.obdroid
 
-import android.content.Context
-import android.os.Build
-import android.os.Environment
-import androidx.core.content.ContextCompat
 import android.Manifest
 import android.annotation.SuppressLint
-import android.app.Activity
-import android.app.Instrumentation.ActivityResult
 import android.bluetooth.BluetoothAdapter
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
+import android.os.Environment
 import android.os.PowerManager
+import android.provider.Settings
 import android.util.Log
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.MainThread
-import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import kotlinx.coroutines.flow.MutableStateFlow
 
@@ -31,6 +29,7 @@ object PermissionsUtil {
     private var locationLauncher: ActivityResultLauncher<Array<String>>? = null
     private var backLocationLauncher: ActivityResultLauncher<String>? = null
     private var externalLauncher: ActivityResultLauncher<String>? = null
+    private var newExternalLauncher: ActivityResultLauncher<Intent>? = null
 
     @MainThread
     fun initLaunchers(fragment: Fragment) {
@@ -39,6 +38,11 @@ object PermissionsUtil {
                 fragment.registerForActivityResult(ActivityResultContracts.RequestPermission()) {
                     resultFlow.value = PermissionType.BackGroundLocation(it)
                 }
+        }
+        newExternalLauncher = fragment.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            resultFlow.value = PermissionType.FileSystemPermission(
+                result.resultCode == PackageManager.PERMISSION_GRANTED
+            )
         }
         dozeLauncher =
             fragment.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -103,7 +107,11 @@ object PermissionsUtil {
 
     @MainThread
     fun requestExternalStoragePermission() {
-        externalLauncher?.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            val uri = Uri.parse("package:" + BuildConfig.APPLICATION_ID)
+            val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION, uri)
+            newExternalLauncher?.launch(intent)
+        } else externalLauncher?.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
     }
 
 
@@ -176,6 +184,19 @@ object PermissionsUtil {
         } else {
             hasBTAdminPermission(context) && hasLocationPermission(context)
                     && hasBackgroundLocation(context)
+        }
+    }
+
+    fun hasAllPermissions(context: Context, dozeShown : Boolean) : Boolean{
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            Log.d("@@@", "${hasBTAdminPermission(context)} ${hasBluetoothPermission(context)} ${hasLocationPermission(context)} ${hasBackgroundLocation(context)} ${hasExternalStoragePermission(context)}")
+            hasBTAdminPermission(context) && hasBluetoothPermission(context)
+                    && hasLocationPermission(context) && hasBackgroundLocation(context) &&
+                    (hasDozeOff(context) || dozeShown) && hasExternalStoragePermission(context)
+        } else {
+            hasBTAdminPermission(context) && hasLocationPermission(context)
+                    && hasLocationPermission(context) && hasBackgroundLocation(context) &&
+                    (hasDozeOff(context) || dozeShown) && hasExternalStoragePermission(context)
         }
     }
 

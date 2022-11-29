@@ -1,27 +1,52 @@
 package ru.barinov.obdroid.startFragment
 
+import android.content.Context
 import android.graphics.drawable.AnimatedVectorDrawable
-import android.transition.Fade
-import android.transition.TransitionManager
-import android.transition.TransitionSet
+import android.transition.*
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AccelerateInterpolator
+import androidx.annotation.MainThread
 import androidx.core.transition.doOnEnd
 import com.google.android.material.button.MaterialButton
+import kotlinx.coroutines.*
+import ru.barinov.obdroid.R
 import ru.barinov.obdroid.databinding.PermissionsFragmentBinding
 
 object PermissionViewHelper {
 
+    @MainThread
+    fun animateRebase(
+        binding: PermissionsFragmentBinding,
+        context: Context,
+        rebaseAction: () -> Unit
+    ) {
+        with(binding) {
+            root.transitionToState(R.id.exit)
+            CoroutineScope(Dispatchers.IO).launch {
+                delay(1200)
+                withContext(Dispatchers.Main){
+                    rebaseAction.invoke()
+                }
+            }
+        }
 
-    fun animateRebase(){}
+    }
 
-    fun animateLogo(anim : AnimatedVectorDrawable){
+    fun animateLogo(anim: AnimatedVectorDrawable) {
         anim.start()
     }
 
 
-    fun isLastCardGone() : Boolean{}
+    fun isLastCardGone(binding: PermissionsFragmentBinding): Boolean {
+        binding.apply {
+            return btPermissionSwitch.visibility == View.GONE
+                    && locationPermissionSwitch.visibility == View.GONE
+                    && fileSystemSwitch.visibility == View.GONE
+                    && dozePermissionSwitch.visibility == View.GONE
+        }
+    }
 
 
     private fun shouldHideLine(binding: PermissionsFragmentBinding): Boolean {
@@ -36,7 +61,7 @@ object PermissionViewHelper {
     private fun hideLine(binding: PermissionsFragmentBinding) {
         if (shouldHideLine(binding)) {
             Fade().apply {
-                duration = 200
+                duration = 100
                 addTarget(binding.line)
                 doOnEnd {
                     binding.line.visibility = View.GONE
@@ -64,7 +89,7 @@ object PermissionViewHelper {
                     btPermissionSwitch.visibility = View.GONE
                     hideLine(binding)
                 }
-                tuneTransition(this)
+                tuneTransition(this, Fade())
                 addTarget(binding.btIcon)
                 addTarget(binding.btPermissionTitle)
                 addTarget(binding.btPermissionSwitch)
@@ -78,10 +103,10 @@ object PermissionViewHelper {
         }
     }
 
-    private fun tuneTransition(set: TransitionSet) {
+    private fun tuneTransition(set: TransitionSet, transition: Transition) {
         set.apply {
             ordering = TransitionSet.ORDERING_TOGETHER
-            addTransition(Fade())
+            addTransition(transition)
             duration = 800
             interpolator = AccelerateInterpolator()
         }
@@ -105,7 +130,7 @@ object PermissionViewHelper {
                     locationPermissionTitle.visibility = View.GONE
                     hideLine(binding)
                 }
-                tuneTransition(this)
+                tuneTransition(this, Fade())
                 addTarget(binding.locationIcon)
                 addTarget(binding.locationPermissionSwitch)
                 addTarget(binding.locationPermissionTitle)
@@ -137,7 +162,7 @@ object PermissionViewHelper {
                     dozePermissionTitle.visibility = View.GONE
                     hideLine(binding)
                 }
-                tuneTransition(this)
+                tuneTransition(this, Fade())
                 addTarget(binding.dozeIcon)
                 addTarget(binding.dozePermissionSwitch)
                 addTarget(binding.dozePermissionTitle)
@@ -151,7 +176,7 @@ object PermissionViewHelper {
         }
     }
 
-    fun showButtonAnimate(root : ViewGroup, button : MaterialButton){
+    fun showButtonAnimate(root: ViewGroup, button: MaterialButton) {
         Fade().apply {
             interpolator = AccelerateInterpolator()
             addTarget(button)
@@ -179,7 +204,7 @@ object PermissionViewHelper {
                     fileSystemSwitch.visibility = View.GONE
                     hideLine(binding)
                 }
-                tuneTransition(this)
+                tuneTransition(this, Fade())
                 addTarget(binding.fileSystemIcon)
                 addTarget(binding.fileSystemSwitch)
                 addTarget(binding.fileSystemPermissionTitle)

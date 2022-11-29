@@ -3,6 +3,7 @@ package ru.barinov.obdroid.startFragment
 import android.graphics.drawable.AnimatedVectorDrawable
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
@@ -48,38 +49,43 @@ class PermissionsFragment : Fragment() {
     }
 
     private fun initStates() {
-        binding.onStartButton.setOnClickListener {
-            rebase()
-        }
-        PermissionsUtil.apply {
-            if (hasBluetoothPermission(requireContext())) {
-                PermissionViewHelper.hideBt(binding)
-            } else {
-                binding.btPermissionSwitch.setOnClickListener {
-                    requestBTPermission()
-                }
+        with(binding) {
+            onStartButton.setOnClickListener {
+                rebase()
             }
-            if (hasLocationPermission(requireContext()) && hasBackgroundLocation(requireContext())) {
-                PermissionViewHelper.hideLocation(binding)
-            } else {
-                binding.locationPermissionSwitch.setOnClickListener {
-                    if (hasLocationPermission(requireContext())) {
-                        requestBackgroundLocationPermission()
-                    } else requestLocationPermission()
-                }
+            headImage.setOnClickListener {
+                PermissionViewHelper.animateLogo(headImage.drawable as AnimatedVectorDrawable)
             }
-            if (hasDozeOff(requireContext()) || prefs.isDozeAsked) {
-                PermissionViewHelper.hideDoze(binding)
-            } else {
-                binding.dozePermissionSwitch.setOnClickListener {
-                    requestDoze(requireContext())
+            PermissionsUtil.apply {
+                if (hasBluetoothPermission(requireContext())) {
+                    PermissionViewHelper.hideBt(this@with)
+                } else {
+                    btPermissionSwitch.setOnClickListener {
+                        requestBTPermission()
+                    }
                 }
-            }
-            if (hasExternalStoragePermission(requireContext())) {
-                PermissionViewHelper.hideExternalStorage(binding)
-            } else {
-                binding.fileSystemSwitch.setOnClickListener {
-                    requestExternalStoragePermission()
+                if (hasLocationPermission(requireContext()) && hasBackgroundLocation(requireContext())) {
+                    PermissionViewHelper.hideLocation(this@with)
+                } else {
+                    locationPermissionSwitch.setOnClickListener {
+                        if (hasLocationPermission(requireContext())) {
+                            requestBackgroundLocationPermission()
+                        } else requestLocationPermission()
+                    }
+                }
+                if (hasDozeOff(requireContext()) || prefs.isDozeAsked) {
+                    PermissionViewHelper.hideDoze(this@with)
+                } else {
+                    dozePermissionSwitch.setOnClickListener {
+                        requestDoze(requireContext())
+                    }
+                }
+                if (hasExternalStoragePermission(requireContext())) {
+                    PermissionViewHelper.hideExternalStorage(this@with)
+                } else {
+                    fileSystemSwitch.setOnClickListener {
+                        requestExternalStoragePermission()
+                    }
                 }
             }
         }
@@ -95,6 +101,13 @@ class PermissionsFragment : Fragment() {
                         if (it.granted) {
                             handlePositive(it)
                         } else handleNegative(it)
+                        PermissionViewHelper.apply {
+                            if (hasAllPermissions(requireContext(), prefs.isDozeAsked)) {
+                                animateRebase(binding, requireContext()){
+                                    rebase()
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -106,7 +119,10 @@ class PermissionsFragment : Fragment() {
             when (type) {
                 is PermissionType.BackGroundLocation -> locationPermissionSwitch.isChecked = false
                 is PermissionType.BluetoothPermission -> btPermissionSwitch.isChecked = false
-                is PermissionType.Doze -> dozePermissionSwitch.isChecked = false
+                is PermissionType.Doze -> {
+                    prefs.isDozeAsked = true
+                    dozePermissionSwitch.isChecked = false
+                }
                 is PermissionType.FileSystemPermission -> fileSystemSwitch.isChecked = false
                 is PermissionType.RuntimeLocation -> locationPermissionSwitch.isChecked = false
                 is PermissionType.WiFiPermission -> TODO()
