@@ -18,7 +18,7 @@
     </fragment>
     <fragment
         android:id="@+id/connectionsFragment"
-        android:name="ru.barinov.obdroid.ConnectionsFragment"
+        android:name="ru.barinov.obdroid.connectionsFragment.ConnectionsFragment"
         android:label="ConnectionsFragment" />
     <fragment
         android:id="@+id/terminalFragment"

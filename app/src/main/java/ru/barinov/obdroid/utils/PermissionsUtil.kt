@@ -1,4 +1,4 @@
-package ru.barinov.obdroid
+package ru.barinov.obdroid.utils
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -18,6 +18,8 @@ import androidx.annotation.MainThread
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import kotlinx.coroutines.flow.MutableStateFlow
+import ru.barinov.obdroid.BuildConfig
+import ru.barinov.obdroid.PermissionType
 
 
 object PermissionsUtil {

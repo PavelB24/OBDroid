@@ -3,12 +3,10 @@ package ru.barinov.obdroid.startFragment
 import android.graphics.drawable.AnimatedVectorDrawable
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
 import android.view.ViewGroup
-import androidx.appcompat.widget.SwitchCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -18,6 +16,7 @@ import org.koin.android.ext.android.inject
 import ru.barinov.obdroid.*
 import ru.barinov.obdroid.databinding.PermissionsFragmentBinding
 import ru.barinov.obdroid.preferences.Preferences
+import ru.barinov.obdroid.utils.PermissionsUtil
 
 class PermissionsFragment : Fragment() {
 
