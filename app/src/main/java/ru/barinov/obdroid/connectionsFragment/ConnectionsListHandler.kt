@@ -8,48 +8,32 @@ object ConnectionsListHandler {
 
     private var lastList: List<ConnectionItem>? = null
 
-    fun addBt(btDevices: List<BtConnectionItem>): List<ConnectionItem> {
-        lastList ?: return btDevices
+    fun addBt(btDevice : BtConnectionItem): List<ConnectionItem> {
+        if(lastList == null){
+            lastList = listOf(btDevice)
+            return lastList!!
+        }
         val resultList = mutableListOf<ConnectionItem>()
-        lastList?.let {
-            resultList.addAll(it)
+        lastList?.toMutableList()?.let { list->
+            list.removeIf { it is BtConnectionItem && it.address == btDevice.address }
+            resultList.addAll(list)
+            resultList.add(btDevice)
         }
-        btDevices.forEach { new ->
-            resultList.removeIf { stored ->
-                if (stored is BtConnectionItem) {
-                    !btDevices.toMutableList()
-                        .map { device ->
-                            device.address
-                        }.contains(stored.address) ||
-                            new.address == stored.address
-
-                } else false
-            }
-        }
-        resultList.addAll(btDevices)
         lastList = resultList
         return resultList
     }
 
     fun addWiFi(wifiDevices: List<WifiConnectionItem>): List<ConnectionItem> {
-        lastList ?: return wifiDevices
+        if(lastList == null){
+            lastList = wifiDevices
+            return lastList!!
+        }
         val resultList = mutableListOf<ConnectionItem>()
-        lastList?.let {
-            resultList.addAll(it)
+        lastList?.toMutableList()?.let { list->
+            list.removeIf { it is WifiConnectionItem }
+            resultList.addAll(list)
+            resultList.addAll(wifiDevices)
         }
-        wifiDevices.forEach { new ->
-            resultList.removeIf { stored ->
-                if (stored is WifiConnectionItem) {
-                    !wifiDevices.toMutableList()
-                        .map { device ->
-                            device.bssid
-                        }.contains(stored.bssid) ||
-                            new.bssid == stored.bssid
-
-                } else false
-            }
-        }
-        resultList.addAll(wifiDevices)
         lastList = resultList
         return resultList
     }

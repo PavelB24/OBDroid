@@ -1,5 +1,6 @@
 package ru.barinov.obdroid.connectionsFragment
 
+import android.util.Log
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import ru.barinov.obdroid.base.ConnectionItem
@@ -7,6 +8,7 @@ import ru.barinov.obdroid.base.BaseViewHolder
 
 class ConnectionsAdapter : RecyclerView.Adapter<BaseViewHolder<ConnectionItem>>() {
 
+    private var items = listOf<ConnectionItem>()
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -21,5 +23,9 @@ class ConnectionsAdapter : RecyclerView.Adapter<BaseViewHolder<ConnectionItem>>(
 
     override fun getItemCount(): Int {
         TODO("Not yet implemented")
+    }
+
+    fun newItems(new : List<ConnectionItem>){
+        Log.d("@@@", new.toString())
     }
 }
