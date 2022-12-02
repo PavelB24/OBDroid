@@ -1,11 +1,8 @@
 package ru.barinov.obdroid.connectionsFragment
 
 import android.annotation.SuppressLint
-import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothManager
-import android.bluetooth.le.ScanCallback
-import android.bluetooth.le.ScanResult
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -13,22 +10,24 @@ import android.content.IntentFilter
 import android.net.wifi.WifiManager
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.PopupMenu
 import androidx.fragment.app.Fragment
+import ru.barinov.obdroid.R
 import ru.barinov.obdroid.base.ConnectionItem
 import ru.barinov.obdroid.core.toBtConnectionItem
 import ru.barinov.obdroid.utils.PermissionsUtil
 import ru.barinov.obdroid.databinding.ConnectionsLayoutBinding
+import ru.barinov.obdroid.uiModels.BtConnectionItem
 import ru.barinov.obdroid.uiModels.WifiConnectionItem
 import java.util.*
 
 class ConnectionsFragment : Fragment() {
 
-    private companion object{
-       const val BT_UUID = "00001101-0000-1000-8000-00805F9B34FB"
+    private companion object {
+        const val BT_UUID = "00001101-0000-1000-8000-00805F9B34FB"
     }
 
     private val adapter by lazy { ConnectionsAdapter() }
@@ -45,7 +44,7 @@ class ConnectionsFragment : Fragment() {
                 WifiManager.SCAN_RESULTS_AVAILABLE_ACTION -> {
                     val success = intent.getBooleanExtra(WifiManager.EXTRA_RESULTS_UPDATED, false)
                     if (success) {
-                        doOnNewWifi()
+                        doOnNewScanResults()
                     }
                 }
                 BluetoothDevice.ACTION_FOUND -> {
@@ -90,13 +89,11 @@ class ConnectionsFragment : Fragment() {
                     })
                 )
             )
-
-
         }
     }
 
     @SuppressLint("MissingPermission")
-    private fun doOnNewWifi() {
+    private fun doOnNewScanResults() {
         if (PermissionsUtil.hasLocationPermission(requireContext())) {
             val result = wifiManager.scanResults.map {
                 WifiConnectionItem(
@@ -124,6 +121,7 @@ class ConnectionsFragment : Fragment() {
     @SuppressLint("MissingPermission")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initViews()
         wifiManager = requireContext().getSystemService(WifiManager::class.java)
         btManager = requireContext().getSystemService(BluetoothManager::class.java)
         requireActivity().registerReceiver(connectionsReceiver,
@@ -144,6 +142,36 @@ class ConnectionsFragment : Fragment() {
 //            }
 //        })
 
+    }
+
+    private fun initViews() {
+        adapter.addItemClickListener(object : ConnectionsAdapter.ConnectionClickListener {
+            override fun onItemClick(item: ConnectionItem, itemView: View) {
+                val popup = PopupMenu(requireContext(), itemView)
+                when (item) {
+                    is BtConnectionItem -> {
+                        popup.apply {
+                            inflate(R.menu.bt_item_popup_menu)
+                            setOnMenuItemClickListener {
+                                when(it.itemId){
+                                    R.id.bound_menuItem -> {}
+                                    R.id.connect_bt_item -> {}
+                                }
+                                true
+                            }
+                        }
+                    }
+                    else -> {
+                        popup.apply {
+                            inflate(R.menu.wifi_item_popup_menu)
+                            setOnMenuItemClickListener {
+                                true
+                            }
+                        }
+                    }
+                }
+            }
+        })
     }
 
     override fun onDestroy() {

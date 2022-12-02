@@ -29,6 +29,6 @@ class ConnectionsDiff(
     }
 
     override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-        TODO("Not yet implemented")
+        return oldList[oldItemPosition] == newList[newItemPosition]
     }
 }

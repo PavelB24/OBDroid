@@ -1,31 +1,69 @@
 package ru.barinov.obdroid.connectionsFragment
 
 import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.DiffUtil.DiffResult
 import androidx.recyclerview.widget.RecyclerView
 import ru.barinov.obdroid.base.ConnectionItem
 import ru.barinov.obdroid.base.BaseViewHolder
+import ru.barinov.obdroid.databinding.BtItemLayoutBinding
+import ru.barinov.obdroid.databinding.WifiItemLayoutBinding
+import ru.barinov.obdroid.utils.ConnectionsDiff
 
 class ConnectionsAdapter : RecyclerView.Adapter<BaseViewHolder<ConnectionItem>>() {
 
     private var items = listOf<ConnectionItem>()
 
+    private var onItemClick: ConnectionClickListener? = null
+
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
     ): BaseViewHolder<ConnectionItem> {
-        TODO("Not yet implemented")
+        return if (viewType == 0) {
+            WifiViewHolder(WifiItemLayoutBinding.inflate(LayoutInflater.from(parent.context)))
+        } else {
+            BTViewHolder(BtItemLayoutBinding.inflate(LayoutInflater.from(parent.context)))
+        }
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return when (getItem(position).type) {
+            ConnectionItem.ConnectionType.WIFI -> 0
+            ConnectionItem.ConnectionType.BLUETOOTH -> 1
+        }
     }
 
     override fun onBindViewHolder(holder: BaseViewHolder<ConnectionItem>, position: Int) {
-        TODO("Not yet implemented")
+        val item = getItem(position)
+        holder.onBind(item)
+        onItemClick?.let { listener ->
+            holder.itemView.setOnClickListener {
+                listener.onItemClick(item, holder.itemView)
+            }
+        }
+
     }
 
-    override fun getItemCount(): Int {
-        TODO("Not yet implemented")
+    override fun getItemCount(): Int = items.size
+
+    private fun getItem(position: Int): ConnectionItem = items[position]
+
+    fun newItems(new: List<ConnectionItem>) {
+        val result = DiffUtil.calculateDiff(ConnectionsDiff(items, new))
+        items = new
+        result.dispatchUpdatesTo(this)
     }
 
-    fun newItems(new : List<ConnectionItem>){
-        Log.d("@@@", new.toString())
+    fun addItemClickListener(listener: ConnectionClickListener) {
+        onItemClick = listener
+    }
+
+    interface ConnectionClickListener {
+
+        fun onItemClick(item: ConnectionItem, itemView : View)
     }
 }
