@@ -10,11 +10,16 @@ import android.content.IntentFilter
 import android.net.wifi.WifiManager
 import android.os.Build
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.PopupMenu
+import android.widget.Toolbar
+import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.ui.setupWithNavController
+import ru.barinov.obdroid.BuildConfig
+import ru.barinov.obdroid.MainActivity
 import ru.barinov.obdroid.R
 import ru.barinov.obdroid.base.ConnectionItem
 import ru.barinov.obdroid.core.toBtConnectionItem
@@ -85,7 +90,6 @@ class ConnectionsFragment : Fragment() {
                             val bind = it
                             bind.createRfcommSocketToServiceRecord(uuid)
                         }
-
                     })
                 )
             )
@@ -115,6 +119,34 @@ class ConnectionsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = ConnectionsLayoutBinding.inflate(inflater, container, false)
+        (requireActivity() as MainActivity).setSupportActionBar(binding.connectionsToolbar)
+        binding.connectionsToolbar.setupWithNavController(findNavController())
+        binding.connectionsToolbar.title = ""
+        requireActivity().addMenuProvider(object : MenuProvider{
+            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                menuInflater.inflate(R.menu.connecions_toolbar_menu, menu)
+            }
+
+            @SuppressLint("MissingPermission")
+            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+                when(menuItem.itemId){
+                    R.id.enable_bt_item -> {
+                        if(BuildConfig.VERSION_CODE >= Build.VERSION_CODES.TIRAMISU){
+                            //todo
+                        } else {
+                            btManager.adapter.enable()
+                            btManager.adapter.startDiscovery()
+                        }
+
+                    }
+                    R.id.enable_wifi_item -> {
+                        wifiManager.startScan()
+                    }
+
+                }
+                return true
+            }
+        }, viewLifecycleOwner, Lifecycle.State.RESUMED)
         return binding.root
     }
 
@@ -141,10 +173,10 @@ class ConnectionsFragment : Fragment() {
 //                }
 //            }
 //        })
-
     }
 
     private fun initViews() {
+        binding.connectionsRv.adapter = adapter
         adapter.addItemClickListener(object : ConnectionsAdapter.ConnectionClickListener {
             override fun onItemClick(item: ConnectionItem, itemView: View) {
                 val popup = PopupMenu(requireContext(), itemView)

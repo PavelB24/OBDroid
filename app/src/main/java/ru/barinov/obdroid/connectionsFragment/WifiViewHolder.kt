@@ -13,5 +13,10 @@ class WifiViewHolder(
         if (item !is WifiConnectionItem){
             throw IllegalAccessException()
         }
+        binding.apply {
+            wfBssid.text = item.bssid
+            wfSsid.text = item.ssid
+            wfParams.text = "Fr: ${item.frequency} Ch:${item.channel}"
+        }
     }
 }

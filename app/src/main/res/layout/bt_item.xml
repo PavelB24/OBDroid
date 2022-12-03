@@ -15,28 +15,18 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <TextView
-                android:id="@+id/wf_params"
-                android:layout_width="0dp"
-                android:layout_marginTop="2dp"
-                android:layout_height="match_parent"
-                app:layout_constraintStart_toEndOf="@id/connection_icon"
-                app:layout_constraintTop_toTopOf="parent"
-                android:layout_marginHorizontal="8dp"
-                />
-
             <ImageView
                 android:id="@+id/connection_icon"
                 android:layout_width="50dp"
                 android:layout_margin="8dp"
                 android:layout_height="50dp"
-                app:layout_constraintTop_toBottomOf="@id/wf_params"
+                app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 />
 
             <TextView
-                android:id="@+id/wf_ssid"
+                android:id="@+id/bt_name"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 app:layout_constraintStart_toEndOf="@id/connection_icon"
@@ -46,7 +36,7 @@
                 />
 
             <TextView
-                android:id="@+id/wf_bssid"
+                android:id="@+id/bt_address"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 app:layout_constraintStart_toEndOf="@id/connection_icon"

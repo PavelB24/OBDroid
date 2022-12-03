@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.DiffUtil.DiffResult
 import androidx.recyclerview.widget.RecyclerView
 import ru.barinov.obdroid.base.ConnectionItem
 import ru.barinov.obdroid.base.BaseViewHolder
-import ru.barinov.obdroid.databinding.BtItemLayoutBinding
+import ru.barinov.obdroid.databinding.BtItemBinding
 import ru.barinov.obdroid.databinding.WifiItemLayoutBinding
 import ru.barinov.obdroid.utils.ConnectionsDiff
 
@@ -24,9 +24,13 @@ class ConnectionsAdapter : RecyclerView.Adapter<BaseViewHolder<ConnectionItem>>(
         viewType: Int
     ): BaseViewHolder<ConnectionItem> {
         return if (viewType == 0) {
-            WifiViewHolder(WifiItemLayoutBinding.inflate(LayoutInflater.from(parent.context)))
+            WifiViewHolder(WifiItemLayoutBinding.inflate(
+                LayoutInflater.from(parent.context), parent, false)
+            )
         } else {
-            BTViewHolder(BtItemLayoutBinding.inflate(LayoutInflater.from(parent.context)))
+            BTViewHolder(BtItemBinding.inflate(
+                LayoutInflater.from(parent.context), parent, false)
+            )
         }
     }
 
