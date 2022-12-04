@@ -10,7 +10,7 @@ sealed class PermissionType(open val granted: Boolean){
 
     data class BluetoothPermission(override val granted : Boolean) : PermissionType(granted)
 
-    data class WiFiPermission(override val granted : Boolean) : PermissionType(granted) //
+    data class WiFiPermission(override val granted : Boolean) : PermissionType(granted)
 
     data class FileSystemPermission(override val granted : Boolean) : PermissionType(granted)
 

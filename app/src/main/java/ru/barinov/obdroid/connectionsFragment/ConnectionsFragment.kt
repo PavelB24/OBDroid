@@ -7,12 +7,19 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.net.ConnectivityManager
+import android.net.MacAddress
+import android.net.NetworkCapabilities
+import android.net.NetworkRequest
 import android.net.wifi.WifiManager
+import android.net.wifi.WifiNetworkSpecifier
 import android.os.Build
 import android.os.Bundle
 import android.view.*
 import android.widget.PopupMenu
+import android.widget.Toast
 import android.widget.Toolbar
+import androidx.core.content.getSystemService
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
@@ -82,6 +89,7 @@ class ConnectionsFragment : Fragment() {
                         override fun createBound() {
                             val bind = it
                             bind.createBond()
+                            btManager.adapter.startDiscovery()
                         }
 
                         @SuppressLint("MissingPermission")
@@ -122,16 +130,16 @@ class ConnectionsFragment : Fragment() {
         (requireActivity() as MainActivity).setSupportActionBar(binding.connectionsToolbar)
         binding.connectionsToolbar.setupWithNavController(findNavController())
         binding.connectionsToolbar.title = ""
-        requireActivity().addMenuProvider(object : MenuProvider{
+        requireActivity().addMenuProvider(object : MenuProvider {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
                 menuInflater.inflate(R.menu.connecions_toolbar_menu, menu)
             }
 
             @SuppressLint("MissingPermission")
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-                when(menuItem.itemId){
+                when (menuItem.itemId) {
                     R.id.enable_bt_item -> {
-                        if(BuildConfig.VERSION_CODE >= Build.VERSION_CODES.TIRAMISU){
+                        if (BuildConfig.VERSION_CODE >= Build.VERSION_CODES.TIRAMISU) {
                             //todo
                         } else {
                             btManager.adapter.enable()
@@ -150,20 +158,17 @@ class ConnectionsFragment : Fragment() {
         return binding.root
     }
 
-    @SuppressLint("MissingPermission")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initViews()
         wifiManager = requireContext().getSystemService(WifiManager::class.java)
         btManager = requireContext().getSystemService(BluetoothManager::class.java)
+        initViews()
         requireActivity().registerReceiver(connectionsReceiver,
             IntentFilter().apply {
                 addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION)
                 addAction(BluetoothDevice.ACTION_FOUND)
             }
         )
-        wifiManager.startScan()
-        btManager.adapter.startDiscovery()
 //        requireContext().getSystemService(BluetoothManager::class.java).adapter.bluetoothLeScanner.startScan(object : ScanCallback(){
 //            override fun onScanResult(callbackType: Int, result: ScanResult?) {
 //                super.onScanResult(callbackType, result)
@@ -175,35 +180,12 @@ class ConnectionsFragment : Fragment() {
 //        })
     }
 
+    @SuppressLint("MissingPermission")
     private fun initViews() {
+        wifiManager.startScan()
+        btManager.adapter.startDiscovery()
         binding.connectionsRv.adapter = adapter
-        adapter.addItemClickListener(object : ConnectionsAdapter.ConnectionClickListener {
-            override fun onItemClick(item: ConnectionItem, itemView: View) {
-                val popup = PopupMenu(requireContext(), itemView)
-                when (item) {
-                    is BtConnectionItem -> {
-                        popup.apply {
-                            inflate(R.menu.bt_item_popup_menu)
-                            setOnMenuItemClickListener {
-                                when(it.itemId){
-                                    R.id.bound_menuItem -> {}
-                                    R.id.connect_bt_item -> {}
-                                }
-                                true
-                            }
-                        }
-                    }
-                    else -> {
-                        popup.apply {
-                            inflate(R.menu.wifi_item_popup_menu)
-                            setOnMenuItemClickListener {
-                                true
-                            }
-                        }
-                    }
-                }
-            }
-        })
+        adapter.addItemClickListener(ConnectionActionHandler(requireContext()))
     }
 
     override fun onDestroy() {

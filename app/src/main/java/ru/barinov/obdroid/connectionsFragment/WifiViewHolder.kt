@@ -1,5 +1,7 @@
 package ru.barinov.obdroid.connectionsFragment
 
+import androidx.appcompat.content.res.AppCompatResources
+import ru.barinov.obdroid.R
 import ru.barinov.obdroid.base.BaseViewHolder
 import ru.barinov.obdroid.base.ConnectionItem
 import ru.barinov.obdroid.databinding.WifiItemLayoutBinding
@@ -17,6 +19,11 @@ class WifiViewHolder(
             wfBssid.text = item.bssid
             wfSsid.text = item.ssid
             wfParams.text = "Fr: ${item.frequency} Ch:${item.channel}"
+            connectionIcon.setImageDrawable(
+                AppCompatResources.getDrawable(
+                    itemView.context, R.drawable.wifi_logo
+                )
+            )
         }
     }
 }

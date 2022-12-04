@@ -31,7 +31,7 @@
                 android:layout_height="match_parent"
                 app:layout_constraintStart_toEndOf="@id/connection_icon"
                 app:layout_constraintTop_toTopOf="@id/connection_icon"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/bt_bound_icon"
                 android:layout_marginHorizontal="8dp"
                 />
 
@@ -41,8 +41,19 @@
                 android:layout_height="match_parent"
                 app:layout_constraintStart_toEndOf="@id/connection_icon"
                 app:layout_constraintBottom_toBottomOf="@id/connection_icon"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/bt_bound_icon"
                 android:layout_marginHorizontal="8dp"
+                />
+
+            <ImageView
+                android:id="@+id/bt_bound_icon"
+                android:layout_width="50dp"
+                android:layout_margin="8dp"
+                android:layout_height="50dp"
+                android:visibility="gone"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
                 />
 
 

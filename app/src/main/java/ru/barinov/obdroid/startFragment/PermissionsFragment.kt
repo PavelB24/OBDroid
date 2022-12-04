@@ -102,7 +102,7 @@ class PermissionsFragment : Fragment() {
                         } else handleNegative(it)
                         PermissionViewHelper.apply {
                             if (hasAllPermissions(requireContext(), prefs.isDozeAsked)) {
-                                animateRebase(binding, requireContext()){
+                                animateRebase(binding){
                                     rebase()
                                 }
                             }

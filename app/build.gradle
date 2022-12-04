@@ -36,7 +36,6 @@ android {
 }
 
 
-
 dependencies {
 
     // https://mvnrepository.com/artifact/androidx.core/core-splashscreen

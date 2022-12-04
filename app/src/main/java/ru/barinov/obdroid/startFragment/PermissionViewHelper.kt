@@ -1,9 +1,7 @@
 package ru.barinov.obdroid.startFragment
 
-import android.content.Context
 import android.graphics.drawable.AnimatedVectorDrawable
 import android.transition.*
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AccelerateInterpolator
@@ -19,7 +17,6 @@ object PermissionViewHelper {
     @MainThread
     fun animateRebase(
         binding: PermissionsFragmentBinding,
-        context: Context,
         rebaseAction: () -> Unit
     ) {
         with(binding) {
