@@ -50,7 +50,9 @@ class PermissionsFragment : Fragment() {
     private fun initStates() {
         with(binding) {
             onStartButton.setOnClickListener {
-                rebase()
+                PermissionViewHelper.animateRebase(binding){
+                    rebase()
+                }
             }
             headImage.setOnClickListener {
                 PermissionViewHelper.animateLogo(headImage.drawable as AnimatedVectorDrawable)

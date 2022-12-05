@@ -3,6 +3,7 @@ package ru.barinov.obdroid.connectionsFragment
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothManager
+import android.bluetooth.BluetoothSocket
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -25,6 +26,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
+import kotlinx.coroutines.flow.MutableSharedFlow
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.barinov.obdroid.BuildConfig
 import ru.barinov.obdroid.MainActivity
 import ru.barinov.obdroid.R
@@ -32,8 +35,10 @@ import ru.barinov.obdroid.base.ConnectionItem
 import ru.barinov.obdroid.core.toBtConnectionItem
 import ru.barinov.obdroid.utils.PermissionsUtil
 import ru.barinov.obdroid.databinding.ConnectionsLayoutBinding
+import ru.barinov.obdroid.startFragment.PermissionViewHelper
 import ru.barinov.obdroid.uiModels.BtConnectionItem
 import ru.barinov.obdroid.uiModels.WifiConnectionItem
+import java.net.Socket
 import java.util.*
 
 class ConnectionsFragment : Fragment() {
@@ -49,6 +54,8 @@ class ConnectionsFragment : Fragment() {
     private lateinit var wifiManager: WifiManager
 
     private lateinit var btManager: BluetoothManager
+
+    private val viewModel by viewModel<ConnectionsViewModel>()
 
     private val connectionsReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -88,15 +95,17 @@ class ConnectionsFragment : Fragment() {
                         @SuppressLint("MissingPermission")
                         override fun createBound() {
                             val bind = it
-                            bind.createBond()
-                            btManager.adapter.startDiscovery()
+                            val result = bind.createBond()
+                            if(result) {
+                                btManager.adapter.startDiscovery()
+                            }
                         }
 
                         @SuppressLint("MissingPermission")
-                        override fun connect() {
+                        override fun connect() : BluetoothSocket {
                             val uuid = UUID.fromString(BT_UUID)
                             val bind = it
-                            bind.createRfcommSocketToServiceRecord(uuid)
+                            return bind.createInsecureRfcommSocketToServiceRecord(uuid)
                         }
                     })
                 )
@@ -185,10 +194,16 @@ class ConnectionsFragment : Fragment() {
         wifiManager.startScan()
         btManager.adapter.startDiscovery()
         binding.connectionsRv.adapter = adapter
-        adapter.addItemClickListener(ConnectionActionHandler(requireContext()))
+        adapter.addItemClickListener(
+            ConnectionActionHandler(
+                requireContext(),
+                viewModel.onConnectFlow as MutableSharedFlow<ConnectionActionHandler.ConnectedEventType>
+            )
+        )
     }
 
     override fun onDestroy() {
+        ConnectionsListHandler.clearResults()
         requireActivity().unregisterReceiver(connectionsReceiver)
         super.onDestroy()
     }

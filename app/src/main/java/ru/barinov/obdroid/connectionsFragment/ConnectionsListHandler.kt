@@ -38,6 +38,10 @@ object ConnectionsListHandler {
         return resultList
     }
 
+    fun clearResults(){
+        lastList = null
+    }
+
 //    fun handleList(input : List<ConnectionItem>) : List<ConnectionItem>{
 //        lastList ?: return input
 //        val resultList = mutableListOf<ConnectionItem>()

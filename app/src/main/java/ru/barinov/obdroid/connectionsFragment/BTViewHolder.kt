@@ -31,7 +31,7 @@ class BTViewHolder(
                 btBoundIcon.visibility = View.VISIBLE
                 btBoundIcon.setImageDrawable(
                     AppCompatResources.getDrawable(
-                        itemView.context, R.drawable.ic_baseline_outbound_24
+                        itemView.context, R.drawable.bound_logo
                     )
                 )
             }

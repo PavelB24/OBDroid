@@ -12,14 +12,16 @@ import android.view.Gravity
 import android.view.View
 import android.widget.PopupMenu
 import android.widget.Toast
+import kotlinx.coroutines.flow.MutableSharedFlow
 import ru.barinov.obdroid.R
 import ru.barinov.obdroid.base.ConnectionItem
 import ru.barinov.obdroid.uiModels.BtConnectionItem
 import ru.barinov.obdroid.uiModels.WifiConnectionItem
 
-class ConnectionActionHandler(private val context: Context) :
-    ConnectionsAdapter.ConnectionClickListener {
-
+class ConnectionActionHandler(
+    private val context: Context,
+    private val connectFlow: MutableSharedFlow<ConnectedEventType>
+) : ConnectionsAdapter.ConnectionClickListener {
     override fun onItemClick(item: ConnectionItem, itemView: View) {
         val popup = PopupMenu(context, itemView)
         popup.apply {
@@ -53,6 +55,7 @@ class ConnectionActionHandler(private val context: Context) :
                     popup.apply {
                         inflate(R.menu.wifi_item_popup_menu)
                         setOnMenuItemClickListener {
+                            val cm = context.getSystemService(ConnectivityManager::class.java)
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                                 val wfSpec = WifiNetworkSpecifier.Builder()
                                     .setSsid(item.ssid)
@@ -62,8 +65,9 @@ class ConnectionActionHandler(private val context: Context) :
                                     .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
                                     .setNetworkSpecifier(wfSpec)
                                     .build()
-                                val cm = context.getSystemService(ConnectivityManager::class.java)
-                                cm.requestNetwork(networkRequest, WifiConnectionCallBack(cm))
+                                cm.requestNetwork(networkRequest, WifiConnectionCallBack(cm) {
+                                    onConnection()
+                                })
 
                             } else {
                                 TODO("VERSION.SDK_INT < Q")
@@ -76,5 +80,13 @@ class ConnectionActionHandler(private val context: Context) :
             gravity = Gravity.END
             show()
         }
+    }
+
+    private fun onConnection() {
+        TODO("Not yet implemented")
+    }
+
+    enum class ConnectedEventType {
+        WIFI, BLUETOOTH, BLUETOOTH_BOUND, FAIL
     }
 }
