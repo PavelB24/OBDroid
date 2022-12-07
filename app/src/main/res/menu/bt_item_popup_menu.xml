@@ -3,9 +3,9 @@
 
     <item
         android:id="@+id/bound_menuItem"
-        android:title="Bound BT Device" />
+        android:title="@string/bound_bt_device" />
     <item
         android:id="@+id/connect_bt_item"
-        android:title="Connect to Device" />
+        android:title="@string/connect_to_device" />
 
 </menu>

@@ -29,6 +29,12 @@ class MainActivity : AppCompatActivity() {
             resources.getString(R.string.app_name)
         drawerLayout.setDrawerLockMode(LOCK_MODE_LOCKED_CLOSED)
         navView.setupWithNavController(navController)
+        navView.setNavigationItemSelectedListener {
+            if(it.itemId == R.id.exit_menu){
+                finish()
+            }
+            true
+        }
     }
 
     fun unlockDrawer(){

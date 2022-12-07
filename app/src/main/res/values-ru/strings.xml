@@ -1,0 +1,18 @@
+<resources>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Настройки</string>
+
+    <string name="menu_home">На Старт</string>
+    <string name="menu_gallery">Gallery</string>
+    <string name="menu_slideshow">Slideshow</string>
+    <string name="unknown_bt_name">Неизвестный Девайс</string>
+    <string name="connection_failed_string">Ошибка Соединения</string>
+    <string name="settings">Настройки</string>
+    <string name="connection">Соединения</string>
+    <string name="terminal">Терминал</string>
+    <string name="exit">Выход</string>
+    <string name="main_view">Домашний Экран</string>
+</resources>

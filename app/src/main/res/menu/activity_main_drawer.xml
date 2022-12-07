@@ -7,20 +7,20 @@
 
         <item
             android:id="@+id/homeFragment"
-            android:title="Main"/>
+            android:title="@string/main_view"/>
 
         <item
             android:id="@+id/settingsFragment"
-            android:title="Settings"/>
+            android:title="@string/settings"/>
 
 
         <item
             android:id="@+id/connectionsFragment"
-            android:title="Connection"/>
+            android:title="@string/connection"/>
 
         <item
             android:id="@+id/terminalFragment"
-            android:title="Terminal"/>
+            android:title="@string/terminal"/>
 
     </group>
 
@@ -30,7 +30,7 @@
 
     <item
         android:id="@+id/exit_menu"
-        android:title="Exit"/>
+        android:title="@string/exit"/>
 
     </group>
 </menu>

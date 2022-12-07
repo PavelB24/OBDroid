@@ -4,7 +4,7 @@ import ru.barinov.obdroid.base.ConnectionItem
 import ru.barinov.obdroid.uiModels.BtConnectionItem
 import ru.barinov.obdroid.uiModels.WifiConnectionItem
 
-object ConnectionsListHandler {
+class ConnectionsListHandler {
 
     private var lastList: List<ConnectionItem>? = null
 
@@ -37,6 +37,8 @@ object ConnectionsListHandler {
         lastList = resultList
         return resultList
     }
+
+    fun getList() = lastList
 
     fun clearResults(){
         lastList = null

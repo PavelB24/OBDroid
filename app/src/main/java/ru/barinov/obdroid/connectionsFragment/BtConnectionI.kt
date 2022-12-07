@@ -6,7 +6,7 @@ import java.net.Socket
 
 interface BtConnectionI {
 
-    fun createBound()
+    fun createBound() : Boolean
 
-    fun connect() : BluetoothSocket
+    fun connect() : BluetoothSocket?
 }

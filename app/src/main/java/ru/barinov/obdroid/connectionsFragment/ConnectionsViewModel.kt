@@ -1,28 +1,47 @@
 package ru.barinov.obdroid.connectionsFragment
 
+import android.bluetooth.BluetoothSocket
 import android.content.Context
+import android.net.Network
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import ru.barinov.obdroid.ConnectedEventType
+import ru.barinov.obdroid.uiModels.BtConnectionItem
+import ru.barinov.obdroid.uiModels.WifiConnectionItem
 
-class ConnectionsViewModel() : ViewModel() {
+class ConnectionsViewModel(
+    private val connectionHandler: ConnectionActionHandler
+) : ViewModel() {
 
-    private val _onConnectFlow = MutableSharedFlow<ConnectionActionHandler.ConnectedEventType>().onEach {
-        when(it){
-            ConnectionActionHandler.ConnectedEventType.WIFI -> onConnect()
-            ConnectionActionHandler.ConnectedEventType.BLUETOOTH -> onConnect()
-            else -> { Unit }
-        }
-    }.shareIn(viewModelScope, SharingStarted.Eagerly)
+    private val listHandler by lazy { ConnectionsListHandler() }
 
-    val onConnectFlow: SharedFlow<ConnectionActionHandler.ConnectedEventType> = _onConnectFlow
+    private val _onConnectFlow = connectionHandler.connectFlow
+    val onConnectFlow: SharedFlow<ConnectedEventType> = _onConnectFlow
 
-    private fun onConnect() {
-        TODO("Not yet implemented")
+    fun onConnectWf(
+        network : Network,
+        ssid : String,
+        bssid : String
+    ) {
+
+    }
+
+    fun onConnectBt(socket : BluetoothSocket, actions : BtConnectionI) {
+
     }
 
 
+    fun connectBounded(device : BtConnectionItem){
+        connectionHandler.connectBt(device)
+    }
 
+    fun handle(btDevice : BtConnectionItem) = listHandler.addBt(btDevice)
+
+    fun handle(wifiList : List<WifiConnectionItem>) = listHandler.addWiFi(wifiList)
+
+
+    fun getConnectionHandler() = connectionHandler
 
 }
