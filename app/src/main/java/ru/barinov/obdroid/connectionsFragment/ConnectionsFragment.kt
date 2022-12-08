@@ -4,25 +4,12 @@ import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothManager
-import android.bluetooth.BluetoothSocket
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
 import android.content.IntentFilter
-import android.net.ConnectivityManager
-import android.net.MacAddress
-import android.net.NetworkCapabilities
-import android.net.NetworkRequest
 import android.net.wifi.WifiManager
-import android.net.wifi.WifiNetworkSpecifier
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.*
-import android.widget.PopupMenu
 import android.widget.Toast
-import android.widget.Toolbar
-import androidx.core.content.getSystemService
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
@@ -30,29 +17,21 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
-import kotlinx.coroutines.flow.MutableSharedFlow
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import ru.barinov.obdroid.BuildConfig
-import ru.barinov.obdroid.ConnectedEventType
-import ru.barinov.obdroid.MainActivity
-import ru.barinov.obdroid.R
+import ru.barinov.obdroid.*
 import ru.barinov.obdroid.base.ConnectionItem
-import ru.barinov.obdroid.core.toBtConnectionItem
+import ru.barinov.obdroid.broadcastReceivers.ConnectionsBroadcastReceiver
 import ru.barinov.obdroid.utils.PermissionsUtil
 import ru.barinov.obdroid.databinding.ConnectionsLayoutBinding
-import ru.barinov.obdroid.startFragment.PermissionViewHelper
 import ru.barinov.obdroid.uiModels.BtConnectionItem
 import ru.barinov.obdroid.uiModels.WifiConnectionItem
-import java.net.Socket
 import java.util.*
 
 class ConnectionsFragment : Fragment() {
 
-    private companion object {
-        const val BT_UUID = "00001101-0000-1000-8000-00805F9B34FB"
-    }
 
     //События для flow все перенеси в ресивер, кроме поключения по WF  - там коллбэк, обрабатывай метод коннекта, пытаясь открыть полученный соккет
 
@@ -66,51 +45,8 @@ class ConnectionsFragment : Fragment() {
 
     private val viewModel by viewModel<ConnectionsViewModel>()
 
-    private val connectionsReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context?, intent: Intent?) {
+    private val connectionsReceiver by lazy { ConnectionsBroadcastReceiver() }
 
-    }
-
-    private fun addDevice(device: BluetoothDevice?) {
-        device?.let {
-            adapter.newItems(
-                viewModel.handle(
-                    it.toBtConnectionItem(object :
-                        BtConnectionI {
-                        @SuppressLint("MissingPermission")
-                        override fun createBound() : Boolean {
-                            val bind = it
-                            return bind.createBond()
-                        }
-
-                        @SuppressLint("MissingPermission")
-                        override fun connect(): BluetoothSocket {
-                            val uuid = UUID.fromString(BT_UUID)
-                            val bind = it
-                            return bind.createInsecureRfcommSocketToServiceRecord(uuid)
-                        }
-                    })
-                )
-            )
-        }
-    }
-
-    @SuppressLint("MissingPermission")
-    private fun doOnNewScanResults() {
-        if (PermissionsUtil.hasLocationPermission(requireContext())) {
-            val result = wifiManager.scanResults.map {
-                WifiConnectionItem(
-                    ConnectionItem.ConnectionType.WIFI,
-                    it.BSSID,
-                    it.frequency,
-                    it.timestamp,
-                    it.channelWidth,
-                    it.SSID
-                )
-            }
-            adapter.newItems(viewModel.handle(result))
-        }
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -177,9 +113,6 @@ class ConnectionsFragment : Fragment() {
         lifecycleScope.launchWhenStarted {
             viewModel.onConnectFlow.onEach { event->
                 when(event){
-                    is ConnectedEventType.BluetoothBounded -> {
-
-                    }
                     is ConnectedEventType.BluetoothConnected -> {
                         event.apply {
                             displayConnection(item)
@@ -200,6 +133,53 @@ class ConnectionsFragment : Fragment() {
                 }
             }.collect()
         }
+        lifecycleScope.launchWhenStarted {
+            connectionsReceiver.receiverEvents.onEach { event->
+                when(event){
+                    is ConnectionReceiverEvent.BluetoothBounded -> {
+                        onDeviceBounded(event.device)
+                    }
+                    is ConnectionReceiverEvent.BoundFailed -> {
+                        onFailedBound(event.device)
+                    }
+                    is ConnectionReceiverEvent.BoundingStarted -> {
+                        showProgress()
+                    }
+                    is ConnectionReceiverEvent.NewBtDeviceFound -> {
+                        onNewBtDevice(event.device)
+                    }
+                    is ConnectionReceiverEvent.ScanAvailable -> {
+                        doOnNewScanResults()
+                    }
+                    is ConnectionReceiverEvent.UnBounded -> {
+                        onNewBtDevice(event.device)
+                    }
+                    is ConnectionReceiverEvent.ReBound -> {
+                        //todo
+                    }
+                }
+            }.collect()
+        }
+        lifecycleScope.launchWhenStarted {
+            viewModel.scanResult.onEach {
+                adapter.newItems(it)
+            }.collect()
+        }
+    }
+
+    private fun onDeviceBounded(device: BluetoothDevice) {
+        binding.progressBar.visibility = View.GONE
+        viewModel.handleBtDevice(device)
+    }
+
+    private fun onFailedBound(device: BluetoothDevice) {
+        binding.progressBar.visibility = View.GONE
+        viewModel.handleBtDevice(device)
+        Snackbar.make(requireView(), "Bound Failed", Snackbar.LENGTH_SHORT).show()
+    }
+
+    private fun showProgress() {
+        binding.progressBar.visibility = View.VISIBLE
     }
 
     private fun displayConnection(item: ConnectionItem) {
@@ -219,6 +199,17 @@ class ConnectionsFragment : Fragment() {
             }
         }
 
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun doOnNewScanResults(){
+        if (PermissionsUtil.hasLocationPermission(requireContext())) {
+            viewModel.handleScanResults(wifiManager.scanResults)
+        }
+    }
+
+    private fun onNewBtDevice(device: BluetoothDevice){
+        viewModel.handleBtDevice(device)
     }
 
     @SuppressLint("MissingPermission")

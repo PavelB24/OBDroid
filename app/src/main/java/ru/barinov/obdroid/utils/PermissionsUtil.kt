@@ -82,6 +82,7 @@ object PermissionsUtil {
 
     }
 
+    @MainThread
     fun hasLocationPermission(context: Context): Boolean =
         ContextCompat
             .checkSelfPermission(
@@ -143,6 +144,7 @@ object PermissionsUtil {
         )
     }
 
+    @MainThread
     fun hasBackgroundLocation(context: Context) =
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             ContextCompat.checkSelfPermission(
@@ -154,6 +156,7 @@ object PermissionsUtil {
         }
 
 
+    @MainThread
     fun hasBluetoothPermission(context: Context) =
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             ContextCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_CONNECT) ==
@@ -162,6 +165,7 @@ object PermissionsUtil {
             hasBTAdminPermission(context)
         }
 
+    @MainThread
     private fun hasBTAdminPermission(context: Context) =
         ContextCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_ADMIN) ==
                 PackageManager.PERMISSION_GRANTED
@@ -179,6 +183,7 @@ object PermissionsUtil {
         } else oldBtLauncher?.launch(Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE))
     }
 
+    @MainThread
     fun hasNecessaryPermissions(context: Context): Boolean {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             hasBTAdminPermission(context) && hasBluetoothPermission(context)
@@ -189,6 +194,7 @@ object PermissionsUtil {
         }
     }
 
+    @MainThread
     fun hasAllPermissions(context: Context, dozeShown : Boolean) : Boolean{
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             Log.d("@@@", "${hasBTAdminPermission(context)} ${hasBluetoothPermission(context)} ${hasLocationPermission(context)} ${hasBackgroundLocation(context)} ${hasExternalStoragePermission(context)}")
@@ -215,6 +221,7 @@ object PermissionsUtil {
         }
     }
 
+    @MainThread
     fun hasDozeOff(context: Context): Boolean {
         val pm = context.getSystemService(PowerManager::class.java)
         return pm.isIgnoringBatteryOptimizations("package:${context.packageName}")

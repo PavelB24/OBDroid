@@ -1,17 +1,28 @@
 package ru.barinov.obdroid.connectionsFragment
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.launch
 import ru.barinov.obdroid.base.ConnectionItem
 import ru.barinov.obdroid.uiModels.BtConnectionItem
 import ru.barinov.obdroid.uiModels.WifiConnectionItem
 
-class ConnectionsListHandler {
+class ConnectionsListHandler(private val scope : CoroutineScope) {
+
+
+    val scanResult = MutableSharedFlow<List<ConnectionItem>>(1, 10)
 
     private var lastList: List<ConnectionItem>? = null
 
-    fun addBt(btDevice : BtConnectionItem): List<ConnectionItem> {
+    fun addBt(btDevice : BtConnectionItem) {
         if(lastList == null){
             lastList = listOf(btDevice)
-            return lastList!!
+            lastList?.let {
+                scope.launch {
+                    scanResult.emit(it)
+                }
+            }
+            return
         }
         val resultList = mutableListOf<ConnectionItem>()
         lastList?.toMutableList()?.let { list->
@@ -20,13 +31,20 @@ class ConnectionsListHandler {
             resultList.add(btDevice)
         }
         lastList = resultList
-        return resultList
+        scope.launch {
+            scanResult.emit(resultList)
+        }
     }
 
-    fun addWiFi(wifiDevices: List<WifiConnectionItem>): List<ConnectionItem> {
+    fun addWiFi(wifiDevices: List<WifiConnectionItem>) {
         if(lastList == null){
             lastList = wifiDevices
-            return lastList!!
+            lastList?.let {
+                scope.launch {
+                    scanResult.emit(it)
+                }
+            }
+            return
         }
         val resultList = mutableListOf<ConnectionItem>()
         lastList?.toMutableList()?.let { list->
@@ -35,7 +53,9 @@ class ConnectionsListHandler {
             resultList.addAll(wifiDevices)
         }
         lastList = resultList
-        return resultList
+        scope.launch {
+            scanResult.emit(resultList)
+        }
     }
 
     fun getList() = lastList

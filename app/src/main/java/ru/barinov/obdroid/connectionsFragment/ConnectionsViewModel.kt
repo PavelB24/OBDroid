@@ -1,47 +1,82 @@
 package ru.barinov.obdroid.connectionsFragment
 
+import android.annotation.SuppressLint
+import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothSocket
-import android.content.Context
 import android.net.Network
+import android.net.wifi.ScanResult
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
 import ru.barinov.obdroid.ConnectedEventType
+import ru.barinov.obdroid.base.ConnectionItem
+import ru.barinov.obdroid.core.toBtConnectionItem
 import ru.barinov.obdroid.uiModels.BtConnectionItem
 import ru.barinov.obdroid.uiModels.WifiConnectionItem
+import java.util.*
 
 class ConnectionsViewModel(
     private val connectionHandler: ConnectionActionHandler
 ) : ViewModel() {
 
-    private val listHandler by lazy { ConnectionsListHandler() }
+    private val listHandler by lazy { ConnectionsListHandler(viewModelScope) }
 
     private val _onConnectFlow = connectionHandler.connectFlow
     val onConnectFlow: SharedFlow<ConnectedEventType> = _onConnectFlow
 
+    val scanResult = listHandler.scanResult
+
     fun onConnectWf(
-        network : Network,
-        ssid : String,
-        bssid : String
+        network: Network,
+        ssid: String,
+        bssid: String
     ) {
 
     }
 
-    fun onConnectBt(socket : BluetoothSocket, actions : BtConnectionI) {
+    fun onConnectBt(socket: BluetoothSocket, actions: BtConnectionI) {
 
     }
 
 
-    fun connectBounded(device : BtConnectionItem){
+    fun connectBounded(device: BtConnectionItem) {
         connectionHandler.connectBt(device)
     }
 
-    fun handle(btDevice : BtConnectionItem) = listHandler.addBt(btDevice)
 
-    fun handle(wifiList : List<WifiConnectionItem>) = listHandler.addWiFi(wifiList)
 
 
     fun getConnectionHandler() = connectionHandler
+
+    fun handleBtDevice(device: BluetoothDevice) {
+        val handledBt = device.toBtConnectionItem(object :
+            BtConnectionI {
+            @SuppressLint("MissingPermission")
+            override fun createBound(): Boolean {
+                return device.createBond()
+            }
+
+            @SuppressLint("MissingPermission")
+            override fun connect(): BluetoothSocket {
+                val uuid = UUID.fromString(BtConnectionItem.BT_UUID)
+                return device.createInsecureRfcommSocketToServiceRecord(uuid)
+            }
+        })
+        listHandler.addBt(handledBt)
+    }
+
+    fun handleScanResults(scanResult: List<ScanResult>) {
+        val result = scanResult.map {
+            WifiConnectionItem(
+                ConnectionItem.ConnectionType.WIFI,
+                it.BSSID,
+                it.frequency,
+                it.timestamp,
+                it.channelWidth,
+                it.SSID
+            )
+        }
+        listHandler.addWiFi(result)
+    }
 
 }

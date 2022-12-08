@@ -19,6 +19,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
+import ru.barinov.obdroid.ConnectedEventType
 import ru.barinov.obdroid.R
 import ru.barinov.obdroid.base.ConnectionItem
 import ru.barinov.obdroid.uiModels.BtConnectionItem
@@ -47,13 +48,7 @@ class ConnectionActionHandler(
                     setOnMenuItemClickListener {
                         when (it.itemId) {
                             R.id.bound_menuItem -> {
-                                val result = item.actions.createBound()
-                                Log.d("@@@", item.address)
-                                onConnection(
-                                    if (result)
-                                        ConnectedEventType.BluetoothBounded(item)
-                                    else ConnectedEventType.Fail
-                                )
+                                item.actions.createBound()
                             }
                             R.id.connect_bt_item -> {
                                 connectBt(item)
