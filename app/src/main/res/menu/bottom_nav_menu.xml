@@ -3,15 +3,15 @@
 
     <item
         android:id="@+id/mainFragment"
-        android:title="Main"/>
+        android:title="@string/dash_board"/>
 
     <item
         android:id="@+id/diagnosticFragment"
-        android:title="Troubles"/>
+        android:title="@string/trouble_codes"/>
 
     <item
         android:id="@+id/sensorsFragment"
-        android:title="Current Data"/>
+        android:title="@string/sensors"/>
 
 
 </menu>

@@ -18,4 +18,10 @@
     <string name="main_view">Main view</string>
     <string name="bound_bt_device">Bound BT Device</string>
     <string name="connect_to_device">Connect to Device</string>
+    <string name="notification_title" translatable="false">OBD Droid</string> />
+    <string name="content_text_notification">OBD service running...</string>
+    <string name="dash_board">Dash Board</string>
+    <string name="trouble_codes">Trouble Codes</string>
+    <string name="sensors">Sensors</string>
+    />
 </resources>

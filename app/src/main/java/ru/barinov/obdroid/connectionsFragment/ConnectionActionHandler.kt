@@ -21,12 +21,14 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 import ru.barinov.obdroid.ConnectedEventType
 import ru.barinov.obdroid.R
+import ru.barinov.obdroid.WifiConnectionWatcher
 import ru.barinov.obdroid.base.ConnectionItem
 import ru.barinov.obdroid.uiModels.BtConnectionItem
 import ru.barinov.obdroid.uiModels.WifiConnectionItem
 
 class ConnectionActionHandler(
     private val context: Context,
+    private val connectionWatcher : WifiConnectionWatcher
 ) : ConnectionsAdapter.ConnectionClickListener {
 
 
@@ -74,7 +76,7 @@ class ConnectionActionHandler(
                                     .build()
                                 cm.requestNetwork(
                                     networkRequest,
-                                    WifiConnectionCallBack() { network ->
+                                    WifiConnectionCallBack(connectionWatcher) { network ->
                                         val result = cm.bindProcessToNetwork(network)
                                         if (result) {
 //                                          cm.getLinkProperties(network)?.routes?.last()?.gateway?.hostAddress

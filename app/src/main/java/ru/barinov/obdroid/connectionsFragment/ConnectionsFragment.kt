@@ -22,6 +22,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.barinov.obdroid.*
+import ru.barinov.obdroid.activity.MainActivity
 import ru.barinov.obdroid.base.ConnectionItem
 import ru.barinov.obdroid.broadcastReceivers.ConnectionsBroadcastReceiver
 import ru.barinov.obdroid.utils.PermissionsUtil
@@ -168,17 +169,23 @@ class ConnectionsFragment : Fragment() {
     }
 
     private fun onDeviceBounded(device: BluetoothDevice) {
+        binding.connectionsRv.visibility = View.VISIBLE
         binding.progressBar.visibility = View.GONE
-        viewModel.handleBtDevice(device)
+        viewModel.apply {
+            handleBtDevice(device)
+            connectBounded(device)
+        }
     }
 
     private fun onFailedBound(device: BluetoothDevice) {
+        binding.connectionsRv.visibility = View.VISIBLE
         binding.progressBar.visibility = View.GONE
         viewModel.handleBtDevice(device)
         Snackbar.make(requireView(), "Bound Failed", Snackbar.LENGTH_SHORT).show()
     }
 
     private fun showProgress() {
+        binding.connectionsRv.visibility = View.GONE
         binding.progressBar.visibility = View.VISIBLE
     }
 

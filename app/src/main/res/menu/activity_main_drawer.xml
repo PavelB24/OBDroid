@@ -30,6 +30,7 @@
 
     <item
         android:id="@+id/exit_menu"
+        android:onClick="onExit"
         android:title="@string/exit"/>
 
     </group>

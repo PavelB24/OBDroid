@@ -14,6 +14,7 @@ import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.android.ext.android.inject
 import ru.barinov.obdroid.*
+import ru.barinov.obdroid.activity.MainActivity
 import ru.barinov.obdroid.databinding.PermissionsFragmentBinding
 import ru.barinov.obdroid.preferences.Preferences
 import ru.barinov.obdroid.utils.PermissionsUtil

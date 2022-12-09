@@ -8,6 +8,7 @@
         android:id="@+id/wifi_card"
         app:cardUseCompatPadding="true"
         app:cardCornerRadius="8dp"
+        android:backgroundTint="@color/connection_card_colour"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 

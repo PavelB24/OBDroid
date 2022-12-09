@@ -38,12 +38,19 @@ class ConnectionsViewModel(
 
     }
 
+    @SuppressLint("MissingPermission")
+    fun connectBounded(device: BluetoothDevice) {
+        connectionHandler.connectBt(device.toBtConnectionItem(object : BtConnectionI {
+            override fun createBound(): Boolean {
+                return device.createBond()
+            }
 
-    fun connectBounded(device: BtConnectionItem) {
-        connectionHandler.connectBt(device)
+            override fun connect(): BluetoothSocket? {
+                val uuid = UUID.fromString(BtConnectionItem.BT_UUID)
+                return device.createInsecureRfcommSocketToServiceRecord(uuid)
+            }
+        }))
     }
-
-
 
 
     fun getConnectionHandler() = connectionHandler

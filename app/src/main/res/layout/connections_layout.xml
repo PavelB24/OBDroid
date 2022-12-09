@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:animateLayoutChanges="true"
+    android:background="@drawable/fragment_common_background"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <ProgressBar
@@ -15,6 +16,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:visibility="gone"
+        android:theme="@style/CircularProgress"
         />
 
     <androidx.appcompat.widget.Toolbar

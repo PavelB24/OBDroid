@@ -6,8 +6,8 @@
         <item name="android:textSize">50sp</item><!-- text size in menu-->
 
         <!-- item size in menu-->
-        <item name="android:listPreferredItemHeightSmall">10dp</item>
-        <item name="listPreferredItemHeightSmall">50dp</item>
+        <item name="android:listPreferredItemHeightSmall">20dp</item>
+        <item name="listPreferredItemHeightSmall">60dp</item>
 
         <!-- item padding left in menu-->
         <item name="android:listPreferredItemPaddingLeft">8dp</item>
@@ -16,5 +16,10 @@
         <!-- item padding right in menu-->
         <item name="android:listPreferredItemPaddingRight">8dp</item>
         <item name="listPreferredItemPaddingRight">8dp</item>
+    </style>
+
+
+    <style name="CircularProgress" parent="Theme.AppCompat.Light">
+        <item name="colorAccent">@color/peach</item>
     </style>
 </resources>

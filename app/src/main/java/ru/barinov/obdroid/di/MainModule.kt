@@ -1,10 +1,13 @@
-package ru.barinov.obdroid
+package ru.barinov.obdroid.di
 
 import android.content.Context
 import org.koin.android.ext.koin.androidApplication
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
+import ru.barinov.obdroid.ServiceCommander
+import ru.barinov.obdroid.WifiConnectionWatcher
+import ru.barinov.obdroid.activity.ActivityViewModel
 import ru.barinov.obdroid.connectionsFragment.ConnectionActionHandler
 import ru.barinov.obdroid.connectionsFragment.ConnectionsViewModel
 import ru.barinov.obdroid.preferences.Preferences
@@ -19,7 +22,12 @@ val mainModule = module {
     }
 
     factory {
-        ConnectionActionHandler(androidContext())
+        ConnectionActionHandler(androidContext(), get())
+    }
+
+
+    single {
+        ServiceCommander(androidContext())
     }
 
 
@@ -27,8 +35,16 @@ val mainModule = module {
         Preferences(get())
     }
 
+    single {
+        WifiConnectionWatcher()
+    }
+
     viewModel {
         ConnectionsViewModel(get())
+    }
+
+    viewModel {
+        ActivityViewModel(get())
     }
 
 }

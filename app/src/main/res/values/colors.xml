@@ -16,5 +16,7 @@
     <color name="dark_green">#314933</color>
     <color name="mid_green">#80BC85</color>
     <color name="permission_root_colour">#E4DFE1</color>
-    <color name="bottom_nav_color">#6DA1E1</color>
+    <color name="bottom_nav_color">#6291CA</color>
+    <color name="connection_card_colour">#E1E1E1</color>
+    <color name="peach">#ED6767</color>
 </resources>
