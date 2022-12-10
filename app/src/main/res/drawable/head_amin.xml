@@ -48,18 +48,23 @@
             <set>
                 <objectAnimator
                     android:propertyName="scaleY"
-                    android:duration="200"
+                    android:duration="1500"
                     android:valueFrom="1"
                     android:valueTo="0"
+                    android:repeatCount="infinite"
                     android:valueType="floatType"
-                    android:interpolator="@android:anim/accelerate_interpolator"/>
+                    android:interpolator="@android:anim/accelerate_interpolator"
+                    android:repeatMode="reverse"/>
                 <objectAnimator
                     android:propertyName="pivotY"
-                    android:duration="200"
+                    android:duration="1500"
                     android:valueFrom="130"
                     android:valueTo="130"
+                    android:repeatCount="infinite"
                     android:valueType="floatType"
-                    android:interpolator="@android:anim/accelerate_interpolator"/>
+                    android:interpolator="@android:anim/accelerate_interpolator"
+                    android:repeatMode="reverse"
+                    />
             </set>
         </aapt:attr>
     </target>

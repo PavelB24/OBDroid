@@ -1,4 +1,4 @@
-package ru.barinov.obdroid.connectionsFragment
+package ru.barinov.obdroid.ui.connectionsFragment
 
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothSocket
@@ -23,8 +23,8 @@ import ru.barinov.obdroid.ConnectedEventType
 import ru.barinov.obdroid.R
 import ru.barinov.obdroid.WifiConnectionWatcher
 import ru.barinov.obdroid.base.ConnectionItem
-import ru.barinov.obdroid.uiModels.BtConnectionItem
-import ru.barinov.obdroid.uiModels.WifiConnectionItem
+import ru.barinov.obdroid.ui.uiModels.BtConnectionItem
+import ru.barinov.obdroid.ui.uiModels.WifiConnectionItem
 
 class ConnectionActionHandler(
     private val context: Context,

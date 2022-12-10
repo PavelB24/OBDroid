@@ -1,4 +1,4 @@
-package ru.barinov.obdroid.startFragment
+package ru.barinov.obdroid.ui.startFragment
 
 import android.graphics.drawable.AnimatedVectorDrawable
 import android.transition.*
@@ -31,6 +31,7 @@ object PermissionViewHelper {
 
     }
 
+    @MainThread
     fun animateLogo(anim: AnimatedVectorDrawable) {
         anim.start()
     }

@@ -1,4 +1,4 @@
-package ru.barinov.obdroid.startFragment
+package ru.barinov.obdroid.ui.startFragment
 
 import android.graphics.drawable.AnimatedVectorDrawable
 import android.os.Build
@@ -14,7 +14,7 @@ import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.android.ext.android.inject
 import ru.barinov.obdroid.*
-import ru.barinov.obdroid.activity.MainActivity
+import ru.barinov.obdroid.ui.activity.MainActivity
 import ru.barinov.obdroid.databinding.PermissionsFragmentBinding
 import ru.barinov.obdroid.preferences.Preferences
 import ru.barinov.obdroid.utils.PermissionsUtil
@@ -51,7 +51,7 @@ class PermissionsFragment : Fragment() {
     private fun initStates() {
         with(binding) {
             onStartButton.setOnClickListener {
-                PermissionViewHelper.animateRebase(binding){
+                PermissionViewHelper.animateRebase(binding) {
                     rebase()
                 }
             }
@@ -138,7 +138,10 @@ class PermissionsFragment : Fragment() {
             is PermissionType.BackGroundLocation -> {
                 PermissionViewHelper.hideLocationAnimate(binding)
                 if (PermissionsUtil.hasNecessaryPermissions(requireContext())) {
-                    PermissionViewHelper.showButtonAnimate(binding.onStartButtonFrame, binding.onStartButton)
+                    PermissionViewHelper.showButtonAnimate(
+                        binding.onStartButtonFrame,
+                        binding.onStartButton
+                    )
                 }
             }
             is PermissionType.RuntimeLocation -> {

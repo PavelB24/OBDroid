@@ -1,11 +1,11 @@
-package ru.barinov.obdroid.connectionsFragment
+package ru.barinov.obdroid.ui.connectionsFragment
 
 import androidx.appcompat.content.res.AppCompatResources
 import ru.barinov.obdroid.R
 import ru.barinov.obdroid.base.BaseViewHolder
 import ru.barinov.obdroid.base.ConnectionItem
 import ru.barinov.obdroid.databinding.WifiItemLayoutBinding
-import ru.barinov.obdroid.uiModels.WifiConnectionItem
+import ru.barinov.obdroid.ui.uiModels.WifiConnectionItem
 
 class WifiViewHolder(
     private val binding: WifiItemLayoutBinding

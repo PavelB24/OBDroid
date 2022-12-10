@@ -23,5 +23,8 @@
     <string name="dash_board">Dash Board</string>
     <string name="trouble_codes">Trouble Codes</string>
     <string name="sensors">Sensors</string>
+    <string name="terminal_pref_title">Enable Terminal (For Advanced Users)</string>
+    <string name="wifi_settings_title">Wifi Settings</string>
+    <string name="prefs_toolbar_title">Settings</string>
     />
 </resources>

@@ -1,4 +1,4 @@
-package ru.barinov.obdroid.connectionsFragment
+package ru.barinov.obdroid.ui.connectionsFragment
 
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
@@ -22,13 +22,13 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.barinov.obdroid.*
-import ru.barinov.obdroid.activity.MainActivity
+import ru.barinov.obdroid.ui.activity.MainActivity
 import ru.barinov.obdroid.base.ConnectionItem
 import ru.barinov.obdroid.broadcastReceivers.ConnectionsBroadcastReceiver
 import ru.barinov.obdroid.utils.PermissionsUtil
 import ru.barinov.obdroid.databinding.ConnectionsLayoutBinding
-import ru.barinov.obdroid.uiModels.BtConnectionItem
-import ru.barinov.obdroid.uiModels.WifiConnectionItem
+import ru.barinov.obdroid.ui.uiModels.BtConnectionItem
+import ru.barinov.obdroid.ui.uiModels.WifiConnectionItem
 import java.util.*
 
 class ConnectionsFragment : Fragment() {

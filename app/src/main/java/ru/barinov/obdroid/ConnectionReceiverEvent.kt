@@ -1,7 +1,7 @@
 package ru.barinov.obdroid
 
 import android.bluetooth.BluetoothDevice
-import ru.barinov.obdroid.uiModels.BtConnectionItem
+import ru.barinov.obdroid.ui.uiModels.BtConnectionItem
 
 sealed class ConnectionReceiverEvent{
 

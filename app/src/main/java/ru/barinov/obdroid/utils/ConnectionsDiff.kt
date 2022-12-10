@@ -1,8 +1,8 @@
 package ru.barinov.obdroid.utils
 
 import androidx.recyclerview.widget.DiffUtil
-import ru.barinov.obdroid.uiModels.BtConnectionItem
-import ru.barinov.obdroid.uiModels.WifiConnectionItem
+import ru.barinov.obdroid.ui.uiModels.BtConnectionItem
+import ru.barinov.obdroid.ui.uiModels.WifiConnectionItem
 import ru.barinov.obdroid.base.ConnectionItem
 
 class ConnectionsDiff(

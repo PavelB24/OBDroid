@@ -1,4 +1,4 @@
-package ru.barinov.obdroid.connectionsFragment
+package ru.barinov.obdroid.ui.connectionsFragment
 
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothDevice
@@ -11,8 +11,8 @@ import kotlinx.coroutines.flow.*
 import ru.barinov.obdroid.ConnectedEventType
 import ru.barinov.obdroid.base.ConnectionItem
 import ru.barinov.obdroid.core.toBtConnectionItem
-import ru.barinov.obdroid.uiModels.BtConnectionItem
-import ru.barinov.obdroid.uiModels.WifiConnectionItem
+import ru.barinov.obdroid.ui.uiModels.BtConnectionItem
+import ru.barinov.obdroid.ui.uiModels.WifiConnectionItem
 import java.util.*
 
 class ConnectionsViewModel(

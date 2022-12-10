@@ -14,14 +14,14 @@
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="95dp"
+        android:layout_height="95dp"
         android:contentDescription="@string/nav_header_desc"
         android:paddingTop="@dimen/nav_header_vertical_spacing"
         app:srcCompat="@drawable/head_amin" />
 
     <TextView
-        android:id="@+id/title"
+        android:id="@+id/terminal_switch"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textColor="#3A3A3A"

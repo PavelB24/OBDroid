@@ -1,4 +1,4 @@
-package ru.barinov.obdroid.connectionsFragment
+package ru.barinov.obdroid.ui.connectionsFragment
 
 import android.bluetooth.BluetoothDevice
 import android.view.View
@@ -7,7 +7,7 @@ import ru.barinov.obdroid.R
 import ru.barinov.obdroid.base.BaseViewHolder
 import ru.barinov.obdroid.base.ConnectionItem
 import ru.barinov.obdroid.databinding.BtItemBinding
-import ru.barinov.obdroid.uiModels.BtConnectionItem
+import ru.barinov.obdroid.ui.uiModels.BtConnectionItem
 
 class BTViewHolder(
     private val binding: BtItemBinding

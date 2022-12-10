@@ -10,15 +10,18 @@
         android:label="HomeFragment" />
     <fragment
         android:id="@+id/settingsFragment"
-        android:name="ru.barinov.obdroid.SettingsFragment"
+        android:name="ru.barinov.obdroid.ui.settings.SettingsFragment"
         android:label="SettingsFragment" >
         <action
             android:id="@+id/action_settingsFragment_to_profilesFragment"
             app:destination="@id/profilesFragment" />
+        <action
+            android:id="@+id/action_settingsFragment_to_wifiSettingsDialog"
+            app:destination="@id/wifiSettingsDialog" />
     </fragment>
     <fragment
         android:id="@+id/connectionsFragment"
-        android:name="ru.barinov.obdroid.connectionsFragment.ConnectionsFragment"
+        android:name="ru.barinov.obdroid.ui.connectionsFragment.ConnectionsFragment"
         android:label="ConnectionsFragment" />
     <fragment
         android:id="@+id/terminalFragment"
@@ -26,7 +29,7 @@
         android:label="TerminalFragment" />
     <fragment
         android:id="@+id/permissionsFragment"
-        android:name="ru.barinov.obdroid.startFragment.PermissionsFragment"
+        android:name="ru.barinov.obdroid.ui.startFragment.PermissionsFragment"
         android:label="PermissionsFragment" >
         <action
             android:id="@+id/action_permissionsFragment_to_homeFragment"
@@ -39,4 +42,8 @@
         android:id="@+id/profilesFragment"
         android:name="ru.barinov.obdroid.ProfilesFragment"
         android:label="ProfilesFragment" />
+    <dialog
+        android:id="@+id/wifiSettingsDialog"
+        android:name="ru.barinov.obdroid.WifiSettingsDialog"
+        android:label="WifiSettingsDialog" />
 </navigation>

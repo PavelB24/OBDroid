@@ -1,8 +1,8 @@
-package ru.barinov.obdroid.uiModels
+package ru.barinov.obdroid.ui.uiModels
 
 import android.bluetooth.BluetoothDevice
 import ru.barinov.obdroid.base.ConnectionItem
-import ru.barinov.obdroid.connectionsFragment.BtConnectionI
+import ru.barinov.obdroid.ui.connectionsFragment.BtConnectionI
 
 data class BtConnectionItem(
     override val type : ConnectionType,

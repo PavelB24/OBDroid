@@ -5,17 +5,15 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.Service
 import android.content.Intent
-import android.os.Build
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
-import kotlinx.coroutines.cancel
 import ru.barinov.obdroid.R
-import ru.barinov.obdroid.ServiceCommander
+import ru.barinov.obdroid.ui.utils.ServiceCommander
 
 class ObdService : Service() {
 
     companion object {
-        private const val NOTIFICATION_SERVICE_ID = 10101
+        private const val NOTIFICATION_SERVICE_ID = 88
         private const val NOTIFICATION_CHANNEL = "OBD_SERVICE_NF_CH"
         private const val NOTIFICATION_CHANNEL_NAME = "OBD service notification"
     }

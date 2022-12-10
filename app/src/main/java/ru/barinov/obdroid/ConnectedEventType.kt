@@ -2,8 +2,8 @@ package ru.barinov.obdroid
 
 import android.bluetooth.BluetoothSocket
 import android.net.Network
-import ru.barinov.obdroid.uiModels.BtConnectionItem
-import ru.barinov.obdroid.uiModels.WifiConnectionItem
+import ru.barinov.obdroid.ui.uiModels.BtConnectionItem
+import ru.barinov.obdroid.ui.uiModels.WifiConnectionItem
 
 sealed class ConnectedEventType {
 

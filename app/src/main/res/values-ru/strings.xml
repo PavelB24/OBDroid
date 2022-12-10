@@ -21,5 +21,6 @@
     <string name="dash_board">Панель Приборов</string>
     <string name="trouble_codes">Коды Ошибок</string>
     <string name="sensors">Сенсоры</string>
+    <string name="terminal_pref_title">Активировать Терминал (Для Продвинутых Пользователей)</string>
     />
 </resources>

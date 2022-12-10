@@ -1,4 +1,4 @@
-package ru.barinov.obdroid.uiModels
+package ru.barinov.obdroid.ui.uiModels
 
 import ru.barinov.obdroid.base.ConnectionItem
 

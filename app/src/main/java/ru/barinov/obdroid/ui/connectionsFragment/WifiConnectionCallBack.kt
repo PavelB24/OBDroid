@@ -1,4 +1,4 @@
-package ru.barinov.obdroid.connectionsFragment
+package ru.barinov.obdroid.ui.connectionsFragment
 
 import android.net.ConnectivityManager
 import android.net.ConnectivityManager.NetworkCallback
