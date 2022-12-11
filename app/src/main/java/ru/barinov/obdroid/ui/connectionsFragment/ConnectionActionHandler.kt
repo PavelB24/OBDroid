@@ -1,16 +1,13 @@
 package ru.barinov.obdroid.ui.connectionsFragment
 
 import android.bluetooth.BluetoothDevice
-import android.bluetooth.BluetoothSocket
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.MacAddress
-import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
 import android.net.wifi.WifiNetworkSpecifier
 import android.os.Build
-import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.widget.PopupMenu

@@ -7,7 +7,15 @@ import android.app.Service
 import android.content.Intent
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
 import ru.barinov.obdroid.R
+import ru.barinov.obdroid.WifiConnectionWatcher
 import ru.barinov.obdroid.ui.utils.ServiceCommander
 
 class ObdService : Service() {
@@ -18,11 +26,21 @@ class ObdService : Service() {
         private const val NOTIFICATION_CHANNEL_NAME = "OBD service notification"
     }
 
+    private val connectionWatcher by inject<WifiConnectionWatcher>()
+    private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+
     override fun onBind(intent: Intent?): IBinder? = null
 
     override fun onCreate() {
         super.onCreate()
         createNotificationChannel()
+        subscribeOnConnection()
+    }
+
+    private fun subscribeOnConnection() {
+        serviceScope.launch {
+            connectionWatcher.connectionState.onEach {  }.collect()
+        }
     }
 
     private fun createServiceNotification(): Notification {

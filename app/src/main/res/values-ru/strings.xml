@@ -14,7 +14,7 @@
     <string name="connection">Соединения</string>
     <string name="terminal">Терминал</string>
     <string name="exit">Выход</string>
-    <string name="main_view">Домашний Экран</string>
+    <string name="main_view">Диагностика</string>
     <string name="bound_bt_device">Привязать БТ Девайс</string>
     <string name="connect_to_device">Подключиться к Девайсу</string>
     <string name="content_text_notification">OBD сервис выполняется...</string>

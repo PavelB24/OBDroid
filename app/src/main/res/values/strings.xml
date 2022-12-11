@@ -15,7 +15,7 @@
     <string name="connection">Connection</string>
     <string name="terminal">Terminal</string>
     <string name="exit">Exit</string>
-    <string name="main_view">Main view</string>
+    <string name="main_view">Diagnostic</string>
     <string name="bound_bt_device">Bound BT Device</string>
     <string name="connect_to_device">Connect to Device</string>
     <string name="notification_title" translatable="false">OBD Droid</string> />

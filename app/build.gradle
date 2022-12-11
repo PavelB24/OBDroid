@@ -41,6 +41,11 @@ dependencies {
     // https://mvnrepository.com/artifact/androidx.core/core-splashscreen
     runtimeOnly("androidx.core:core-splashscreen:1.0.0")
 
+    implementation('androidx.room:room-runtime:2.4.3')
+    implementation 'androidx.room:room-ktx:2.4.3'
+    implementation 'androidx.work:work-runtime-ktx:2.7.1'
+    kapt("androidx.room:room-compiler:2.4.3")
+
 
     implementation("io.insert-koin:koin-android:3.3.0")
     implementation ("io.insert-koin:koin-core:3.2.2")

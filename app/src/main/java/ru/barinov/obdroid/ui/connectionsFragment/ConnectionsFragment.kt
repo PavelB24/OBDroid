@@ -55,13 +55,16 @@ class ConnectionsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = ConnectionsLayoutBinding.inflate(inflater, container, false)
-        (requireActivity() as MainActivity).setSupportActionBar(binding.connectionsToolbar)
-        binding.connectionsToolbar.setupWithNavController(findNavController())
-        binding.connectionsToolbar.title = ""
+        binding.apply {
+            (requireActivity() as MainActivity).setSupportActionBar(connectionsToolbar)
+            connectionsToolbar.setupWithNavController(findNavController())
+            connectionsToolbar.title = ""
+        }
         requireActivity().addMenuProvider(object : MenuProvider {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
                 menuInflater.inflate(R.menu.connecions_toolbar_menu, menu)
             }
+
             @SuppressLint("MissingPermission")
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                 when (menuItem.itemId) {
@@ -112,8 +115,8 @@ class ConnectionsFragment : Fragment() {
 
     private fun subscribe() {
         lifecycleScope.launchWhenStarted {
-            viewModel.onConnectFlow.onEach { event->
-                when(event){
+            viewModel.onConnectFlow.onEach { event ->
+                when (event) {
                     is ConnectedEventType.BluetoothConnected -> {
                         event.apply {
                             displayConnection(item)
@@ -122,7 +125,9 @@ class ConnectionsFragment : Fragment() {
                     }
                     is ConnectedEventType.Fail -> {
                         Toast.makeText(
-                            requireContext(), getString(R.string.connection_failed_string), Toast.LENGTH_SHORT
+                            requireContext(),
+                            getString(R.string.connection_failed_string),
+                            Toast.LENGTH_SHORT
                         ).show()
                     }
                     is ConnectedEventType.WifiConnected -> {
@@ -135,8 +140,8 @@ class ConnectionsFragment : Fragment() {
             }.collect()
         }
         lifecycleScope.launchWhenStarted {
-            connectionsReceiver.receiverEvents.onEach { event->
-                when(event){
+            connectionsReceiver.receiverEvents.onEach { event ->
+                when (event) {
                     is ConnectionReceiverEvent.BluetoothBounded -> {
                         onDeviceBounded(event.device)
                     }
@@ -209,13 +214,13 @@ class ConnectionsFragment : Fragment() {
     }
 
     @SuppressLint("MissingPermission")
-    private fun doOnNewScanResults(){
+    private fun doOnNewScanResults() {
         if (PermissionsUtil.hasLocationPermission(requireContext())) {
             viewModel.handleScanResults(wifiManager.scanResults)
         }
     }
 
-    private fun onNewBtDevice(device: BluetoothDevice){
+    private fun onNewBtDevice(device: BluetoothDevice) {
         viewModel.handleBtDevice(device)
     }
 

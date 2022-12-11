@@ -17,5 +17,6 @@ class Preferences(sharedPreferences: SharedPreferences) {
     var isDozeAsked by sharedPreferences.boolean(DOZE, false)
     var useTerminal by sharedPreferences.boolean(TERMINAL, false)
     var isFirstLaunch by sharedPreferences.boolean(LAUNCH, true)
-    var wifiPort by sharedPreferences.string(WIFI_PORT, null)
+    var wifiPort by sharedPreferences.string(WIFI_PORT, "35000")
+    var wifiAddress by sharedPreferences.string(WIFI_PORT, null)
 }

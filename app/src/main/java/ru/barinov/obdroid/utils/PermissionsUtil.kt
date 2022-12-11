@@ -79,7 +79,6 @@ object PermissionsUtil {
                             it.getOrDefault(Manifest.permission.ACCESS_COARSE_LOCATION, false)
                 )
             }
-
     }
 
     @MainThread
