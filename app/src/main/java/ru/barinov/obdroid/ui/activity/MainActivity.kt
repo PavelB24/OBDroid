@@ -52,6 +52,10 @@ class MainActivity : AppCompatActivity() {
         finish()
     }
 
+    fun onAboutPressed(item : MenuItem) {
+
+    }
+
     fun unlockDrawer(){
         viewModel.startService()
         binding.drawerLayout.setDrawerLockMode(LOCK_MODE_UNLOCKED)

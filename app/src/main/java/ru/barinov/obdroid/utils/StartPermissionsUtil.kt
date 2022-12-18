@@ -22,7 +22,7 @@ import ru.barinov.obdroid.BuildConfig
 import ru.barinov.obdroid.PermissionType
 
 
-object PermissionsUtil {
+class StartPermissionsUtil {
 
     val resultFlow: MutableStateFlow<PermissionType?> = MutableStateFlow(null)
     private var btLauncher: ActivityResultLauncher<Array<String>>? = null
@@ -83,28 +83,12 @@ object PermissionsUtil {
 
     @MainThread
     fun hasLocationPermission(context: Context): Boolean =
-        ContextCompat
-            .checkSelfPermission(
-                context,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED &&
-                ContextCompat.checkSelfPermission(
-                    context,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
-                ) == PackageManager.PERMISSION_GRANTED
+        PermissionsChecker.hasLocationPermission(context)
 
     @MainThread
-    fun hasBackgroundLocPermission(context: Context): Boolean {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            ContextCompat
-                .checkSelfPermission(
-                    context,
-                    Manifest.permission.ACCESS_BACKGROUND_LOCATION
-                ) == PackageManager.PERMISSION_GRANTED
-        } else {
-            true
-        }
-    }
+    fun hasBackgroundLocPermission(context: Context): Boolean =
+        PermissionsChecker.hasBackgroundLocPermission(context)
+
 
 
     @MainThread
@@ -118,20 +102,8 @@ object PermissionsUtil {
 
 
     @SuppressLint("ObsoleteSdkInt")
-    fun hasExternalStoragePermission(context: Context): Boolean {
-        return when {
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.R -> {
-                Environment.isExternalStorageManager()
-            }
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.M -> {
-                ContextCompat.checkSelfPermission(
-                    context,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE
-                ) == PackageManager.PERMISSION_GRANTED
-            }
-            else -> true
-        }
-    }
+    fun hasExternalStoragePermission(context: Context): Boolean =
+        PermissionsChecker.hasExternalStoragePermission(context)
 
     @MainThread
     fun requestLocationPermission() {
@@ -145,29 +117,12 @@ object PermissionsUtil {
 
     @MainThread
     fun hasBackgroundLocation(context: Context) =
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            ContextCompat.checkSelfPermission(
-                context,
-                Manifest.permission.ACCESS_BACKGROUND_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED
-        } else {
-            true
-        }
+        PermissionsChecker.hasBackgroundLocation(context)
 
 
     @MainThread
     fun hasBluetoothPermission(context: Context) =
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            ContextCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_CONNECT) ==
-                    PackageManager.PERMISSION_GRANTED
-        } else {
-            hasBTAdminPermission(context)
-        }
-
-    @MainThread
-    private fun hasBTAdminPermission(context: Context) =
-        ContextCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_ADMIN) ==
-                PackageManager.PERMISSION_GRANTED
+        PermissionsChecker.hasBluetoothPermission(context)
 
 
     @MainThread
@@ -183,29 +138,12 @@ object PermissionsUtil {
     }
 
     @MainThread
-    fun hasNecessaryPermissions(context: Context): Boolean {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            hasBTAdminPermission(context) && hasBluetoothPermission(context)
-                    && hasLocationPermission(context) && hasBackgroundLocation(context)
-        } else {
-            hasBTAdminPermission(context) && hasLocationPermission(context)
-                    && hasBackgroundLocation(context)
-        }
-    }
+    fun hasNecessaryPermissions(context: Context): Boolean =
+        PermissionsChecker.hasNecessaryPermissions(context)
 
     @MainThread
-    fun hasAllPermissions(context: Context, dozeShown : Boolean) : Boolean{
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            Log.d("@@@", "${hasBTAdminPermission(context)} ${hasBluetoothPermission(context)} ${hasLocationPermission(context)} ${hasBackgroundLocation(context)} ${hasExternalStoragePermission(context)}")
-            hasBTAdminPermission(context) && hasBluetoothPermission(context)
-                    && hasLocationPermission(context) && hasBackgroundLocation(context) &&
-                    (hasDozeOff(context) || dozeShown) && hasExternalStoragePermission(context)
-        } else {
-            hasBTAdminPermission(context) && hasLocationPermission(context)
-                    && hasLocationPermission(context) && hasBackgroundLocation(context) &&
-                    (hasDozeOff(context) || dozeShown) && hasExternalStoragePermission(context)
-        }
-    }
+    fun hasAllPermissions(context: Context, dozeShown : Boolean) : Boolean =
+        PermissionsChecker.hasAllPermissions(context, dozeShown)
 
 
     @MainThread
@@ -221,10 +159,8 @@ object PermissionsUtil {
     }
 
     @MainThread
-    fun hasDozeOff(context: Context): Boolean {
-        val pm = context.getSystemService(PowerManager::class.java)
-        return pm.isIgnoringBatteryOptimizations("package:${context.packageName}")
-    }
+    fun hasDozeOff(context: Context): Boolean =
+        PermissionsChecker.hasDozeOff(context)
 
 
     @MainThread

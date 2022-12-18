@@ -49,10 +49,10 @@ object PermissionViewHelper {
 
     private fun shouldHideLine(binding: PermissionsFragmentBinding): Boolean {
         binding.apply {
-            return btIcon.visibility == View.GONE &&
-                    locationIcon.visibility == View.GONE
-                    || dozeIcon.visibility == View.GONE &&
-                    fileSystemIcon.visibility == View.GONE
+            return btPermissionSwitch.visibility == View.GONE &&
+                    locationPermissionSwitch.visibility == View.GONE
+                    || dozePermissionSwitch.visibility == View.GONE &&
+                    fileSystemSwitch.visibility == View.GONE
         }
     }
 
@@ -72,7 +72,6 @@ object PermissionViewHelper {
 
     fun hideBt(binding: PermissionsFragmentBinding) {
         binding.apply {
-            btIcon.visibility = View.GONE
             btPermissionTitle.visibility = View.GONE
             btPermissionSwitch.visibility = View.GONE
         }
@@ -82,18 +81,15 @@ object PermissionViewHelper {
         binding.apply {
             TransitionSet().apply {
                 doOnEnd {
-                    btIcon.visibility = View.GONE
                     btPermissionTitle.visibility = View.GONE
                     btPermissionSwitch.visibility = View.GONE
                     hideLine(binding)
                 }
                 tuneTransition(this, Fade())
-                addTarget(binding.btIcon)
                 addTarget(binding.btPermissionTitle)
                 addTarget(binding.btPermissionSwitch)
                 TransitionManager.beginDelayedTransition(binding.mainGroup as ViewGroup, this)
             }
-            btIcon.visibility = View.INVISIBLE
             btPermissionTitle.visibility = View.INVISIBLE
             btPermissionSwitch.visibility = View.INVISIBLE
 //            image.setVisibility(if (show) View.VISIBLE else View.GONE)
@@ -112,7 +108,6 @@ object PermissionViewHelper {
 
     fun hideLocation(binding: PermissionsFragmentBinding) {
         binding.apply {
-            locationIcon.visibility = View.GONE
             locationPermissionSwitch.visibility = View.GONE
             locationPermissionTitle.visibility = View.GONE
             hideLine(this)
@@ -123,18 +118,15 @@ object PermissionViewHelper {
         binding.apply {
             TransitionSet().apply {
                 doOnEnd {
-                    locationIcon.visibility = View.GONE
                     locationPermissionSwitch.visibility = View.GONE
                     locationPermissionTitle.visibility = View.GONE
                     hideLine(binding)
                 }
                 tuneTransition(this, Fade())
-                addTarget(binding.locationIcon)
                 addTarget(binding.locationPermissionSwitch)
                 addTarget(binding.locationPermissionTitle)
                 TransitionManager.beginDelayedTransition(binding.mainGroup as ViewGroup, this)
             }
-            locationIcon.visibility = View.INVISIBLE
             locationPermissionSwitch.visibility = View.INVISIBLE
             locationPermissionTitle.visibility = View.INVISIBLE
 //            image.setVisibility(if (show) View.VISIBLE else View.GONE)
@@ -144,7 +136,6 @@ object PermissionViewHelper {
 
     fun hideDoze(binding: PermissionsFragmentBinding) {
         binding.apply {
-            dozeIcon.visibility = View.GONE
             dozePermissionSwitch.visibility = View.GONE
             dozePermissionTitle.visibility = View.GONE
             hideLine(this)
@@ -155,18 +146,15 @@ object PermissionViewHelper {
         binding.apply {
             TransitionSet().apply {
                 doOnEnd {
-                    dozeIcon.visibility = View.GONE
                     dozePermissionSwitch.visibility = View.GONE
                     dozePermissionTitle.visibility = View.GONE
                     hideLine(binding)
                 }
                 tuneTransition(this, Fade())
-                addTarget(binding.dozeIcon)
                 addTarget(binding.dozePermissionSwitch)
                 addTarget(binding.dozePermissionTitle)
                 TransitionManager.beginDelayedTransition(binding.mainGroup as ViewGroup, this)
             }
-            dozeIcon.visibility = View.INVISIBLE
             dozePermissionSwitch.visibility = View.INVISIBLE
             dozePermissionTitle.visibility = View.INVISIBLE
 //            image.setVisibility(if (show) View.VISIBLE else View.GONE)
@@ -186,7 +174,6 @@ object PermissionViewHelper {
 
     fun hideExternalStorage(binding: PermissionsFragmentBinding) {
         binding.apply {
-            fileSystemIcon.visibility = View.GONE
             fileSystemSwitch.visibility = View.GONE
             fileSystemPermissionTitle.visibility = View.GONE
             hideLine(this)
@@ -197,18 +184,15 @@ object PermissionViewHelper {
         binding.apply {
             TransitionSet().apply {
                 doOnEnd {
-                    fileSystemIcon.visibility = View.GONE
                     fileSystemPermissionTitle.visibility = View.GONE
                     fileSystemSwitch.visibility = View.GONE
                     hideLine(binding)
                 }
                 tuneTransition(this, Fade())
-                addTarget(binding.fileSystemIcon)
                 addTarget(binding.fileSystemSwitch)
                 addTarget(binding.fileSystemPermissionTitle)
                 TransitionManager.beginDelayedTransition(binding.mainGroup as ViewGroup, this)
             }
-            fileSystemIcon.visibility = View.INVISIBLE
             fileSystemSwitch.visibility = View.INVISIBLE
             fileSystemPermissionTitle.visibility = View.INVISIBLE
         }

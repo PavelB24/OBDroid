@@ -7,20 +7,20 @@
 
         <item
             android:id="@+id/homeFragment"
-            android:title="@string/main_view"/>
+            android:title="@string/main_view" />
 
         <item
             android:id="@+id/settingsFragment"
-            android:title="@string/settings"/>
+            android:title="@string/settings" />
 
 
         <item
             android:id="@+id/connectionsFragment"
-            android:title="@string/connection"/>
+            android:title="@string/connection" />
 
         <item
             android:id="@+id/terminalFragment"
-            android:title="@string/terminal"/>
+            android:title="@string/terminal" />
 
     </group>
 
@@ -28,10 +28,15 @@
         android:id="@+id/single_select"
         android:checkableBehavior="none">
 
-    <item
-        android:id="@+id/exit_menu"
-        android:onClick="onExit"
-        android:title="@string/exit"/>
+        <item
+            android:id="@+id/about"
+            android:onClick="onAboutPressed"
+            android:title="@string/about" />
+
+        <item
+            android:id="@+id/exit_menu"
+            android:onClick="onExit"
+            android:title="@string/exit" />
 
     </group>
 </menu>

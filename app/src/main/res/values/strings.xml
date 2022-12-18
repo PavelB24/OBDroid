@@ -26,5 +26,13 @@
     <string name="terminal_pref_title">Enable Terminal (For Advanced Users)</string>
     <string name="wifi_settings_title">Wifi Settings</string>
     <string name="prefs_toolbar_title">Settings</string>
+    <string name="bluetooth_permission">Bluetooth Permission</string>
+    <string name="location_permission">Location Permission</string>
+    <string name="save_data_permission">Save Data Permission</string>
+    <string name="battery_optimisation">Battery Optimisation</string>
+    <string name="about">About</string>
+    <string name="show_only_supported_commands">Show Only Supported Commands</string>
+    <string name="profiles_standard_by_default">Profiles (Standard by Default)</string>
+    <string name="use_warm_starts_title">Use Warm Starts On Connection With Obd Device</string>
     />
 </resources>

@@ -109,7 +109,7 @@
                 app:layout_constraintEnd_toStartOf="@id/ws_switch"
                 app:layout_constraintTop_toTopOf="parent"
                 android:layout_marginStart="16dp"
-                android:text="Use Warm Starts On Connection With Obd Device"
+                android:text="@string/use_warm_starts_title"
                 android:gravity="center"
                 android:textStyle="bold"
                 android:singleLine="false"
@@ -152,7 +152,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 android:layout_marginStart="16dp"
-                android:text="Profiles (Standard by Default)"
+                android:text="@string/profiles_standard_by_default"
                 android:gravity="center"
                 android:textStyle="bold"
                 android:singleLine="false"
@@ -160,7 +160,7 @@
                 android:maxLines="2"
                 app:layout_constraintBottom_toBottomOf="parent"
                 android:layout_height="50dp"
-                app:drawableStartCompat="@drawable/wifi_logo_small" />
+                app:drawableStartCompat="@drawable/ic_baseline_directions_car_24" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -186,7 +186,7 @@
                 app:layout_constraintEnd_toStartOf="@id/only_supported_switch"
                 app:layout_constraintTop_toTopOf="parent"
                 android:layout_marginStart="16dp"
-                android:text="Show Only Supported Commands"
+                android:text="@string/show_only_supported_commands"
                 android:gravity="center"
                 android:textStyle="bold"
                 android:singleLine="false"

@@ -25,10 +25,11 @@ import ru.barinov.obdroid.*
 import ru.barinov.obdroid.ui.activity.MainActivity
 import ru.barinov.obdroid.base.ConnectionItem
 import ru.barinov.obdroid.broadcastReceivers.ConnectionsBroadcastReceiver
-import ru.barinov.obdroid.utils.PermissionsUtil
+import ru.barinov.obdroid.utils.StartPermissionsUtil
 import ru.barinov.obdroid.databinding.ConnectionsLayoutBinding
 import ru.barinov.obdroid.ui.uiModels.BtConnectionItem
 import ru.barinov.obdroid.ui.uiModels.WifiConnectionItem
+import ru.barinov.obdroid.utils.PermissionsChecker
 import java.util.*
 
 class ConnectionsFragment : Fragment() {
@@ -72,7 +73,9 @@ class ConnectionsFragment : Fragment() {
                         if (BuildConfig.VERSION_CODE >= Build.VERSION_CODES.TIRAMISU) {
                             //todo
                         } else {
-                            btManager.adapter.enable()
+                            if(!btManager.adapter.isEnabled) {
+                                btManager.adapter.enable()
+                            }
                             btManager.adapter.startDiscovery()
                         }
 
@@ -199,12 +202,20 @@ class ConnectionsFragment : Fragment() {
             connectionCard.visibility = View.VISIBLE
             when (item) {
                 is BtConnectionItem -> {
-                    val img = ResourcesCompat.getDrawable(resources, R.drawable.bt_logo, null)
+                    val img = ResourcesCompat.getDrawable(
+                        resources,
+                        R.drawable.bt_logo,
+                        null
+                    )
                     curConnectionIcon.setImageDrawable(img)
                     curConnectionSsidOrAddr.text = item.address
                 }
                 is WifiConnectionItem -> {
-                    val img = ResourcesCompat.getDrawable(resources, R.drawable.wifi_logo, null)
+                    val img = ResourcesCompat.getDrawable(
+                        resources,
+                        R.drawable.wifi_logo,
+                        null
+                    )
                     curConnectionIcon.setImageDrawable(img)
                     curConnectionSsidOrAddr.text = item.ssid
                 }
@@ -213,9 +224,10 @@ class ConnectionsFragment : Fragment() {
 
     }
 
+
     @SuppressLint("MissingPermission")
     private fun doOnNewScanResults() {
-        if (PermissionsUtil.hasLocationPermission(requireContext())) {
+        if (PermissionsChecker.hasLocationPermission(requireContext())) {
             viewModel.handleScanResults(wifiManager.scanResults)
         }
     }

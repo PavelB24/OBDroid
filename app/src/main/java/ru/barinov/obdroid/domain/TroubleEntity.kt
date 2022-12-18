@@ -7,9 +7,9 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "trouble_codes")
 data class TroubleEntity(
     @PrimaryKey
-    private val code : String,
+    val code : String,
     @ColumnInfo(name = "description_eng")
-    private val descriptionEng : String,
+    val descriptionEng : String,
     @ColumnInfo(name = "description_rus")
-    private val descriptionRus : String
+    val descriptionRus : String
 )

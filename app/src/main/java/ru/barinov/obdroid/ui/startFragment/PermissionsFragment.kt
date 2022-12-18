@@ -17,12 +17,13 @@ import ru.barinov.obdroid.*
 import ru.barinov.obdroid.ui.activity.MainActivity
 import ru.barinov.obdroid.databinding.PermissionsFragmentBinding
 import ru.barinov.obdroid.preferences.Preferences
-import ru.barinov.obdroid.utils.PermissionsUtil
+import ru.barinov.obdroid.utils.StartPermissionsUtil
 
 class PermissionsFragment : Fragment() {
 
     private lateinit var binding: PermissionsFragmentBinding
     private val prefs by inject<Preferences>()
+    private val permissionsUtil by lazy { StartPermissionsUtil() }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -30,14 +31,14 @@ class PermissionsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = PermissionsFragmentBinding.inflate(inflater, container, false)
-        PermissionsUtil.initLaunchers(this)
+        permissionsUtil.initLaunchers(this)
         return binding.root
     }
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        if (PermissionsUtil.hasNecessaryPermissions(requireContext())) {
+        if (permissionsUtil.hasNecessaryPermissions(requireContext())) {
             lifecycleScope.launchWhenStarted {
                 rebase()
             }
@@ -58,7 +59,7 @@ class PermissionsFragment : Fragment() {
             headImage.setOnClickListener {
                 PermissionViewHelper.animateLogo(headImage.drawable as AnimatedVectorDrawable)
             }
-            PermissionsUtil.apply {
+            permissionsUtil.apply {
                 if (hasBluetoothPermission(requireContext())) {
                     PermissionViewHelper.hideBt(this@with)
                 } else {
@@ -96,7 +97,7 @@ class PermissionsFragment : Fragment() {
 
     private fun subscribe() {
         lifecycleScope.launchWhenStarted {
-            PermissionsUtil.apply {
+            permissionsUtil.apply {
                 resultFlow.collectLatest { result ->
                     PermissionViewHelper.animateLogo(binding.headImage.drawable as AnimatedVectorDrawable)
                     result?.let {
@@ -137,7 +138,7 @@ class PermissionsFragment : Fragment() {
         when (type) {
             is PermissionType.BackGroundLocation -> {
                 PermissionViewHelper.hideLocationAnimate(binding)
-                if (PermissionsUtil.hasNecessaryPermissions(requireContext())) {
+                if (permissionsUtil.hasNecessaryPermissions(requireContext())) {
                     PermissionViewHelper.showButtonAnimate(
                         binding.onStartButtonFrame,
                         binding.onStartButton
@@ -146,10 +147,10 @@ class PermissionsFragment : Fragment() {
             }
             is PermissionType.RuntimeLocation -> {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                    PermissionsUtil.requestBackgroundLocationPermission()
+                    permissionsUtil.requestBackgroundLocationPermission()
                 } else {
                     PermissionViewHelper.hideLocationAnimate(binding)
-                    if (PermissionsUtil.hasNecessaryPermissions(requireContext())) {
+                    if (permissionsUtil.hasNecessaryPermissions(requireContext())) {
                         binding.line.visibility = GONE
                         PermissionViewHelper.showButtonAnimate(
                             binding.onStartButtonFrame,
@@ -160,7 +161,7 @@ class PermissionsFragment : Fragment() {
             }
             is PermissionType.BluetoothPermission -> {
                 PermissionViewHelper.hideBtAnimate(binding)
-                if (PermissionsUtil.hasNecessaryPermissions(requireContext())) {
+                if (permissionsUtil.hasNecessaryPermissions(requireContext())) {
                     PermissionViewHelper.showButtonAnimate(
                         binding.onStartButtonFrame,
                         binding.onStartButton
