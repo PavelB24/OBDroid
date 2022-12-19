@@ -1,0 +1,7 @@
+package ru.barinov.obdroid.domain
+
+enum class TroubleCodeType {
+    FUEL_AND_AIR, IGNITION_SYSTEM, EMISSION_CONTROLS, SPEED_CONTROL_AUXILIARY, ECU_AND_AUXILIARY,
+    TRANSMISSION, GM, CHASSIS, COMMON, HEADER
+
+}

@@ -2,8 +2,6 @@ package ru.barinov.obdroid.data
 
 import android.content.Context
 import android.content.res.AssetManager.ACCESS_STREAMING
-import android.os.Build
-import android.util.Log
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.CommandsRepository
@@ -13,15 +11,11 @@ import org.koin.core.component.inject
 import ru.barinov.obdroid.BuildConfig
 import ru.barinov.obdroid.domain.CommandCategory
 import ru.barinov.obdroid.domain.CommandEntity
-import java.io.BufferedInputStream
-import java.io.BufferedReader
-import java.io.File
-import java.io.InputStreamReader
+import ru.barinov.obdroid.domain.TroubleCodeEntity
+import ru.barinov.obdroid.domain.TroubleCodeType
 import java.security.KeyStore
-import java.security.Security
 import java.util.*
 import javax.crypto.Cipher
-import javax.crypto.SecretKeyFactory
 import javax.crypto.spec.SecretKeySpec
 
 class DbWorker(
@@ -32,7 +26,8 @@ class DbWorker(
     private companion object {
         private const val ALGORITHM = "AES"
         private const val COMMANDS_ASSET_NAME = "commands"
-        private const val troublesAssetName = ""
+        private const val TROUBLES_ASSET_NAME = "trouble_codes"
+        private const val EXTRA_ASSET_NAME = "extra"
     }
 
     private val commandsRepo: CommandsRepository by inject()
@@ -44,11 +39,11 @@ class DbWorker(
         try {
             val cipher = initCipher()
             loadMainCommands(cipher)
-            loadOtherCommands()
-            loadTroubleCodes()
+            loadOtherCommands(cipher)
+            loadTroubleCodes(cipher)
             Result.success()
-        } catch (e : Exception){
-            if(BuildConfig.DEBUG) {
+        } catch (e: Exception) {
+            if (BuildConfig.DEBUG) {
                 e.printStackTrace()
             }
             Result.failure()
@@ -56,12 +51,60 @@ class DbWorker(
 
     }
 
-    private suspend fun loadTroubleCodes() {
+    private suspend fun loadTroubleCodes(cipher: Cipher) {
+        val encryptedArray = context.assets.open(TROUBLES_ASSET_NAME, ACCESS_STREAMING).readBytes()
+        val decrypted = cipher.doFinal(encryptedArray)
+        val reader = decrypted.inputStream().bufferedReader()
+        while (reader.ready()) {
+            val lineContents = reader.readLine().split("//")
+            val translate = if (lineContents.size == 3) lineContents.last() else null
+            val category: TroubleCodeType = when {
+                lineContents[0].contains("X") -> TroubleCodeType.HEADER
+                lineContents[0].take(3) == "P01" -> TroubleCodeType.FUEL_AND_AIR
+                lineContents[0].take(3) == "P02" -> TroubleCodeType.FUEL_AND_AIR
+                lineContents[0].take(3) == "P03" -> TroubleCodeType.IGNITION_SYSTEM
+                lineContents[0].take(3) == "P04" -> TroubleCodeType.EMISSION_CONTROLS
+                lineContents[0].take(3) == "P05" -> TroubleCodeType.SPEED_CONTROL_AUXILIARY
+                lineContents[0].take(3) == "P06" -> TroubleCodeType.ECU_AND_AUXILIARY
+                lineContents[0].take(3) == "P07" -> TroubleCodeType.CHASSIS
+                lineContents[0].take(2) == "P1" ->  TroubleCodeType.GM
+                else -> TroubleCodeType.COMMON
+            }
 
+            troublesRepo.insertCode(
+                TroubleCodeEntity(
+                    lineContents[0],
+                    lineContents[1],
+                    translate,
+                    category
+                )
+            )
+        }
     }
 
-    private suspend fun loadOtherCommands() {
-
+    private suspend fun loadOtherCommands(cipher: Cipher) {
+        val encryptedArray = context.assets.open(EXTRA_ASSET_NAME, ACCESS_STREAMING).readBytes()
+        val decrypted = cipher.doFinal(encryptedArray)
+        val reader = decrypted.inputStream().bufferedReader()
+        while (reader.ready()) {
+            val lineContents = reader.readLine().split("//")
+            val translate = if (lineContents.size == 5) lineContents.last() else null
+            val category: CommandCategory =
+                if(lineContents[3].contains("supported", true))
+                    CommandCategory.SUPPORTED_PIDS else CommandCategory.VEHICLE_INFO
+            commandsRepo.insertCommand(
+                CommandEntity(
+                    lineContents[1],
+                    Integer.valueOf(lineContents[2]),
+                    lineContents[0],
+                    category,
+                    lineContents[3],
+                    translate,
+                    isChosen = false,
+                    isCustomCommand = false
+                )
+            )
+        }
     }
 
     private suspend fun loadMainCommands(cipher: Cipher) {

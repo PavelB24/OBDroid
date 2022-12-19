@@ -16,6 +16,7 @@ import ru.barinov.obdroid.ui.utils.ServiceCommander
 import ru.barinov.obdroid.WifiConnectionWatcher
 import ru.barinov.obdroid.data.DataBase
 import ru.barinov.obdroid.data.DbWorker
+import ru.barinov.obdroid.data.TroublesRepository
 import ru.barinov.obdroid.ui.activity.ActivityViewModel
 import ru.barinov.obdroid.ui.connectionsFragment.ConnectionActionHandler
 import ru.barinov.obdroid.ui.connectionsFragment.ConnectionsViewModel
@@ -53,14 +54,23 @@ val mainModule = module {
         ConnectionActionHandler(androidContext(), get())
     }
 
+    single {
+        TroublesRepository(
+            get<DataBase>().getTroublesDao()
+        )
+    }
+
 
     single {
         ServiceCommander(androidContext())
     }
 
-    single { CommandsRepository(get()) }
+    single {
+        CommandsRepository(
+            get<DataBase>().getCommandsDao()
+        )
+    }
 
-    single { get<DataBase>().getCommandsDao() }
 
     single {
         Preferences(get())

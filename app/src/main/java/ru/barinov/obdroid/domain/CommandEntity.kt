@@ -7,9 +7,11 @@ import androidx.room.TypeConverter
 import androidx.room.TypeConverters
 
 @TypeConverters(CommandEntity.CommandCategoryTypeConverter::class)
-@Entity(tableName = "pid_commands")
+@Entity(
+    tableName = "pid_commands",
+    primaryKeys = ["dex_value", "command_section_dex"]
+)
 data class CommandEntity(
-    @PrimaryKey
     @ColumnInfo(name = "dex_value")
     val dexValue: String,
     @ColumnInfo(name = "dec_value")
