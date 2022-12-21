@@ -25,7 +25,7 @@
     </style>
 
     <style name="DialogTheme" parent="Theme.AppCompat.Light.Dialog">
-        <item name="android:windowNoTitle">false</item>
+        <item name="android:windowNoTitle">true</item>
         <item name="android:windowMinWidthMajor">99%</item>
         <item name="android:windowMinWidthMinor">99%</item>
     </style>

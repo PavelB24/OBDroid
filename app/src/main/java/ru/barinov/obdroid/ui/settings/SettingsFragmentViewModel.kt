@@ -12,4 +12,17 @@ class SettingsFragmentViewModel(
     fun changeTerminalEnabled(flag : Boolean){
         prefs.useTerminal = flag
     }
+
+    fun changeUseWarmStarts(checked: Boolean) {
+        prefs.useWarmStarts = checked
+    }
+
+    fun getWarmStartsFlag(): Boolean = prefs.useWarmStarts
+
+
+    fun getUseOnlySupported(): Boolean =  prefs.showOnlySupported
+
+    fun changeUseOnlySupported(checked: Boolean) {
+        prefs.showOnlySupported = checked
+    }
 }

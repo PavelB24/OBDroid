@@ -123,7 +123,6 @@ class ConnectionsFragment : Fragment() {
                     is ConnectedEventType.BluetoothConnected -> {
                         event.apply {
                             displayConnection(item)
-                            viewModel.onConnectBt(socket, item.actions)
                         }
                     }
                     is ConnectedEventType.Fail -> {
@@ -136,7 +135,7 @@ class ConnectionsFragment : Fragment() {
                     is ConnectedEventType.WifiConnected -> {
                         event.apply {
                             displayConnection(item)
-                            viewModel.onConnectWf(network, item.ssid, item.bssid)
+                            findNavController().navigate(R.id.action_connectionsFragment_to_wifiSettingsDialog)
                         }
                     }
                 }

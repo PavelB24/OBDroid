@@ -41,6 +41,15 @@ class SettingsFragment : Fragment() {
         binding.wifiSettingsCard.setOnClickListener {
             findNavController().navigate(R.id.action_settingsFragment_to_wifiSettingsDialog)
         }
+        binding.onlySupportedSwitch.isChecked = viewModel.getUseOnlySupported()
+        binding.onlySupportedSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
+            viewModel.changeUseOnlySupported(isChecked)
+        }
+        binding.wsSwitch.isChecked = viewModel.getWarmStartsFlag()
+        binding.wsSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
+            viewModel.changeUseWarmStarts(isChecked)
+        }
+
     }
 
 

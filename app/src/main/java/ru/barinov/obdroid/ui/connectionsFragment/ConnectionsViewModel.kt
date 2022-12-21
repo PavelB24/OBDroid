@@ -3,7 +3,10 @@ package ru.barinov.obdroid.ui.connectionsFragment
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothSocket
+import android.net.ConnectivityManager
 import android.net.Network
+import android.net.NetworkRequest
+import android.net.NetworkSpecifier
 import android.net.wifi.ScanResult
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -26,13 +29,6 @@ class ConnectionsViewModel(
 
     val scanResult = listHandler.scanResult
 
-    fun onConnectWf(
-        network: Network,
-        ssid: String,
-        bssid: String
-    ) {
-
-    }
 
     fun onConnectBt(socket: BluetoothSocket, actions: BtConnectionI) {
 
@@ -40,16 +36,19 @@ class ConnectionsViewModel(
 
     @SuppressLint("MissingPermission")
     fun connectBounded(device: BluetoothDevice) {
-        connectionHandler.connectBt(device.toBtConnectionItem(object : BtConnectionI {
-            override fun createBound(): Boolean {
-                return device.createBond()
-            }
+        connectionHandler.connectBt(
+            device.toBtConnectionItem(object : BtConnectionI {
+                override fun createBound(): Boolean {
+                    return device.createBond()
+                }
 
-            override fun connect(): BluetoothSocket? {
-                val uuid = UUID.fromString(BtConnectionItem.BT_UUID)
-                return device.createInsecureRfcommSocketToServiceRecord(uuid)
+                override fun connect(): BluetoothSocket? {
+                    val uuid = UUID.fromString(BtConnectionItem.BT_UUID)
+                    return device.createInsecureRfcommSocketToServiceRecord(uuid)
+                }
             }
-        }))
+            )
+        )
     }
 
 

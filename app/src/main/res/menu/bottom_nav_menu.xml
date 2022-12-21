@@ -3,14 +3,17 @@
 
     <item
         android:id="@+id/mainFragment"
+        android:icon="@drawable/ic_baseline_directions_car_24"
         android:title="@string/dash_board"/>
 
     <item
         android:id="@+id/diagnosticFragment"
+        android:icon="@drawable/troubles"
         android:title="@string/trouble_codes"/>
 
     <item
         android:id="@+id/sensorsFragment"
+        android:icon="@drawable/ic_baseline_speed_24"
         android:title="@string/sensors"/>
 
 

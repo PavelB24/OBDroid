@@ -58,28 +58,30 @@ class DbWorker(
         while (reader.ready()) {
             val lineContents = reader.readLine().split("//")
             val translate = if (lineContents.size == 3) lineContents.last() else null
-            val category: TroubleCodeType = when {
-                lineContents[0].contains("X") -> TroubleCodeType.HEADER
-                lineContents[0].take(3) == "P01" -> TroubleCodeType.FUEL_AND_AIR
-                lineContents[0].take(3) == "P02" -> TroubleCodeType.FUEL_AND_AIR
-                lineContents[0].take(3) == "P03" -> TroubleCodeType.IGNITION_SYSTEM
-                lineContents[0].take(3) == "P04" -> TroubleCodeType.EMISSION_CONTROLS
-                lineContents[0].take(3) == "P05" -> TroubleCodeType.SPEED_CONTROL_AUXILIARY
-                lineContents[0].take(3) == "P06" -> TroubleCodeType.ECU_AND_AUXILIARY
-                lineContents[0].take(3) == "P07" -> TroubleCodeType.CHASSIS
-                lineContents[0].take(2) == "P1" ->  TroubleCodeType.GM
-                else -> TroubleCodeType.COMMON
-            }
-
-            troublesRepo.insertCode(
-                TroubleCodeEntity(
-                    lineContents[0],
-                    lineContents[1],
-                    translate,
-                    category
+            lineContents[0].apply {
+                val category: TroubleCodeType = when {
+                    contains("X") -> TroubleCodeType.HEADER
+                    take(3) == "P01" -> TroubleCodeType.FUEL_AND_AIR
+                    take(3) == "P02" -> TroubleCodeType.FUEL_AND_AIR
+                    take(3) == "P03" -> TroubleCodeType.IGNITION_SYSTEM
+                    take(3) == "P04" -> TroubleCodeType.EMISSION_CONTROLS
+                    take(3) == "P05" -> TroubleCodeType.SPEED_CONTROL_AUXILIARY
+                    take(3) == "P06" -> TroubleCodeType.ECU_AND_AUXILIARY
+                    take(3) == "P07" -> TroubleCodeType.CHASSIS
+                    take(2) == "P1" -> TroubleCodeType.GM
+                    else -> TroubleCodeType.COMMON
+                }
+                troublesRepo.insertCode(
+                    TroubleCodeEntity(
+                        lineContents[0],
+                        lineContents[1],
+                        translate,
+                        category
+                    )
                 )
-            )
+            }
         }
+
     }
 
     private suspend fun loadOtherCommands(cipher: Cipher) {
@@ -90,7 +92,7 @@ class DbWorker(
             val lineContents = reader.readLine().split("//")
             val translate = if (lineContents.size == 5) lineContents.last() else null
             val category: CommandCategory =
-                if(lineContents[3].contains("supported", true))
+                if (lineContents[3].contains("supported", true))
                     CommandCategory.SUPPORTED_PIDS else CommandCategory.VEHICLE_INFO
             commandsRepo.insertCommand(
                 CommandEntity(
@@ -114,25 +116,27 @@ class DbWorker(
         while (reader.ready()) {
             val lineContents = reader.readLine().split("//")
             val translate = if (lineContents.size == 4) lineContents.last() else null
-            val category: CommandCategory = when {
-                lineContents[2].contains("diesel", true) -> CommandCategory.DIESEL
-                lineContents[2].contains("hybrid", true) -> CommandCategory.HYBRID
-                lineContents[2].contains("Oxygen", true) -> CommandCategory.OXYGEN_SENSOR
-                lineContents[2].contains("PIDs supported") -> CommandCategory.SUPPORTED_PIDS
-                else -> CommandCategory.COMMON
-            }
-            commandsRepo.insertCommand(
-                CommandEntity(
-                    lineContents[0],
-                    Integer.valueOf(lineContents[1]),
-                    "01",
-                    category,
-                    lineContents[2],
-                    translate,
-                    isChosen = false,
-                    isCustomCommand = false
+            lineContents[2].apply {
+                val category: CommandCategory = when {
+                    contains("diesel", true) -> CommandCategory.DIESEL
+                    contains("hybrid", true) -> CommandCategory.HYBRID
+                    contains("Oxygen", true) -> CommandCategory.OXYGEN_SENSOR
+                    contains("PIDs supported") -> CommandCategory.SUPPORTED_PIDS
+                    else -> CommandCategory.COMMON
+                }
+                commandsRepo.insertCommand(
+                    CommandEntity(
+                        lineContents[0],
+                        Integer.valueOf(lineContents[1]),
+                        "01",
+                        category,
+                        lineContents[2],
+                        translate,
+                        isChosen = false,
+                        isCustomCommand = false
+                    )
                 )
-            )
+            }
         }
     }
 

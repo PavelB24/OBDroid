@@ -18,14 +18,14 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 import ru.barinov.obdroid.ConnectedEventType
 import ru.barinov.obdroid.R
-import ru.barinov.obdroid.WifiConnectionWatcher
+import ru.barinov.obdroid.ConnectionWatcher
 import ru.barinov.obdroid.base.ConnectionItem
 import ru.barinov.obdroid.ui.uiModels.BtConnectionItem
 import ru.barinov.obdroid.ui.uiModels.WifiConnectionItem
 
 class ConnectionActionHandler(
     private val context: Context,
-    private val connectionWatcher : WifiConnectionWatcher
+    private val connectionWatcher : ConnectionWatcher
 ) : ConnectionsAdapter.ConnectionClickListener {
 
 
@@ -77,9 +77,11 @@ class ConnectionActionHandler(
                                         val result = cm.bindProcessToNetwork(network)
                                         if (result) {
 //                                          cm.getLinkProperties(network)?.routes?.last()?.gateway?.hostAddress
+                                            connectionWatcher.setCurrentSignatures(item.bssid,
+                                                item.ssid
+                                            )
                                             onConnection(
                                                 ConnectedEventType.WifiConnected(
-                                                    network,
                                                     item
                                                 )
                                             )
@@ -104,7 +106,6 @@ class ConnectionActionHandler(
         onConnection(
             if (socket != null)
                 ConnectedEventType.BluetoothConnected(
-                    socket,
                     item
                 )
             else ConnectedEventType.Fail

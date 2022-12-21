@@ -28,6 +28,9 @@
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         android:background="@color/bottom_nav_color"
+        app:itemBackground="@drawable/item_bottom_nav_backgroud"
+        app:itemIconTint="@color/bottom_menu_item_selector"
+        app:itemTextColor="@color/bottom_menu_item_selector"
         app:menu="@menu/bottom_nav_menu"
         />
 

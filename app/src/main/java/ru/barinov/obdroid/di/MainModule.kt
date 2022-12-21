@@ -12,8 +12,9 @@ import org.koin.android.ext.koin.androidApplication
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
+import ru.barinov.obdroid.WifiConnectionSettingsViewModel
 import ru.barinov.obdroid.ui.utils.ServiceCommander
-import ru.barinov.obdroid.WifiConnectionWatcher
+import ru.barinov.obdroid.ConnectionWatcher
 import ru.barinov.obdroid.data.DataBase
 import ru.barinov.obdroid.data.DbWorker
 import ru.barinov.obdroid.data.TroublesRepository
@@ -60,6 +61,10 @@ val mainModule = module {
         )
     }
 
+    single {
+        WifiConnectionSettingsViewModel(get(), get(), get())
+    }
+
 
     single {
         ServiceCommander(androidContext())
@@ -77,7 +82,7 @@ val mainModule = module {
     }
 
     single {
-        WifiConnectionWatcher()
+        ConnectionWatcher()
     }
 
     viewModel {

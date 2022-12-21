@@ -17,10 +17,10 @@
     <string name="main_view">Диагностика</string>
     <string name="bound_bt_device">Привязать БТ Девайс</string>
     <string name="connect_to_device">Подключиться к Девайсу</string>
-    <string name="content_text_notification">OBD сервис выполняется...</string>
+    <string name="content_text_notification">OBDroid выполняется</string>
     <string name="dash_board">Панель Приборов</string>
-    <string name="trouble_codes">Коды Ошибок</string>
-    <string name="sensors">Сенсоры</string>
+    <string name="trouble_codes">Ошибоки</string>
+    <string name="sensors">Датчики</string>
     <string name="terminal_pref_title">Активировать Терминал
         (Для Продвинутых Пользователей)
     </string>
@@ -36,5 +36,7 @@
     <string name="use_warm_starts_title">Использовать
         Тёплые Старты при Соединении с OBD Девайсом
     </string>
+    <string name="connect_to_network">Подсоединиться к Сети</string>
+    <string name="cancel">Отмена</string>
     />
 </resources>

@@ -1,13 +1,14 @@
 package ru.barinov.obdroid
 
-import android.app.Dialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.barinov.obdroid.databinding.WifiConnectionSettingsDialogBinding
+import ru.barinov.obdroid.ui.utils.AddressTextWatcher
 
 class WifiSettingsDialog : DialogFragment() {
 
@@ -28,26 +29,39 @@ class WifiSettingsDialog : DialogFragment() {
         super.onCreate(savedInstanceState)
         // Do not create a new Fragment when the Activity is re-created such as orientation changes.
         retainInstance = true
-        isCancelable = false
         setStyle(STYLE_NORMAL, R.style.DialogTheme)
     }
 
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val dialog = super.onCreateDialog(savedInstanceState)
-        dialog.setTitle("")
-        return dialog
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        if(viewModel.isConnectedToNetwork()){
-            binding.getawayField.visibility = View.GONE
-            binding.negativeButton.visibility = View.GONE
-        } else  binding.negativeButton.setOnClickListener {
-
+        if (viewModel.isConnectedToNetwork()) {
+            binding.getawayEt.isEnabled = false
+        }
+        val textWatcher =
+            AddressTextWatcher(binding.portEt, binding.getawayEt, binding.positiveButton)
+        binding.getawayEt.setText(viewModel.getGetaway())
+        binding.portEt.setText(viewModel.getPort())
+        binding.portEt.addTextChangedListener(textWatcher)
+        binding.getawayEt.addTextChangedListener(textWatcher)
+        binding.negativeButton.setOnClickListener {
+            if (viewModel.isConnectedToNetwork()) {
+                Toast.makeText(
+                    requireContext(),
+                    "You can change address and port later in settings",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+            dismiss()
         }
         binding.positiveButton.setOnClickListener {
-
+            viewModel.onNewSettings(
+                binding.getawayEt.text.toString(),
+                binding.portEt.text.toString()
+            )
+            dismiss()
         }
     }
+
+
 }

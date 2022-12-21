@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import ru.barinov.obdroid.R
-import ru.barinov.obdroid.WifiConnectionWatcher
+import ru.barinov.obdroid.ConnectionWatcher
 import ru.barinov.obdroid.ui.utils.ServiceCommander
 
 class ObdService : Service() {
@@ -26,7 +26,7 @@ class ObdService : Service() {
         private const val NOTIFICATION_CHANNEL_NAME = "OBD service notification"
     }
 
-    private val connectionWatcher by inject<WifiConnectionWatcher>()
+    private val connectionWatcher by inject<ConnectionWatcher>()
     private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     override fun onBind(intent: Intent?): IBinder? = null

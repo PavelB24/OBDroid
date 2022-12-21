@@ -22,7 +22,11 @@
     <fragment
         android:id="@+id/connectionsFragment"
         android:name="ru.barinov.obdroid.ui.connectionsFragment.ConnectionsFragment"
-        android:label="ConnectionsFragment" />
+        android:label="ConnectionsFragment" >
+        <action
+            android:id="@+id/action_connectionsFragment_to_wifiSettingsDialog"
+            app:destination="@id/wifiSettingsDialog" />
+    </fragment>
     <fragment
         android:id="@+id/terminalFragment"
         android:name="ru.barinov.obdroid.TerminalFragment"
