@@ -16,18 +16,17 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="24dp"
             app:boxStrokeColor="@color/dark_green"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toStartOf="@id/port_field"
-            >
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/getaway_et"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/getaway_hint"
-               android:inputType="number"
                 android:digits="0123456789."
+                android:hint="@string/getaway_hint"
+                android:inputType="number"
                 android:textCursorDrawable="@drawable/cursor"
                 app:layout_constraintTop_toTopOf="parent" />
         </com.google.android.material.textfield.TextInputLayout>
@@ -36,20 +35,20 @@
             android:id="@+id/port_field"
             android:layout_width="100dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
             android:layout_marginTop="24dp"
+            android:layout_marginEnd="16dp"
             app:boxStrokeColor="@color/dark_green"
-            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            >
+            app:layout_constraintTop_toTopOf="parent">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/port_et"
-                android:maxLength="5"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/port_hint"
+                android:digits="0123456789"
                 android:inputType="number"
+                android:maxLength="5"
                 android:textCursorDrawable="@drawable/cursor"
                 app:layout_constraintTop_toTopOf="parent" />
         </com.google.android.material.textfield.TextInputLayout>
@@ -77,10 +76,10 @@
             android:layout_marginHorizontal="8dp"
             android:layout_marginTop="18dp"
             android:backgroundTint="@color/mid_green"
+            android:enabled="false"
             android:text="@android:string/ok"
             android:textColor="@color/positive_button_selector"
             android:textSize="18sp"
-            android:enabled="false"
             app:backgroundTintMode="src_atop"
             app:layout_constraintEnd_toEndOf="@id/port_field"
             app:layout_constraintTop_toBottomOf="@id/port_field" />

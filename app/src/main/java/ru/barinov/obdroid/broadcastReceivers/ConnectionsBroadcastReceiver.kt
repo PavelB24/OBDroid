@@ -18,7 +18,6 @@ import ru.barinov.obdroid.ConnectionReceiverEvent
 
 class ConnectionsBroadcastReceiver() : BroadcastReceiver() {
 
-
     private val _receiverEvents = MutableSharedFlow<ConnectionReceiverEvent>()
     val receiverEvents : SharedFlow<ConnectionReceiverEvent> = _receiverEvents
 

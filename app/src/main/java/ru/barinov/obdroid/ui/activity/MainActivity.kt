@@ -1,5 +1,6 @@
 package ru.barinov.obdroid.ui.activity
 
+import android.annotation.SuppressLint
 import android.graphics.drawable.AnimatedImageDrawable
 import android.graphics.drawable.AnimatedVectorDrawable
 import android.graphics.drawable.AnimationDrawable
@@ -16,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout.LOCK_MODE_LOCKED_CLOSED
 import androidx.drawerlayout.widget.DrawerLayout.LOCK_MODE_UNLOCKED
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import ru.barinov.obdroid.BuildConfig
 import ru.barinov.obdroid.R
 import ru.barinov.obdroid.databinding.ActivityMainBinding
 
@@ -29,6 +31,11 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        @SuppressLint("SetTextI18n")
+        binding.navView.getHeaderView(0)
+            .findViewById<TextView>(R.id.version_tv).text = "ver. ${BuildConfig.VERSION_NAME}"
+
         val navController = findNavController(R.id.container)
         val drawerLayout: DrawerLayout = binding.drawerLayout
         val navView: NavigationView = binding.navView

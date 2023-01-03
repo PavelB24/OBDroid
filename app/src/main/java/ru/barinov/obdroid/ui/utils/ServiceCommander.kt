@@ -10,22 +10,16 @@ class ServiceCommander(private val context : Context) {
     companion object{
         const val SERVICE_COMMAND_KEY = "s_command"
         const val SERVICE_COMMAND_EXIT = "on_exit"
-        const val SERVICE_COMMAND_WIFI_PARAMS = "wf_params"
     }
 
 
      fun startService() {
-        ContextCompat.startForegroundService(context, Intent(context, ObdService::class.java))
+        sendMessageToService(SERVICE_COMMAND_KEY)
     }
 
      fun stopService() {
         sendMessageToService(SERVICE_COMMAND_EXIT)
     }
-
-    fun onWifiParamsChanged(){
-        sendMessageToService(SERVICE_COMMAND_WIFI_PARAMS)
-    }
-
 
     private fun sendMessageToService(extra : String){
         ContextCompat.startForegroundService(
@@ -33,8 +27,8 @@ class ServiceCommander(private val context : Context) {
             Intent(
                 context,
                 ObdService::class.java
-            ).apply {
-                putExtra(SERVICE_COMMAND_KEY, extra)
+            ).also {
+                it.putExtra(SERVICE_COMMAND_KEY, extra)
             }
         )
     }

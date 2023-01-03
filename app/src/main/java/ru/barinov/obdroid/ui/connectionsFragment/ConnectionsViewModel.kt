@@ -3,10 +3,6 @@ package ru.barinov.obdroid.ui.connectionsFragment
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothSocket
-import android.net.ConnectivityManager
-import android.net.Network
-import android.net.NetworkRequest
-import android.net.NetworkSpecifier
 import android.net.wifi.ScanResult
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -24,51 +20,37 @@ class ConnectionsViewModel(
 
     private val listHandler by lazy { ConnectionsListHandler(viewModelScope) }
 
-    private val _onConnectFlow = connectionHandler.connectFlow
+    private val _onConnectFlow = connectionHandler.onConnectFlow
     val onConnectFlow: SharedFlow<ConnectedEventType> = _onConnectFlow
 
-    val scanResult = listHandler.scanResult
+    val scanResult: SharedFlow<List<ConnectionItem>> = listHandler.scanResult
 
 
     fun onConnectBt(socket: BluetoothSocket, actions: BtConnectionI) {
 
     }
 
-    @SuppressLint("MissingPermission")
-    fun connectBounded(device: BluetoothDevice) {
-        connectionHandler.connectBt(
-            device.toBtConnectionItem(object : BtConnectionI {
-                override fun createBound(): Boolean {
-                    return device.createBond()
-                }
-
-                override fun connect(): BluetoothSocket? {
-                    val uuid = UUID.fromString(BtConnectionItem.BT_UUID)
-                    return device.createInsecureRfcommSocketToServiceRecord(uuid)
-                }
-            }
-            )
-        )
-    }
-
 
     fun getConnectionHandler() = connectionHandler
 
-    fun handleBtDevice(device: BluetoothDevice) {
+    @SuppressLint("MissingPermission")
+    fun handleBtDevice(device: BluetoothDevice, andConnect: Boolean = false) {
         val handledBt = device.toBtConnectionItem(object :
             BtConnectionI {
-            @SuppressLint("MissingPermission")
+
             override fun createBound(): Boolean {
                 return device.createBond()
             }
 
-            @SuppressLint("MissingPermission")
             override fun connect(): BluetoothSocket {
                 val uuid = UUID.fromString(BtConnectionItem.BT_UUID)
                 return device.createInsecureRfcommSocketToServiceRecord(uuid)
             }
         })
         listHandler.addBt(handledBt)
+        if(andConnect){
+            connectionHandler.connectBt(handledBt)
+        }
     }
 
     fun handleScanResults(scanResult: List<ScanResult>) {

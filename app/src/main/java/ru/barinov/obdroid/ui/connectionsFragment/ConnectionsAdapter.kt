@@ -1,17 +1,15 @@
 package ru.barinov.obdroid.ui.connectionsFragment
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.DiffUtil.DiffResult
 import androidx.recyclerview.widget.RecyclerView
 import ru.barinov.obdroid.base.ConnectionItem
 import ru.barinov.obdroid.base.BaseViewHolder
 import ru.barinov.obdroid.databinding.BtItemBinding
 import ru.barinov.obdroid.databinding.WifiItemLayoutBinding
-import ru.barinov.obdroid.utils.ConnectionsDiff
+import ru.barinov.obdroid.ui.utils.ConnectionsDiff
 
 class ConnectionsAdapter : RecyclerView.Adapter<BaseViewHolder<ConnectionItem>>() {
 

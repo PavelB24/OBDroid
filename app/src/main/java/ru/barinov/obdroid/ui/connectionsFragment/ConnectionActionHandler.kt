@@ -18,7 +18,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 import ru.barinov.obdroid.ConnectedEventType
 import ru.barinov.obdroid.R
-import ru.barinov.obdroid.ConnectionWatcher
+import ru.barinov.obdroid.utils.ConnectionWatcher
 import ru.barinov.obdroid.base.ConnectionItem
 import ru.barinov.obdroid.ui.uiModels.BtConnectionItem
 import ru.barinov.obdroid.ui.uiModels.WifiConnectionItem
@@ -29,7 +29,10 @@ class ConnectionActionHandler(
 ) : ConnectionsAdapter.ConnectionClickListener {
 
 
-    val connectFlow: MutableSharedFlow<ConnectedEventType> = MutableSharedFlow(0, 10)
+    val onConnectFlow: MutableSharedFlow<ConnectedEventType> = MutableSharedFlow(
+        0,
+        10
+    )
 
 
     override fun onItemClick(item: ConnectionItem, itemView: View) {
@@ -114,7 +117,7 @@ class ConnectionActionHandler(
 
     private fun onConnection(event: ConnectedEventType) {
         CoroutineScope(Job() + Dispatchers.IO).launch {
-            connectFlow.emit(event)
+            onConnectFlow.emit(event)
         }
     }
 

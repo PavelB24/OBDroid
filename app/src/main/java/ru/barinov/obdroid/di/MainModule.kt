@@ -7,14 +7,15 @@ import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
-import com.CommandsRepository
+import androidx.work.await
+import ru.barinov.obdroid.data.CommandsRepository
 import org.koin.android.ext.koin.androidApplication
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 import ru.barinov.obdroid.WifiConnectionSettingsViewModel
 import ru.barinov.obdroid.ui.utils.ServiceCommander
-import ru.barinov.obdroid.ConnectionWatcher
+import ru.barinov.obdroid.utils.ConnectionWatcher
 import ru.barinov.obdroid.data.DataBase
 import ru.barinov.obdroid.data.DbWorker
 import ru.barinov.obdroid.data.TroublesRepository
@@ -22,6 +23,7 @@ import ru.barinov.obdroid.ui.activity.ActivityViewModel
 import ru.barinov.obdroid.ui.connectionsFragment.ConnectionActionHandler
 import ru.barinov.obdroid.ui.connectionsFragment.ConnectionsViewModel
 import ru.barinov.obdroid.preferences.Preferences
+import ru.barinov.obdroid.ui.sensorsFragment.SensorsViewModel
 import ru.barinov.obdroid.ui.settings.SettingsFragmentViewModel
 
 private const val SHARED_PREFS_NAME = "prefs"
@@ -40,7 +42,6 @@ val mainModule = module {
                 db: SupportSQLiteDatabase
             ) {
                 super.onCreate(db)
-                Log.d("@@@", "LOG ON CR DB")
                 val prepopulateWork = OneTimeWorkRequestBuilder<DbWorker>().build()
                 WorkManager.getInstance(androidApplication()).enqueue(prepopulateWork)
             }
@@ -91,6 +92,10 @@ val mainModule = module {
 
     viewModel {
         ActivityViewModel(get(), get())
+    }
+
+    viewModel {
+        SensorsViewModel(get())
     }
 
     viewModel {

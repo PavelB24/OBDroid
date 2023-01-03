@@ -5,4 +5,7 @@ import ru.barinov.obdroid.domain.TroubleCodeEntity
 class TroublesRepository(private val dao: TroublesDao) {
 
     suspend fun insertCode(entity: TroubleCodeEntity) = dao.insertTrouble(entity)
+
+    suspend fun populateWithTroubles(troubles: List<TroubleCodeEntity>) =
+        dao.prepopulateWithTroubles(troubles)
 }

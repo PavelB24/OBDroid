@@ -2,11 +2,14 @@ package ru.barinov.obdroid.domain
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
-import androidx.room.PrimaryKey
 import androidx.room.TypeConverter
 import androidx.room.TypeConverters
+import ru.barinov.obdroid.ui.uiModels.PidCommand
 
-@TypeConverters(CommandEntity.CommandCategoryTypeConverter::class)
+@TypeConverters(
+    CommandEntity.CommandCategoryTypeConverter::class,
+    MeasurementUnitTypeConverter::class
+)
 @Entity(
     tableName = "pid_commands",
     primaryKeys = ["dex_value", "command_section_dex"]
@@ -14,8 +17,8 @@ import androidx.room.TypeConverters
 data class CommandEntity(
     @ColumnInfo(name = "dex_value")
     val dexValue: String,
-    @ColumnInfo(name = "dec_value")
-    val decValue: Int,
+    @ColumnInfo(name = "octal_value")
+    val octalValue: Int,
     @ColumnInfo(name = "command_section_dex")
     val commandSectionDex: String,
     val category: CommandCategory,
@@ -26,15 +29,31 @@ data class CommandEntity(
     @ColumnInfo(name = "is_chosen")
     val isChosen: Boolean,
     @ColumnInfo(name = "is_custom_command")
-    val isCustomCommand: Boolean
+    val isCustomCommand: Boolean,
+    @ColumnInfo(name = "measurement_unit")
+    val measurementUnit: MeasurementUnit?
 ){
 
-
-    object CommandCategoryTypeConverter{
+    class CommandCategoryTypeConverter {
         @TypeConverter
         fun toType(ordinal: Int) = CommandCategory.values()[ordinal]
+
         @TypeConverter
         fun fromType(type: CommandCategory) = type.ordinal
-
     }
+
+}
+
+fun CommandEntity.toPidCommand(): PidCommand{
+    return PidCommand(
+        dexValue,
+        octalValue,
+        commandSectionDex,
+        category,
+        commandDescEng,
+        commandDescRus,
+        isChosen,
+        isCustomCommand,
+        measurementUnit
+    )
 }

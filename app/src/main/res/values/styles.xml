@@ -22,4 +22,17 @@
     <style name="CircularProgress" parent="Theme.AppCompat.Light">
         <item name="colorAccent">@color/peach</item>
     </style>
+    
+    
+    <style name="DefaultSpeedometerStyle">
+        <item name="backgroundColor">#514B4B</item>
+        <item name="pointerColor">#FB430A</item>
+        <item name="maxSpeed">180</item>
+        <item name="backgroundAlpha">80</item>
+        <item name="scaleColor">#ff0000</item>
+        <item name="scaleAlpha">255</item>
+        <item name="pointerAlpha">255</item>
+        <item name="speedTextColor">#000000</item>
+        <item name="speedTextAlpha">255</item>
+    </style>
 </resources>

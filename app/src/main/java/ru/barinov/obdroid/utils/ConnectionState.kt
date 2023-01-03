@@ -1,4 +1,4 @@
-package ru.barinov.obdroid
+package ru.barinov.obdroid.utils
 
 import android.bluetooth.BluetoothSocket
 import android.net.LinkProperties
@@ -7,7 +7,7 @@ import ru.barinov.obdroid.ui.uiModels.BtConnectionItem
 
 sealed class ConnectionState {
 
-    data class Connected(val network: Network) : ConnectionState()
+    data class WifiConnected(val network: Network) : ConnectionState()
 
     object UnAvailable : ConnectionState()
 
@@ -23,5 +23,6 @@ sealed class ConnectionState {
 
     data class Lost(val network: Network): ConnectionState()
 
+    object OnAddressConfirmed: ConnectionState()
 
 }

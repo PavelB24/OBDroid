@@ -13,7 +13,7 @@
     </fragment>
     <fragment
         android:id="@+id/sensorsFragment"
-        android:name="ru.barinov.obdroid.SensorsFragment"
+        android:name="ru.barinov.obdroid.ui.sensorsFragment.SensorsFragment"
         android:label="SensorsFragment" >
         <action
             android:id="@+id/action_sensorsFragment_to_sensorDetailsFragment"

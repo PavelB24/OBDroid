@@ -2,6 +2,7 @@ package ru.barinov.obdroid.data
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
+import ru.barinov.obdroid.domain.AtCommandEntity
 import ru.barinov.obdroid.domain.CommandEntity
 import ru.barinov.obdroid.domain.TroubleCodeEntity
 
@@ -9,7 +10,8 @@ import ru.barinov.obdroid.domain.TroubleCodeEntity
     version = 1,
     entities = [
         CommandEntity::class,
-        TroubleCodeEntity::class
+        TroubleCodeEntity::class,
+        AtCommandEntity::class
     ]
 )
 abstract class DataBase : RoomDatabase() {

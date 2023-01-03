@@ -1,4 +1,4 @@
-package ru.barinov.obdroid.utils
+package ru.barinov.obdroid.ui.utils
 
 import androidx.recyclerview.widget.DiffUtil
 import ru.barinov.obdroid.ui.uiModels.BtConnectionItem

@@ -51,13 +51,15 @@ class WifiSettingsDialog : DialogFragment() {
                     "You can change address and port later in settings",
                     Toast.LENGTH_SHORT
                 ).show()
+                viewModel.connectWithWiFi()
             }
             dismiss()
         }
         binding.positiveButton.setOnClickListener {
             viewModel.onNewSettings(
                 binding.getawayEt.text.toString(),
-                binding.portEt.text.toString()
+                binding.portEt.text.toString(),
+                viewModel.isConnectedToNetwork()
             )
             dismiss()
         }

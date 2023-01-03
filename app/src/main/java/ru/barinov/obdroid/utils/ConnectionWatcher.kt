@@ -1,10 +1,9 @@
-package ru.barinov.obdroid
+package ru.barinov.obdroid.utils
 
 import android.bluetooth.BluetoothSocket
 import android.net.Network
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import ru.barinov.obdroid.ui.uiModels.BtConnectionItem
 
 class ConnectionWatcher {
 
@@ -13,20 +12,20 @@ class ConnectionWatcher {
 
     val connectionState: StateFlow<ConnectionState> = _connectionState
 
-    var currWifiConnectionSsid: String? = null
+    var lastWifiConnectionSsid: String? = null
         private set
-    var currWifiConnectionBssid: String? = null
+    var lastWifiConnectionBssid: String? = null
         private set
 
 
-    fun onChangeNetworkState(state: ConnectionState) {
+    fun onChangeState(state: ConnectionState) {
         _connectionState.value = state
     }
 
     fun getCurrentWfConnection(): Network? {
         return when (connectionState.value) {
-            is ConnectionState.Connected -> {
-                (connectionState.value as ConnectionState.Connected).network
+            is ConnectionState.WifiConnected -> {
+                (connectionState.value as ConnectionState.WifiConnected).network
             }
             is ConnectionState.LinkPropertiesChanged -> {
                 (connectionState.value as ConnectionState.LinkPropertiesChanged).network
@@ -48,8 +47,8 @@ class ConnectionWatcher {
     }
 
     fun setCurrentSignatures(bssid: String, ssid: String){
-        currWifiConnectionBssid = bssid
-        currWifiConnectionSsid = ssid
+        lastWifiConnectionBssid = bssid
+        lastWifiConnectionSsid = ssid
     }
 
 

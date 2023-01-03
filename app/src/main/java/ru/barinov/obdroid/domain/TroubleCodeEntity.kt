@@ -6,7 +6,7 @@ import androidx.room.TypeConverter
 import androidx.room.TypeConverters
 
 @Entity(tableName = "trouble_codes")
-@TypeConverters()
+@TypeConverters(TroubleCodeEntity.TroubleCodeTypeConverter::class)
 data class TroubleCodeEntity(
     @PrimaryKey
     val code: String,

@@ -1,0 +1,33 @@
+package ru.barinov.obdroid.domain
+
+enum class MeasurementUnit {
+    PRESSURE,
+    ANGLE,
+    GRAM_SEC,
+    PERCENT,
+    VOLTAGE_FUEL_TRIM,
+    SEC,
+    COUNT,
+    VOLT,
+    KILOMETRE_HOUR,
+    KILOMETRE,
+    ROUND,
+    LITRE_HOUR,
+    LITRE_MIN,
+    LITRE_SEC,
+    MA,
+    RATIO,
+    TIME_MILL,
+    TIME_SEC,
+    TIME_MIN,
+    CELSIUS,
+    STATE,
+    MINUTE,
+    RATIO_V_MA_PRESSURE,
+    NM,
+    MG_TO_CYLINDER,
+    CUSTOM,
+    VIN,
+    ID,
+    NAME
+}

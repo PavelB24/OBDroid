@@ -135,7 +135,9 @@ class ConnectionsFragment : Fragment() {
                     is ConnectedEventType.WifiConnected -> {
                         event.apply {
                             displayConnection(item)
-                            findNavController().navigate(R.id.action_connectionsFragment_to_wifiSettingsDialog)
+                            findNavController().navigate(
+                                R.id.action_connectionsFragment_to_wifiSettingsDialog
+                            )
                         }
                     }
                 }
@@ -179,8 +181,7 @@ class ConnectionsFragment : Fragment() {
         binding.connectionsRv.visibility = View.VISIBLE
         binding.progressBar.visibility = View.GONE
         viewModel.apply {
-            handleBtDevice(device)
-            connectBounded(device)
+            handleBtDevice(device, true)
         }
     }
 
@@ -188,7 +189,9 @@ class ConnectionsFragment : Fragment() {
         binding.connectionsRv.visibility = View.VISIBLE
         binding.progressBar.visibility = View.GONE
         viewModel.handleBtDevice(device)
-        Snackbar.make(requireView(), "Bound Failed", Snackbar.LENGTH_SHORT).show()
+        Snackbar.make(requireView(), "Bound Failed", Snackbar.LENGTH_SHORT)
+            .setAnchorView(binding.progressBar).show()
+
     }
 
     private fun showProgress() {

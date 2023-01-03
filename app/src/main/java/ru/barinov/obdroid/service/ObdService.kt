@@ -15,8 +15,9 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import ru.barinov.obdroid.R
-import ru.barinov.obdroid.ConnectionWatcher
+import ru.barinov.obdroid.utils.ConnectionWatcher
 import ru.barinov.obdroid.ui.utils.ServiceCommander
+import ru.barinov.obdroid.utils.ConnectionState
 
 class ObdService : Service() {
 
@@ -39,7 +40,16 @@ class ObdService : Service() {
 
     private fun subscribeOnConnection() {
         serviceScope.launch {
-            connectionWatcher.connectionState.onEach {  }.collect()
+            connectionWatcher.connectionState.onEach {
+                when(it){
+                    is ConnectionState.WifiConnected -> {}
+                    is ConnectionState.ConnectedToBt -> {}
+                    is ConnectionState.LinkPropertiesChanged -> {}
+                    is ConnectionState.Lost -> {}
+                    ConnectionState.OnAddressConfirmed -> {}
+                    ConnectionState.UnAvailable -> {}
+                }
+            }.collect()
         }
     }
 

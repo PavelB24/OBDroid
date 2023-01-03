@@ -2,19 +2,16 @@ package ru.barinov.obdroid.data
 
 import android.content.Context
 import android.content.res.AssetManager.ACCESS_STREAMING
+import android.renderscript.RenderScript
+import android.util.Log
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.CommandsRepository
 import kotlinx.coroutines.coroutineScope
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import ru.barinov.obdroid.BuildConfig
-import ru.barinov.obdroid.domain.CommandCategory
-import ru.barinov.obdroid.domain.CommandEntity
-import ru.barinov.obdroid.domain.TroubleCodeEntity
-import ru.barinov.obdroid.domain.TroubleCodeType
+import ru.barinov.obdroid.domain.*
 import java.security.KeyStore
-import java.util.*
 import javax.crypto.Cipher
 import javax.crypto.spec.SecretKeySpec
 
@@ -27,7 +24,7 @@ class DbWorker(
         private const val ALGORITHM = "AES"
         private const val COMMANDS_ASSET_NAME = "commands"
         private const val TROUBLES_ASSET_NAME = "trouble_codes"
-        private const val EXTRA_ASSET_NAME = "extra"
+        private const val EXTRA_ASSET_NAME = "commands_ext"
     }
 
     private val commandsRepo: CommandsRepository by inject()
@@ -48,13 +45,13 @@ class DbWorker(
             }
             Result.failure()
         }
-
     }
 
     private suspend fun loadTroubleCodes(cipher: Cipher) {
         val encryptedArray = context.assets.open(TROUBLES_ASSET_NAME, ACCESS_STREAMING).readBytes()
         val decrypted = cipher.doFinal(encryptedArray)
         val reader = decrypted.inputStream().bufferedReader()
+        val buffer = mutableListOf<TroubleCodeEntity>()
         while (reader.ready()) {
             val lineContents = reader.readLine().split("//")
             val translate = if (lineContents.size == 3) lineContents.last() else null
@@ -71,7 +68,7 @@ class DbWorker(
                     take(2) == "P1" -> TroubleCodeType.GM
                     else -> TroubleCodeType.COMMON
                 }
-                troublesRepo.insertCode(
+                buffer.add(
                     TroubleCodeEntity(
                         lineContents[0],
                         lineContents[1],
@@ -81,20 +78,22 @@ class DbWorker(
                 )
             }
         }
-
+        troublesRepo.populateWithTroubles(buffer)
     }
+
 
     private suspend fun loadOtherCommands(cipher: Cipher) {
         val encryptedArray = context.assets.open(EXTRA_ASSET_NAME, ACCESS_STREAMING).readBytes()
         val decrypted = cipher.doFinal(encryptedArray)
         val reader = decrypted.inputStream().bufferedReader()
+        val buffer = mutableListOf<CommandEntity>()
         while (reader.ready()) {
             val lineContents = reader.readLine().split("//")
-            val translate = if (lineContents.size == 5) lineContents.last() else null
+            val translate = if (lineContents.size == 5) lineContents[3] else null
             val category: CommandCategory =
                 if (lineContents[3].contains("supported", true))
                     CommandCategory.SUPPORTED_PIDS else CommandCategory.VEHICLE_INFO
-            commandsRepo.insertCommand(
+            buffer.add(
                 CommandEntity(
                     lineContents[1],
                     Integer.valueOf(lineContents[2]),
@@ -103,28 +102,61 @@ class DbWorker(
                     lineContents[3],
                     translate,
                     isChosen = false,
-                    isCustomCommand = false
+                    isCustomCommand = false,
+                    getMeasurementUnit(lineContents)
                 )
             )
         }
+        commandsRepo.populateWithCommands(buffer)
+    }
+
+    private fun getMeasurementUnit(lineContents: List<String>): MeasurementUnit? {
+        return if (lineContents.size == 5) {
+            when (lineContents[4]) {
+                "c" -> MeasurementUnit.CUSTOM
+                "p" -> MeasurementUnit.PERCENT
+                "t" -> MeasurementUnit.CELSIUS
+                "kpa" -> MeasurementUnit.PRESSURE
+                "rpm" -> MeasurementUnit.ROUND
+                "kmh" -> MeasurementUnit.KILOMETRE_HOUR
+                "ang" -> MeasurementUnit.ANGLE
+                "gs" -> MeasurementUnit.GRAM_SEC
+                "vc" -> MeasurementUnit.VOLTAGE_FUEL_TRIM
+                "sec" -> MeasurementUnit.SEC
+                "km" -> MeasurementUnit.KILOMETRE
+                "v" -> MeasurementUnit.VOLT
+                "co" -> MeasurementUnit.COUNT
+                "ma" -> MeasurementUnit.MA
+                "rat" -> MeasurementUnit.RATIO
+                "min" -> MeasurementUnit.MINUTE
+                "rvmakpa" -> MeasurementUnit.RATIO_V_MA_PRESSURE
+                "lh" -> MeasurementUnit.LITRE_HOUR
+                "nm" -> MeasurementUnit.NM
+                "mgc" -> MeasurementUnit.MG_TO_CYLINDER
+                "vin" -> MeasurementUnit.VIN
+                "n" -> MeasurementUnit.NAME
+                else -> null
+            }
+        } else null
     }
 
     private suspend fun loadMainCommands(cipher: Cipher) {
         val encryptedArray = context.assets.open(COMMANDS_ASSET_NAME, ACCESS_STREAMING).readBytes()
         val decrypted = cipher.doFinal(encryptedArray)
         val reader = decrypted.inputStream().bufferedReader()
+        val buffer = mutableListOf<CommandEntity>()
         while (reader.ready()) {
             val lineContents = reader.readLine().split("//")
-            val translate = if (lineContents.size == 4) lineContents.last() else null
+            val translate = if (lineContents.size == 5) lineContents[3] else null
             lineContents[2].apply {
                 val category: CommandCategory = when {
                     contains("diesel", true) -> CommandCategory.DIESEL
                     contains("hybrid", true) -> CommandCategory.HYBRID
-                    contains("Oxygen", true) -> CommandCategory.OXYGEN_SENSOR
+                    contains("oxygen", true) -> CommandCategory.OXYGEN_SENSOR
                     contains("PIDs supported") -> CommandCategory.SUPPORTED_PIDS
                     else -> CommandCategory.COMMON
                 }
-                commandsRepo.insertCommand(
+                buffer.add(
                     CommandEntity(
                         lineContents[0],
                         Integer.valueOf(lineContents[1]),
@@ -133,11 +165,13 @@ class DbWorker(
                         lineContents[2],
                         translate,
                         isChosen = false,
-                        isCustomCommand = false
+                        isCustomCommand = false,
+                        getMeasurementUnit(lineContents)
                     )
                 )
             }
         }
+        commandsRepo.populateWithCommands(buffer)
     }
 
     private fun initCipher(): Cipher {

@@ -3,8 +3,8 @@ package ru.barinov.obdroid.ui.connectionsFragment
 import android.net.ConnectivityManager.NetworkCallback
 import android.net.LinkProperties
 import android.net.Network
-import ru.barinov.obdroid.ConnectionState
-import ru.barinov.obdroid.ConnectionWatcher
+import ru.barinov.obdroid.utils.ConnectionState
+import ru.barinov.obdroid.utils.ConnectionWatcher
 
 class WifiConnectionCallBack(
     private val connectionWatcher : ConnectionWatcher,
@@ -14,17 +14,17 @@ class WifiConnectionCallBack(
     override fun onAvailable(network: Network) {
         super.onAvailable(network)
         onConnection.invoke(network)
-        connectionWatcher.onChangeNetworkState(ConnectionState.Connected(network))
+        connectionWatcher.onChangeState(ConnectionState.WifiConnected(network))
     }
 
     override fun onUnavailable() {
         super.onUnavailable()
-        connectionWatcher.onChangeNetworkState(ConnectionState.UnAvailable)
+        connectionWatcher.onChangeState(ConnectionState.UnAvailable)
     }
 
     override fun onLinkPropertiesChanged(network: Network, linkProperties: LinkProperties) {
         super.onLinkPropertiesChanged(network, linkProperties)
-        connectionWatcher.onChangeNetworkState(
+        connectionWatcher.onChangeState(
             ConnectionState.LinkPropertiesChanged(
                 network,
                 linkProperties
@@ -34,6 +34,6 @@ class WifiConnectionCallBack(
 
     override fun onLost(network: Network) {
         super.onLost(network)
-        connectionWatcher.onChangeNetworkState(ConnectionState.Lost(network))
+        connectionWatcher.onChangeState(ConnectionState.Lost(network))
     }
 }
