@@ -95,7 +95,7 @@ val mainModule = module {
     }
 
     viewModel {
-        SensorsViewModel(get())
+        SensorsViewModel(get(), get())
     }
 
     viewModel {

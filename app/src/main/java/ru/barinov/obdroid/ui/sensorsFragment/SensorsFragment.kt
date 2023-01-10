@@ -4,14 +4,19 @@ import android.os.Bundle
 import android.util.Log
 import android.view.*
 import androidx.core.view.MenuProvider
+import androidx.core.view.get
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import ru.barinov.obdroid.HomeFragment
+import ru.barinov.obdroid.R
 import ru.barinov.obdroid.base.Command
 import ru.barinov.obdroid.databinding.SensorsFragmentBinding
 import ru.barinov.obdroid.domain.CommandActions
+import ru.barinov.obdroid.domain.CommandCategory
 import ru.barinov.obdroid.ui.utils.SensorsAdapter
 
 class SensorsFragment : Fragment() {
@@ -29,22 +34,19 @@ class SensorsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = SensorsFragmentBinding.inflate(inflater, container, false)
-        Log.d("@@@", "Sens")
+        lifecycleScope.launchWhenStarted {
+            (parentFragment?.parentFragment as HomeFragment).getToolbar().addMenuProvider(
+                SensorsFragmentMenuProvider(viewModel),
+                viewLifecycleOwner,
+                Lifecycle.State.RESUMED
+            )
+        }
         return binding.root
     }
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        requireActivity().addMenuProvider(object: MenuProvider{
-            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-
-            }
-
-            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-               return true
-            }
-        }, viewLifecycleOwner)
         initViews()
         subscribe()
     }
@@ -52,7 +54,6 @@ class SensorsFragment : Fragment() {
     private fun subscribe() {
         lifecycleScope.launchWhenStarted {
             viewModel.commandsFlow.collectLatest {
-                Log.d("@@@", it.size.toString())
                 adapter.updateList(it)
             }
         }
@@ -64,9 +65,11 @@ class SensorsFragment : Fragment() {
     }
 
     private fun getActions(): CommandActions {
-        return object: CommandActions{
-            override fun onLongClick(item: Command) {
-                popUpHandler.buildPopUp(item)
+        return object : CommandActions {
+            override fun onLongClick(item: Command, itemView: View) {
+                popUpHandler.buildPopUp(item, itemView){isFav, section, command ->
+                    viewModel.handleFav(isFav, section, command)
+                }
             }
 
             override fun onClick(item: Command) {

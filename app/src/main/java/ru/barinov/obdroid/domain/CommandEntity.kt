@@ -12,26 +12,29 @@ import ru.barinov.obdroid.ui.uiModels.PidCommand
 )
 @Entity(
     tableName = "pid_commands",
-    primaryKeys = ["dex_value", "command_section_dex"]
+    primaryKeys = ["hex_value", "command_section_hex"]
 )
 data class CommandEntity(
-    @ColumnInfo(name = "dex_value")
-    val dexValue: String,
+    @ColumnInfo(name = "hex_value")
+    val hexValue: String,
     @ColumnInfo(name = "octal_value")
     val octalValue: Int,
-    @ColumnInfo(name = "command_section_dex")
-    val commandSectionDex: String,
+    @ColumnInfo(name = "command_section_hex")
+    val commandSectionHex: String,
     val category: CommandCategory,
     @ColumnInfo(name = "command_desc_eng")
     val commandDescEng: String,
     @ColumnInfo(name = "command_desc_rus")
     val commandDescRus: String?,
-    @ColumnInfo(name = "is_chosen")
-    val isChosen: Boolean,
+    @ColumnInfo(name = "is_fav")
+    val isFav: Boolean,
     @ColumnInfo(name = "is_custom_command")
     val isCustomCommand: Boolean,
     @ColumnInfo(name = "measurement_unit")
-    val measurementUnit: MeasurementUnit?
+    val measurementUnit: MeasurementUnit?,
+    val available: Boolean,
+    @ColumnInfo(name = "is_dynamic")
+    val isDynamic: Boolean
 ){
 
     class CommandCategoryTypeConverter {
@@ -46,13 +49,13 @@ data class CommandEntity(
 
 fun CommandEntity.toPidCommand(): PidCommand{
     return PidCommand(
-        dexValue,
+        hexValue,
         octalValue,
-        commandSectionDex,
+        commandSectionHex,
         category,
         commandDescEng,
         commandDescRus,
-        isChosen,
+        isFav,
         isCustomCommand,
         measurementUnit
     )

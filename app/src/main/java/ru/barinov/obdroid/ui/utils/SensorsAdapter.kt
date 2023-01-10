@@ -8,7 +8,6 @@ import ru.barinov.obdroid.base.Command
 import ru.barinov.obdroid.databinding.CommandItemLayoutBinding
 import ru.barinov.obdroid.domain.CommandActions
 import ru.barinov.obdroid.ui.sensorsFragment.CommandsDiffUtil
-import ru.barinov.obdroid.utils.CommandViewHolder
 
 class SensorsAdapter : RecyclerView.Adapter<CommandViewHolder>() {
 
@@ -29,7 +28,7 @@ class SensorsAdapter : RecyclerView.Adapter<CommandViewHolder>() {
         holder.onBind(item)
         holder.itemView.apply {
             setOnLongClickListener {
-                action?.onLongClick(item)
+                action?.onLongClick(item, holder.itemView)
                 true
             }
             setOnClickListener {

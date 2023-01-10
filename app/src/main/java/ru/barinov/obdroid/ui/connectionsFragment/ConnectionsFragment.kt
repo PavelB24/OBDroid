@@ -8,6 +8,7 @@ import android.content.IntentFilter
 import android.net.wifi.WifiManager
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.core.content.res.ResourcesCompat
@@ -61,6 +62,7 @@ class ConnectionsFragment : Fragment() {
             connectionsToolbar.setupWithNavController(findNavController())
             connectionsToolbar.title = ""
         }
+
         requireActivity().addMenuProvider(object : MenuProvider {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
                 menuInflater.inflate(R.menu.connecions_toolbar_menu, menu)

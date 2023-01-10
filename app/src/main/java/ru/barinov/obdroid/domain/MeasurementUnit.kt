@@ -1,6 +1,7 @@
 package ru.barinov.obdroid.domain
 
 enum class MeasurementUnit {
+    UNDEFINED,
     PRESSURE,
     ANGLE,
     GRAM_SEC,

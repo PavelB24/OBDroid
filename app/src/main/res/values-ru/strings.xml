@@ -38,5 +38,23 @@
     </string>
     <string name="connect_to_network">Подсоединиться к Сети</string>
     <string name="cancel">Отмена</string>
+    <string name="all_cat">Все</string>
+    <string name="common_cat">Общее</string>
+    <string name="diesel_cat">Дизель</string>
+    <string name="electric_cat">Электрика</string>
+    <string name="oxygen_sensors_cat">Кислородные Датчики</string>
+    <string name="vehicle_info_cat">информация об Автомобие</string>
+    <string name="favorites_commands_toolbar_title">Избранное</string>
+    <string name="categories">Категории</string>
+    <string name="temperature">Температура</string>
+    <string name="fuel_injection">Впрыск Топлива</string>
+    <string name="air_flow">Воздух</string>
+    <string name="throttle">Дроссель</string>
+    <string name="turbo">Турбина</string>
+    <string name="add_fav">Добавить в Избранное</string>
+    <string name="remove_fav">Удалить из Избранного</string>
+    <string name="show_extended_description">Расширенное Описание</string>
+    <string name="no_troubles_detected">Ошибок не Обнаружено</string>
+    <string name="clear_troubles">Очистить Ошибки</string>
     />
 </resources>

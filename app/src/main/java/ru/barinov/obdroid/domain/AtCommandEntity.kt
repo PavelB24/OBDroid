@@ -5,8 +5,11 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
 
+@TypeConverters(
+    CommandEntity.CommandCategoryTypeConverter::class,
+    MeasurementUnitTypeConverter::class
+)
 @Entity(tableName = "at_commands")
-@TypeConverters(MeasurementUnitTypeConverter::class)
 data class AtCommandEntity(
     @PrimaryKey
     val command: String,
@@ -19,5 +22,6 @@ data class AtCommandEntity(
     @ColumnInfo(name = "accessibility")
     val accessAbleForUser: Boolean,
     @ColumnInfo(name = "is_favorite")
-    val isFavorite: Boolean
+    val isFavorite: Boolean,
+    val category: CommandCategory
 )

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/cat_toolbar_button"
+        android:title="@string/categories"
+        app:showAsAction="collapseActionView">
+
+
+        <menu>
+            <group
+                android:id="@+id/sort_buttons_group"
+                android:checkableBehavior="single">
+                <item
+                    android:id="@+id/cat_all"
+                    android:title="@string/all_cat"
+                    app:showAsAction="collapseActionView" />
+
+
+                <item
+                    android:id="@+id/cat_diesel"
+                    android:checked="true"
+                    android:title="@string/diesel_cat"
+                    app:showAsAction="collapseActionView" />
+
+                <item
+                    android:id="@+id/cat_turbo"
+                    android:checked="true"
+                    android:title="@string/turbo"
+                    app:showAsAction="collapseActionView" />
+
+                <item
+                    android:id="@+id/cat_electric"
+                    android:title="@string/electric_cat"
+                    app:showAsAction="collapseActionView" />
+
+                <item
+                    android:id="@+id/cat_throttle"
+                    android:title="@string/throttle"
+                    app:showAsAction="collapseActionView" />
+
+                <item
+                    android:id="@+id/cat_air"
+                    android:title="@string/air_flow"
+                    app:showAsAction="collapseActionView" />
+
+                <item
+                    android:id="@+id/cat_fuel_injection"
+                    android:title="@string/fuel_injection"
+                    app:showAsAction="collapseActionView" />
+
+                <item
+                    android:id="@+id/cat_temperature"
+                    android:title="@string/temperature"
+                    app:showAsAction="collapseActionView" />
+
+                <item
+                    android:id="@+id/cat_oxygen"
+                    android:title="@string/oxygen_sensors_cat"
+                    app:showAsAction="collapseActionView" />
+                <item
+                    android:id="@+id/cat_info"
+                    android:title="@string/vehicle_info_cat"
+                    app:showAsAction="collapseActionView" />
+
+            </group>
+
+        </menu>
+
+    </item>
+
+    <item
+        android:id="@+id/fav_toolbar_button"
+        android:title="@string/favorites_commands_toolbar_title"
+        android:checkable="true"
+        app:showAsAction="collapseActionView"/>
+
+</menu>

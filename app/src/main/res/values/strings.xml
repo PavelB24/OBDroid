@@ -38,5 +38,23 @@
     <string name="cancel">Cancel</string>
     <string name="port_hint" translatable="false">9999</string>
     <string name="getaway_hint" translatable="false">192.00.00.00</string>
+    <string name="all_cat">All</string>
+    <string name="common_cat">Common</string>
+    <string name="diesel_cat">Diesel</string>
+    <string name="electric_cat">Electrical</string>
+    <string name="oxygen_sensors_cat">Oxygen Sensors</string>
+    <string name="vehicle_info_cat">Vehicle Info</string>
+    <string name="favorites_commands_toolbar_title">Favorites</string>
+    <string name="categories">Categories</string>
+    <string name="temperature">Temperature</string>
+    <string name="fuel_injection">Fuel Injection</string>
+    <string name="air_flow">Air Flow</string>
+    <string name="throttle">Throttle</string>
+    <string name="turbo">Turbo Charger</string>
+    <string name="add_fav">Add to Favorites</string>
+    <string name="remove_fav">Remove From Favorites</string>
+    <string name="show_extended_description">Extended Description</string>
+    <string name="no_troubles_detected">No Troubles Detected</string>
+    <string name="clear_troubles">Clear Troubles</string>
     />
 </resources>

@@ -13,6 +13,8 @@ class Preferences(sharedPreferences: SharedPreferences) {
         const val WIFI_PORT = "wfPort"
         const val SUPPORTED_FLAG = "onlySupported"
         const val WARM_STARTS = "useWarmStarts"
+        const val COMMANDS_SORT = "commandsSort"
+        const val SHOW_ONLY_FAVS_COMMANDS = "favsCommands"
     }
 
     var version by sharedPreferences.string(VERSION, BuildConfig.VERSION_NAME)
@@ -23,4 +25,6 @@ class Preferences(sharedPreferences: SharedPreferences) {
     var wifiAddress by sharedPreferences.string(WIFI_PORT, null)
     var showOnlySupported by sharedPreferences.boolean(SUPPORTED_FLAG, false)
     var useWarmStarts by sharedPreferences.boolean(WARM_STARTS, false)
+    var commandsSort by sharedPreferences.int(COMMANDS_SORT, 0)
+    var showFavs by sharedPreferences.boolean(SHOW_ONLY_FAVS_COMMANDS, false)
 }

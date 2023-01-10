@@ -5,11 +5,13 @@ import android.util.Log
 import android.view.*
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import ru.barinov.obdroid.ui.activity.MainActivity
 import ru.barinov.obdroid.databinding.HomeLayoutBinding
+import ru.barinov.obdroid.ui.sensorsFragment.SensorsFragment
 
 
 class HomeFragment : Fragment() {
@@ -30,7 +32,14 @@ class HomeFragment : Fragment() {
         val host = view.findViewById<View>(R.id.container2)
         val activity = requireActivity() as MainActivity
         binding.mainBottomNav.setupWithNavController(Navigation.findNavController(host))
-        binding.toolbar.setupWithNavController(Navigation.findNavController(host), activity.getDrawer())
+        lifecycleScope.launchWhenStarted {
+            binding.toolbar.setupWithNavController(
+                Navigation.findNavController(host),
+                activity.getDrawer()
+            )
+        }
     }
+
+    fun getToolbar() = binding.toolbar
 
 }

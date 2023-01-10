@@ -2,8 +2,6 @@ package ru.barinov.obdroid.data
 
 import android.content.Context
 import android.content.res.AssetManager.ACCESS_STREAMING
-import android.renderscript.RenderScript
-import android.util.Log
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import kotlinx.coroutines.coroutineScope
@@ -89,10 +87,9 @@ class DbWorker(
         val buffer = mutableListOf<CommandEntity>()
         while (reader.ready()) {
             val lineContents = reader.readLine().split("//")
-            val translate = if (lineContents.size == 5) lineContents[3] else null
+            val translate = if (lineContents.size == 8) lineContents[6] else null
             val category: CommandCategory =
-                if (lineContents[3].contains("supported", true))
-                    CommandCategory.SUPPORTED_PIDS else CommandCategory.VEHICLE_INFO
+                CommandCategory.values()[Integer.valueOf(lineContents[1])]
             buffer.add(
                 CommandEntity(
                     lineContents[1],
@@ -101,18 +98,20 @@ class DbWorker(
                     category,
                     lineContents[3],
                     translate,
-                    isChosen = false,
+                    isFav = false,
                     isCustomCommand = false,
-                    getMeasurementUnit(lineContents)
-                )
+                    getMeasurementUnit(lineContents, 1),
+                    available = false,
+                    lineContents[0] == "1"
+                    )
             )
         }
         commandsRepo.populateWithCommands(buffer)
     }
 
-    private fun getMeasurementUnit(lineContents: List<String>): MeasurementUnit? {
-        return if (lineContents.size == 5) {
-            when (lineContents[4]) {
+    private fun getMeasurementUnit(lineContents: List<String>, padding: Int = 0): MeasurementUnit? {
+        return if (lineContents.size == 7 + padding) {
+            when (lineContents[6 + padding]) {
                 "c" -> MeasurementUnit.CUSTOM
                 "p" -> MeasurementUnit.PERCENT
                 "t" -> MeasurementUnit.CELSIUS
@@ -147,29 +146,24 @@ class DbWorker(
         val buffer = mutableListOf<CommandEntity>()
         while (reader.ready()) {
             val lineContents = reader.readLine().split("//")
-            val translate = if (lineContents.size == 5) lineContents[3] else null
-            lineContents[2].apply {
-                val category: CommandCategory = when {
-                    contains("diesel", true) -> CommandCategory.DIESEL
-                    contains("hybrid", true) -> CommandCategory.HYBRID
-                    contains("oxygen", true) -> CommandCategory.OXYGEN_SENSOR
-                    contains("PIDs supported") -> CommandCategory.SUPPORTED_PIDS
-                    else -> CommandCategory.COMMON
-                }
-                buffer.add(
-                    CommandEntity(
-                        lineContents[0],
-                        Integer.valueOf(lineContents[1]),
-                        "01",
-                        category,
-                        lineContents[2],
-                        translate,
-                        isChosen = false,
-                        isCustomCommand = false,
-                        getMeasurementUnit(lineContents)
+            val translate = if (lineContents.size == 7) lineContents[5] else null
+            val category: CommandCategory =
+                CommandCategory.values()[Integer.valueOf(lineContents[1])]
+            buffer.add(
+                CommandEntity(
+                    lineContents[2],
+                    Integer.valueOf(lineContents[3]),
+                    "01",
+                    category,
+                    lineContents[4],
+                    translate,
+                    isFav = false,
+                    isCustomCommand = false,
+                    getMeasurementUnit(lineContents),
+                    available = false,
+                    lineContents[0] == "1"
                     )
-                )
-            }
+            )
         }
         commandsRepo.populateWithCommands(buffer)
     }

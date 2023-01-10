@@ -13,6 +13,15 @@ class CommandsRepository(
 
     fun getAllCommands() = dao.getAllCommands()
 
-    fun getCommandsByCategory(category: CommandCategory) = dao.getCommandsByCategory(category.ordinal)
+    fun getCommandsByCategory(category: CommandCategory) =
+        dao.getCommandsByCategory(category.ordinal)
+
+    fun getOnlyFavs() = dao.getOnlyFavs()
+
+    fun getCommandsByCategoryOnlyFavs(category: CommandCategory) =
+        dao.getCommandsByCategoryOnlyFavs(category.ordinal)
+
+    suspend fun handleFav(isFav: Boolean, section: String, command: String) =
+        dao.handleFav(isFav, section, command)
 
 }
