@@ -1,6 +1,7 @@
 package ru.barinov.obdroid
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -28,42 +29,41 @@ class WifiSettingsDialog : DialogFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // Do not create a new Fragment when the Activity is re-created such as orientation changes.
-        retainInstance = true
         setStyle(STYLE_NORMAL, R.style.DialogTheme)
     }
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        if (viewModel.isConnectedToNetwork()) {
-            binding.getawayEt.isEnabled = false
-        }
-        val textWatcher =
-            AddressTextWatcher(binding.portEt, binding.getawayEt, binding.positiveButton)
-        binding.getawayEt.setText(viewModel.getGetaway())
-        binding.portEt.setText(viewModel.getPort())
-        binding.portEt.addTextChangedListener(textWatcher)
-        binding.getawayEt.addTextChangedListener(textWatcher)
-        binding.negativeButton.setOnClickListener {
+        binding.apply {
             if (viewModel.isConnectedToNetwork()) {
-                Toast.makeText(
-                    requireContext(),
-                    "You can change address and port later in settings",
-                    Toast.LENGTH_SHORT
-                ).show()
-                viewModel.connectWithWiFi()
+                getawayEt.isEnabled = false
             }
-            dismiss()
-        }
-        binding.positiveButton.setOnClickListener {
-            viewModel.onNewSettings(
-                binding.getawayEt.text.toString(),
-                binding.portEt.text.toString(),
-                viewModel.isConnectedToNetwork()
-            )
-            dismiss()
+            val textWatcher =
+                AddressTextWatcher(portEt, getawayEt, positiveButton)
+            getawayEt.setText(viewModel.getGetaway())
+            portEt.setText(viewModel.getPort())
+            portEt.addTextChangedListener(textWatcher)
+            getawayEt.addTextChangedListener(textWatcher)
+            negativeButton.setOnClickListener {
+                if (viewModel.isConnectedToNetwork()) {
+//                Toast.makeText(
+//                    requireContext(),
+//                    "You can change address and port later in settings",
+//                    Toast.LENGTH_SHORT
+//                ).show()
+                    viewModel.connectWithWiFi()
+                }
+                dismiss()
+            }
+            positiveButton.setOnClickListener {
+                viewModel.onNewSettings(
+                    getawayEt.text.toString(),
+                    portEt.text.toString(),
+                    viewModel.isConnectedToNetwork()
+                )
+                dismiss()
+            }
         }
     }
-
-
 }

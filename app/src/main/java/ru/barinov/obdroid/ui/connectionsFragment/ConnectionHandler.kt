@@ -13,19 +13,21 @@ import android.view.View
 import android.widget.PopupMenu
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 import ru.barinov.obdroid.ConnectedEventType
 import ru.barinov.obdroid.R
 import ru.barinov.obdroid.utils.ConnectionWatcher
 import ru.barinov.obdroid.base.ConnectionItem
+import ru.barinov.obdroid.preferences.Preferences
 import ru.barinov.obdroid.ui.uiModels.BtConnectionItem
 import ru.barinov.obdroid.ui.uiModels.WifiConnectionItem
+import ru.barinov.obdroid.utils.ConnectionState
 
-class ConnectionActionHandler(
+class ConnectionHandler(
     private val context: Context,
-    private val connectionWatcher : ConnectionWatcher
+    private val connectionWatcher : ConnectionWatcher,
+    private val preferences: Preferences
 ) : ConnectionsAdapter.ConnectionClickListener {
 
 
@@ -33,6 +35,11 @@ class ConnectionActionHandler(
         0,
         10
     )
+
+
+    fun getCurrentBtConnection() = connectionWatcher.getCurrentBtDevice()
+
+    fun getCurrentWifiConnection() = connectionWatcher.getCurrentWfConnection()
 
 
     override fun onItemClick(item: ConnectionItem, itemView: View) {
@@ -67,7 +74,7 @@ class ConnectionActionHandler(
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                                 val builder = WifiNetworkSpecifier.Builder()
                                     .setBssid(MacAddress.fromString(item.bssid))
-                                if (!item.ssid.isNullOrEmpty()) {
+                                if (item.ssid.isNotEmpty()) {
                                     builder.setSsid(item.ssid)
                                 }
                                 val networkRequest = NetworkRequest.Builder()
@@ -76,10 +83,16 @@ class ConnectionActionHandler(
                                     .build()
                                 cm.requestNetwork(
                                     networkRequest,
-                                    WifiConnectionCallBack(connectionWatcher) { network ->
+                                    WifiConnectionCallBack(connectionWatcher, item.bssid) { network ->
                                         val result = cm.bindProcessToNetwork(network)
                                         if (result) {
-//                                          cm.getLinkProperties(network)?.routes?.last()?.gateway?.hostAddress
+                                            cm.getLinkProperties(network)
+                                                ?.routes
+                                                ?.last()
+                                                ?.gateway
+                                                ?.hostAddress?.let {
+                                                    preferences.wifiAddress = it
+                                                }
                                             connectionWatcher.setCurrentSignatures(item.bssid,
                                                 item.ssid
                                             )
@@ -105,18 +118,26 @@ class ConnectionActionHandler(
     }
 
     fun connectBt(item: BtConnectionItem) {
-        val socket = item.actions.connect()
-        onConnection(
-            if (socket != null)
-                ConnectedEventType.BluetoothConnected(
-                    item
-                )
-            else ConnectedEventType.Fail
-        )
+        try {
+            val socket = item.actions.connect()
+            onConnection(
+                if (socket != null)
+                    ConnectedEventType.BluetoothConnecting(
+                        item.toItemWithExtractedSocket()
+                    )
+                else ConnectedEventType.Fail
+            )
+            connectionWatcher.onChangeState(ConnectionState.BtSocketObtained(item.address, socket))
+        } catch (e: Exception){
+            e.printStackTrace()
+            onConnection(
+                ConnectedEventType.Fail
+            )
+        }
     }
 
     private fun onConnection(event: ConnectedEventType) {
-        CoroutineScope(Job() + Dispatchers.IO).launch {
+        CoroutineScope(Dispatchers.IO).launch {
             onConnectFlow.emit(event)
         }
     }

@@ -20,7 +20,7 @@
 
 
     <style name="CircularProgress" parent="Theme.AppCompat.Light">
-        <item name="colorAccent">@color/peach</item>
+        <item name="colorAccent">@color/blue</item>
     </style>
     
     

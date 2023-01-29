@@ -15,6 +15,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="24dp"
+            app:hintTextColor="@color/hint_color"
             app:boxStrokeColor="@color/dark_green"
             app:layout_constraintEnd_toStartOf="@id/port_field"
             app:layout_constraintStart_toStartOf="parent"
@@ -37,6 +38,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
             android:layout_marginEnd="16dp"
+            app:hintTextColor="@color/hint_color"
             app:boxStrokeColor="@color/dark_green"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent">

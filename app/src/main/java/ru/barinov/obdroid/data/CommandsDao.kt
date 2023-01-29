@@ -6,6 +6,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import kotlinx.coroutines.flow.Flow
+import ru.barinov.obdroid.domain.AtCommandEntity
 import ru.barinov.obdroid.domain.CommandEntity
 
 @Dao
@@ -17,6 +18,10 @@ interface CommandsDao {
     @Transaction
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun populateWithCommands(commands: List<CommandEntity>)
+
+    @Transaction
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun populateWithAtCommands(commands: List<AtCommandEntity>)
 
     @Query("SELECT COUNT(*) FROM pid_commands")
     fun count() : Int

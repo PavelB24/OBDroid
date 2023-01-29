@@ -7,11 +7,11 @@
     <fragment
         android:id="@+id/homeFragment"
         android:name="ru.barinov.obdroid.HomeFragment"
-        android:label="HomeFragment" />
+        android:label="@string/dash_board" />
     <fragment
         android:id="@+id/settingsFragment"
         android:name="ru.barinov.obdroid.ui.settings.SettingsFragment"
-        android:label="SettingsFragment" >
+        android:label="@string/settings">
         <action
             android:id="@+id/action_settingsFragment_to_profilesFragment"
             app:destination="@id/profilesFragment" />
@@ -22,15 +22,19 @@
     <fragment
         android:id="@+id/connectionsFragment"
         android:name="ru.barinov.obdroid.ui.connectionsFragment.ConnectionsFragment"
-        android:label="ConnectionsFragment" >
+        android:label="@string/connections_title">
         <action
             android:id="@+id/action_connectionsFragment_to_wifiSettingsDialog"
-            app:destination="@id/wifiSettingsDialog" />
+            app:destination="@id/wifiSettingsDialog"
+            app:launchSingleTop="false" />
+        <action
+            android:id="@+id/action_connectionsFragment_to_onBtConnectionDialog"
+            app:destination="@id/onBtConnectionDialog" />
     </fragment>
     <fragment
-        android:id="@+id/terminalFragment"
-        android:name="ru.barinov.obdroid.TerminalFragment"
-        android:label="TerminalFragment" />
+        android:id="@+id/shellFragment"
+        android:name="ru.barinov.obdroid.ShellFragment"
+        android:label="@string/shell_title" />
     <fragment
         android:id="@+id/permissionsFragment"
         android:name="ru.barinov.obdroid.ui.startFragment.PermissionsFragment"
@@ -44,10 +48,26 @@
     </fragment>
     <fragment
         android:id="@+id/profilesFragment"
-        android:name="ru.barinov.obdroid.ProfilesFragment"
-        android:label="ProfilesFragment" />
+        android:name="ru.barinov.obdroid.ui.profilesListFragment.ProfilesFragment"
+        android:label="ProfilesFragment" >
+        <action
+            android:id="@+id/action_profilesFragment_to_profileCreationFragment"
+            app:destination="@id/profileCreationFragment" />
+    </fragment>
     <dialog
         android:id="@+id/wifiSettingsDialog"
         android:name="ru.barinov.obdroid.WifiSettingsDialog"
         android:label="WifiSettingsDialog" />
+    <dialog
+        android:id="@+id/profileCreationFragment"
+        android:name="ru.barinov.obdroid.ui.profileCreation.ProfileCreationFragment"
+        android:label="ProfileCreationFragment" />
+    <dialog
+        android:id="@+id/aboutDialogFragment"
+        android:name="ru.barinov.obdroid.ui.AboutDialogFragment"
+        android:label="AboutDialogFragment" />
+    <dialog
+        android:id="@+id/onBtConnectionDialog"
+        android:name="ru.barinov.obdroid.ui.connectionsFragment.bindedDialogs.OnBtConnectionDialog"
+        android:label="OnBtConnectionDialog" />
 </navigation>

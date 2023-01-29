@@ -1,27 +1,20 @@
 package ru.barinov.obdroid.ui.sensorsFragment
 
 import android.os.Bundle
-import android.util.Log
 import android.view.*
-import androidx.core.view.MenuProvider
-import androidx.core.view.get
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.barinov.obdroid.HomeFragment
-import ru.barinov.obdroid.R
 import ru.barinov.obdroid.base.Command
+import ru.barinov.obdroid.base.ItemInteractor
 import ru.barinov.obdroid.databinding.SensorsFragmentBinding
-import ru.barinov.obdroid.domain.CommandActions
-import ru.barinov.obdroid.domain.CommandCategory
 import ru.barinov.obdroid.ui.utils.SensorsAdapter
 
 class SensorsFragment : Fragment() {
 
-    //toolbar
     private lateinit var binding: SensorsFragmentBinding
     private val popUpHandler by lazy { PopUpMenuHandler(requireContext()) }
     private val adapter by lazy { SensorsAdapter() }
@@ -64,10 +57,10 @@ class SensorsFragment : Fragment() {
         binding.sensorsRecycler.adapter = adapter
     }
 
-    private fun getActions(): CommandActions {
-        return object : CommandActions {
-            override fun onLongClick(item: Command, itemView: View) {
-                popUpHandler.buildPopUp(item, itemView){isFav, section, command ->
+    private fun getActions(): ItemInteractor<Command> {
+        return object : ItemInteractor<Command> {
+            override fun onLongClick(item: Command, view: View) {
+                popUpHandler.buildPopUp(item, view){ isFav, section, command ->
                     viewModel.handleFav(isFav, section, command)
                 }
             }

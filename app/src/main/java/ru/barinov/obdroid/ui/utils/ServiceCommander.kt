@@ -10,11 +10,16 @@ class ServiceCommander(private val context : Context) {
     companion object{
         const val SERVICE_COMMAND_KEY = "s_command"
         const val SERVICE_COMMAND_EXIT = "on_exit"
+        const val SERVICE_WIFI_CONFIRMED = "wifi_confirmed"
     }
 
 
      fun startService() {
         sendMessageToService(SERVICE_COMMAND_KEY)
+    }
+
+    fun wifiSettingsConfirmed(){
+        sendMessageToService(SERVICE_WIFI_CONFIRMED)
     }
 
      fun stopService() {

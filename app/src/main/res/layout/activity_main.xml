@@ -18,7 +18,7 @@
             android:layout_height="match_parent"
             android:name="androidx.navigation.fragment.NavHostFragment"
             app:defaultNavHost="true"
-            app:navGraph="@navigation/app_navigation"
+            app:navGraph="@navigation/root_navigation"
             />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

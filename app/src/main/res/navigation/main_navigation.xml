@@ -32,7 +32,7 @@
     </fragment>
     <fragment
         android:id="@+id/sensorDetailsFragment"
-        android:name="ru.barinov.obdroid.SensorDetailsFragment"
+        android:name="ru.barinov.obdroid.ui.diagnosticRoot.DiagnosticRootFragment"
         android:label="SensorDetailsFragment" />
     <dialog
         android:id="@+id/troubleDescriptionDialogFragment"

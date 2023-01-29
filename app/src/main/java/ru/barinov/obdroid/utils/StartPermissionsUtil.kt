@@ -2,6 +2,7 @@ package ru.barinov.obdroid.utils
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.Activity.RESULT_OK
 import android.bluetooth.BluetoothAdapter
 import android.content.Context
 import android.content.Intent
@@ -43,13 +44,13 @@ class StartPermissionsUtil {
         }
         newExternalLauncher = fragment.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             resultFlow.value = PermissionType.FileSystemPermission(
-                result.resultCode == PackageManager.PERMISSION_GRANTED
+                result.resultCode == RESULT_OK
             )
         }
         dozeLauncher =
             fragment.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
                 resultFlow.value = PermissionType.Doze(
-                    result.resultCode == PackageManager.PERMISSION_GRANTED
+                   hasDozeOff(fragment.requireContext())
                 )
             }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
@@ -93,11 +94,12 @@ class StartPermissionsUtil {
 
     @MainThread
     fun requestExternalStoragePermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            val uri = Uri.parse("package:" + BuildConfig.APPLICATION_ID)
-            val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION, uri)
-            newExternalLauncher?.launch(intent)
-        } else externalLauncher?.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+//            val uri = Uri.parse("package:" + BuildConfig.APPLICATION_ID)
+//            val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION, uri)
+//            newExternalLauncher?.launch(intent)
+//        } else
+            externalLauncher?.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
     }
 
 
@@ -142,17 +144,16 @@ class StartPermissionsUtil {
         PermissionsChecker.hasNecessaryPermissions(context)
 
     @MainThread
-    fun hasAllPermissions(context: Context, dozeShown : Boolean) : Boolean =
-        PermissionsChecker.hasAllPermissions(context, dozeShown)
+    fun hasAllPermissions(context: Context) : Boolean =
+        PermissionsChecker.hasAllPermissions(context)
 
 
     @MainThread
     @SuppressLint("BatteryLife")
     fun requestDoze(context: Context) {
-        val pm = context.getSystemService(PowerManager::class.java)
-        if (!pm.isIgnoringBatteryOptimizations(context.packageName)) {
+        if (!PermissionsChecker.hasDozeOff(context)) {
             dozeLauncher?.launch(Intent().apply {
-                action = android.provider.Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
+                action = Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
                 data = Uri.parse("package:${context.packageName}")
             })
         }

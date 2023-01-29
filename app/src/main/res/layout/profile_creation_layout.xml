@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/fragment_common_background">
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_profile_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="48dp"
+            app:hintTextColor="@color/hint_color"
+            app:boxStrokeColor="@color/dark_green"
+            android:hint="@string/profile_name"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_profile_name"
+                android:textCursorDrawable="@drawable/cursor"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_settings"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="48dp"
+            app:hintTextColor="@color/hint_color"
+            app:boxStrokeColor="@color/dark_green"
+            android:hint="@string/settings_chain"
+            app:layout_constraintTop_toBottomOf="@id/til_profile_name">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_settings"
+                android:textCursorDrawable="@drawable/cursor"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_commands"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="48dp"
+            app:boxStrokeColor="@color/dark_green"
+            app:hintTextColor="@color/hint_color"
+            android:hint="@string/commands_chain"
+            app:layout_constraintTop_toBottomOf="@id/til_settings">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_commands"
+                android:textCursorDrawable="@drawable/cursor"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            android:id="@+id/protocols_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:text="@string/obd_protocol_title"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/proto_list"
+            app:layout_constraintTop_toTopOf="@id/proto_list"
+            app:layout_constraintBottom_toBottomOf="@id/proto_list"
+            />
+
+        <Spinner
+            android:id="@+id/proto_list"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginHorizontal="16dp"
+            android:entries="@array/available_profiles"
+            android:textSize="18sp"
+            android:layout_marginTop="26dp"
+            app:layout_constraintTop_toBottomOf="@id/til_commands"
+            app:layout_constraintEnd_toEndOf="@id/til_commands"
+            app:layout_constraintStart_toStartOf="@id/back_button"
+             />
+
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/create_profile"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:backgroundTint="@color/light_blue"
+            android:text="@string/create"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/proto_list" />
+
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/back_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:backgroundTint="@color/light_blue"
+            android:text="@string/back"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/create_profile"
+            app:layout_constraintTop_toBottomOf="@id/proto_list" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</FrameLayout>

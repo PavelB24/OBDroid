@@ -3,10 +3,12 @@ package ru.barinov.obdroid.ui.startFragment
 import android.graphics.drawable.AnimatedVectorDrawable
 import android.os.Build
 import android.os.Bundle
+import android.os.PowerManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
 import android.view.ViewGroup
+import androidx.core.content.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -22,7 +24,6 @@ import ru.barinov.obdroid.utils.StartPermissionsUtil
 class PermissionsFragment : Fragment() {
 
     private lateinit var binding: PermissionsFragmentBinding
-    private val prefs by inject<Preferences>()
     private val permissionsUtil by lazy { StartPermissionsUtil() }
 
     override fun onCreateView(
@@ -76,7 +77,7 @@ class PermissionsFragment : Fragment() {
                         } else requestLocationPermission()
                     }
                 }
-                if (hasDozeOff(requireContext()) || prefs.isDozeAsked) {
+                if (hasDozeOff(requireContext())) {
                     PermissionViewHelper.hideDoze(this@with)
                 } else {
                     dozePermissionSwitch.setOnClickListener {
@@ -105,7 +106,7 @@ class PermissionsFragment : Fragment() {
                             handlePositive(it)
                         } else handleNegative(it)
                         PermissionViewHelper.apply {
-                            if (hasAllPermissions(requireContext(), prefs.isDozeAsked)) {
+                            if (hasAllPermissions(requireContext())) {
                                 animateRebase(binding){
                                     rebase()
                                 }
@@ -122,10 +123,7 @@ class PermissionsFragment : Fragment() {
             when (type) {
                 is PermissionType.BackGroundLocation -> locationPermissionSwitch.isChecked = false
                 is PermissionType.BluetoothPermission -> btPermissionSwitch.isChecked = false
-                is PermissionType.Doze -> {
-                    prefs.isDozeAsked = true
-                    dozePermissionSwitch.isChecked = false
-                }
+                is PermissionType.Doze -> { dozePermissionSwitch.isChecked = false }
                 is PermissionType.FileSystemPermission -> fileSystemSwitch.isChecked = false
                 is PermissionType.RuntimeLocation -> locationPermissionSwitch.isChecked = false
                 is PermissionType.WiFiPermission -> TODO()
@@ -170,8 +168,6 @@ class PermissionsFragment : Fragment() {
             }
             is PermissionType.Doze -> {
                 PermissionViewHelper.hideDozeAnimate(binding)
-                prefs.isDozeAsked = true
-                Snackbar.make(requireView(), "", Snackbar.LENGTH_SHORT).show()
             }
             is PermissionType.FileSystemPermission -> {
                 PermissionViewHelper.hideExternalStorageAnimate(binding)
@@ -181,7 +177,7 @@ class PermissionsFragment : Fragment() {
     }
 
     private fun rebase() {
-        val graph = findNavController().navInflater.inflate(R.navigation.app_navigation)
+        val graph = findNavController().navInflater.inflate(R.navigation.root_navigation)
         graph.setStartDestination(R.id.homeFragment)
         findNavController().graph = graph
         (requireActivity() as MainActivity).unlockDrawer()

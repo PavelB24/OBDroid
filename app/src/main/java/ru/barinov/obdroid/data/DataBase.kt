@@ -18,9 +18,11 @@ import ru.barinov.obdroid.domain.TroubleCodeEntity
 )
 abstract class DataBase : RoomDatabase() {
 
-    abstract fun getCommandsDao() : CommandsDao
+    abstract fun getCommandsDao(): CommandsDao
 
-    abstract fun getTroublesDao() : TroublesDao
+    abstract fun getTroublesDao(): TroublesDao
+
+    abstract fun getProfilesDao(): ProfilesDao
 
 
 }

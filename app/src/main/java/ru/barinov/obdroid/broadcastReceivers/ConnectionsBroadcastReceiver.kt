@@ -32,6 +32,22 @@ class ConnectionsBroadcastReceiver() : BroadcastReceiver() {
                         _receiverEvents.emit(ConnectionReceiverEvent.ScanAvailable)
                     }
                 }
+
+                BluetoothAdapter.ACTION_STATE_CHANGED -> {
+                    val state = intent.getIntExtra(
+                        BluetoothAdapter.EXTRA_STATE,
+                        BluetoothAdapter.ERROR
+                    )
+                    when(state){
+                        BluetoothAdapter.STATE_OFF,
+                        BluetoothAdapter.STATE_ON -> {
+                            receiverScope.launch {
+                                _receiverEvents.emit(ConnectionReceiverEvent.AdapterStateChanged)
+                            }
+                        }
+                    }
+                }
+
                 BluetoothDevice.ACTION_FOUND -> {
                     val device: BluetoothDevice? =
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -73,16 +89,21 @@ class ConnectionsBroadcastReceiver() : BroadcastReceiver() {
         device: BluetoothDevice?
     ) {
         when {
+            currentState == BluetoothDevice.BOND_BONDED && prevState == BluetoothDevice.BOND_BONDING -> {
+                device?.let {
+                    _receiverEvents.emit(ConnectionReceiverEvent.BluetoothBounded(it))
+                }
+            }
             currentState == BluetoothDevice.BOND_BONDED && prevState == BluetoothDevice.BOND_NONE ->{
                 device?.let {
                     _receiverEvents.emit(ConnectionReceiverEvent.UnBounded(it))
                 }
             }
-            currentState == BluetoothDevice.BOND_BONDED && prevState == BluetoothDevice.BOND_BONDING -> {
-                device?.let {
-                    _receiverEvents.emit(ConnectionReceiverEvent.ReBound(it))
-                }
-            }
+//            currentState == BluetoothDevice.BOND_BONDED && prevState == BluetoothDevice.BOND_BONDING -> {
+//                device?.let {
+//                    _receiverEvents.emit(ConnectionReceiverEvent.ReBound(it))
+//                }
+//            }
             currentState == BluetoothDevice.BOND_NONE && prevState == BluetoothDevice.BOND_BONDED -> {
                 device?.let {
                     _receiverEvents.emit(ConnectionReceiverEvent.BluetoothBounded(it))

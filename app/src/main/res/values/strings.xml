@@ -13,23 +13,25 @@
     <string name="connection_failed_string">Connection Failed</string>
     <string name="settings">Settings</string>
     <string name="connection">Connection</string>
-    <string name="terminal">Terminal</string>
+    <string name="theme_picker_title">Theme selection</string>
     <string name="exit">Exit</string>
     <string name="main_view">Diagnostic</string>
     <string name="bound_bt_device">Bound BT Device</string>
     <string name="connect_to_device">Connect to Device</string>
-    <string name="notification_title" translatable="false">OBD Droid</string> />
+    <string name="notification_title" translatable="false">OBD Droid</string>
+    <string name="shell_title">Shell</string>
+    />
     <string name="content_text_notification">OBDroid running</string>
     <string name="dash_board">Dash Board</string>
     <string name="trouble_codes">Troubles</string>
     <string name="sensors">Sensors</string>
-    <string name="terminal_pref_title">Enable Terminal (For Advanced Users)</string>
+    <string name="terminal_pref_title">Enable shell (For advanced users)</string>
     <string name="wifi_settings_title">Wifi Settings</string>
     <string name="prefs_toolbar_title">Settings</string>
-    <string name="bluetooth_permission">Bluetooth Permission</string>
-    <string name="location_permission">Location Permission</string>
-    <string name="save_data_permission">Save Data Permission</string>
-    <string name="battery_optimisation">Battery Optimisation</string>
+    <string name="bluetooth_permission">Bluetooth permission</string>
+    <string name="location_permission">Location permission</string>
+    <string name="save_data_permission">Save Data permission</string>
+    <string name="battery_optimisation">Battery optimisation</string>
     <string name="about">About</string>
     <string name="show_only_supported_commands">Show Only Supported Commands</string>
     <string name="profiles_standard_by_default">Profiles (Standard by Default)</string>
@@ -56,5 +58,49 @@
     <string name="show_extended_description">Extended Description</string>
     <string name="no_troubles_detected">No Troubles Detected</string>
     <string name="clear_troubles">Clear Troubles</string>
-    />
+    <string name="default_obd_protocol">Default OBD Protocol</string>
+    <string name="add_profile">Add Profile</string>
+    <string name="help">Help</string>
+    <string name="create">Create</string>
+    <string name="back">Back</string>
+    <string name="profile_name">Profile Name</string>
+    <string name="settings_chain">Settings Chain</string>
+    <string name="commands_chain">Commands Chain</string>
+    <string name="exit_message">Exit from application?</string>
+    <string name="enter_name_and_settings">Enter name and settings, please</string>
+    <string name="obd_protocol_title">OBD protocol:</string>
+    <string name="select_profile_message">Select this profile?</string>
+    <string name="connections_title">Available Devices</string>
+    <string name="disconnect">Disconnect</string>
+    <string name="send">Send</string>
+    <string name="enter_command_hint">Enter command</string>
+    <string name="shell_themes">Shell themes</string>
+    <string name="fast_bt_connect">Fast bluetooth connect</string>
+    <string name="fast_wf_connect">Fast wifi connect</string>
+    <string name="fast_connections">Fast connect</string>
+    <string name="bt_connected_title">Device connected</string>
+    <string name="bt_connecting_title">Device connecting</string>
+    <string name="bt_connected_message">Device %s was connected</string>
+    <string name="about_obd_droid_text">\nOBDroid version %s\nAuthor Barinov Pavel\nFor suggestions and comments, please contact me\n\nbarinovp363@gmail.com\n\nwww.linkedin.com/in/pavel-barinov-017841236</string>
+    <string name="enable_bluetooth">Enable Bluetooth</string>
+
+    <string-array name="available_profiles" translatable="false">
+        <item name="profile_undefined">Auto</item>
+        <item name="profile_sae_1850_pwm">SAE J1850 PWM</item>
+        <item name="profile_sae_1850_vpw">SAE J1850 VPW</item>
+        <item name="profile_iso9141">ISO 9141 2</item>
+        <item name="profile_iso14230">ISO 14230 4 5kb</item>
+        <item name="profile_iso14230f">ISO 14230 4 FAST INIT</item>
+        <item name="profile_iso15765_11_500">ISO 15765 4 CAN 11bit ID 500kb</item>
+        <item name="profile_iso15765_29_500">ISO_15765 4 CAN_29 bit ID 500kb</item>
+        <item name="profile_iso15765_11_250">ISO 15765 4 CAN 11 bit ID 250kb</item>
+        <item name="profile_iso15765_29_250">ISO 15765 4 CAN_29 bit ID 250kb</item>
+        <item name="profile_sae_j1939">SAE J1939 CAN 29 bit ID 250kb</item>
+    </string-array>
+
+    <string-array name="shell_themes_arr">
+        <item name="profile_undefined">Default</item>
+        <item name="profile_sae_1850_pwm">Dark</item>
+        <item name="profile_sae_1850_vpw">Garnet</item>
+    </string-array>
 </resources>

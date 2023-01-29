@@ -11,49 +11,51 @@ import ru.barinov.obdroid.ConnectedEventType
 import ru.barinov.obdroid.base.ConnectionItem
 import ru.barinov.obdroid.core.toBtConnectionItem
 import ru.barinov.obdroid.ui.uiModels.BtConnectionItem
+import ru.barinov.obdroid.ui.uiModels.BtItem
 import ru.barinov.obdroid.ui.uiModels.WifiConnectionItem
+import ru.barinov.obdroid.utils.ConnectionState
 import java.util.*
 
 class ConnectionsViewModel(
-    private val connectionHandler: ConnectionActionHandler
+    private val connectionHandler: ConnectionHandler
 ) : ViewModel() {
 
     private val listHandler by lazy { ConnectionsListHandler(viewModelScope) }
 
     private val _onConnectFlow = connectionHandler.onConnectFlow
+
     val onConnectFlow: SharedFlow<ConnectedEventType> = _onConnectFlow
 
     val scanResult: SharedFlow<List<ConnectionItem>> = listHandler.scanResult
-
-
-    fun onConnectBt(socket: BluetoothSocket, actions: BtConnectionI) {
-
-    }
 
 
     fun getConnectionHandler() = connectionHandler
 
     @SuppressLint("MissingPermission")
     fun handleBtDevice(device: BluetoothDevice, andConnect: Boolean = false) {
-        val handledBt = device.toBtConnectionItem(object :
-            BtConnectionI {
+        val currentConnection = connectionHandler.getCurrentBtConnection()
+        if(currentConnection == null || currentConnection.mac != device.address) {
+            val handledBt = device.toBtConnectionItem(object : BtConnectionI {
 
-            override fun createBound(): Boolean {
-                return device.createBond()
-            }
+                override fun createBound(): Boolean {
+                    return device.createBond()
+                }
 
-            override fun connect(): BluetoothSocket {
-                val uuid = UUID.fromString(BtConnectionItem.BT_UUID)
-                return device.createInsecureRfcommSocketToServiceRecord(uuid)
+                override fun connect(): BluetoothSocket {
+                    val uuid = UUID.fromString(BtConnectionItem.BT_UUID)
+                    return device.createInsecureRfcommSocketToServiceRecord(uuid)
+                }
+            })
+
+            listHandler.addBt(handledBt)
+            if (andConnect) {
+                connectionHandler.connectBt(handledBt)
             }
-        })
-        listHandler.addBt(handledBt)
-        if(andConnect){
-            connectionHandler.connectBt(handledBt)
         }
     }
 
     fun handleScanResults(scanResult: List<ScanResult>) {
+        val currentConnection = connectionHandler.getCurrentWifiConnection()
         val result = scanResult.map {
             WifiConnectionItem(
                 ConnectionItem.ConnectionType.WIFI,
@@ -64,7 +66,26 @@ class ConnectionsViewModel(
                 it.SSID
             )
         }
+        currentConnection?.let { state->
+            when (state) {
+                is ConnectionState.WifiConnected -> {
+                    result.filter { it.bssid != state.bssid}
+                }
+                is ConnectionState.OnAddressConfirmed -> {
+                    result.filter { it.bssid != state.bssid}
+                }
+                else -> throw IllegalStateException()
+            }
+        }
         listHandler.addWiFi(result)
+    }
+
+    fun removeConnectedWiFi(item: WifiConnectionItem) {
+        listHandler.removeItem(item)
+    }
+
+    fun removeConnectedBt(item: BtItem) {
+        listHandler.removeItem(item)
     }
 
 }

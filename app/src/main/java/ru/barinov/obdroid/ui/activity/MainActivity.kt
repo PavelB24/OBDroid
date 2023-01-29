@@ -1,14 +1,13 @@
 package ru.barinov.obdroid.ui.activity
 
 import android.annotation.SuppressLint
-import android.graphics.drawable.AnimatedImageDrawable
 import android.graphics.drawable.AnimatedVectorDrawable
-import android.graphics.drawable.AnimationDrawable
 import android.os.Bundle
 import android.view.MenuItem
 import android.widget.ImageView
 
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import com.google.android.material.navigation.NavigationView
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
@@ -39,36 +38,51 @@ class MainActivity : AppCompatActivity() {
         val navController = findNavController(R.id.container)
         val drawerLayout: DrawerLayout = binding.drawerLayout
         val navView: NavigationView = binding.navView
-        //Set Version HERE
-        navView.menu.findItem(R.id.terminalFragment).isVisible = viewModel.shouldShowTerminal()
+
+        navView.menu.findItem(R.id.shellFragment).isVisible = viewModel.shouldShowTerminal()
         navView.getHeaderView(0).findViewById<TextView>(R.id.terminal_switch).text =
             resources.getString(R.string.app_name)
         drawerLayout.setDrawerLockMode(LOCK_MODE_LOCKED_CLOSED)
         navView.setupWithNavController(navController)
+
         drawerLayout.addDrawerListener(
             AnimateIconDrawerListener(
                 navView.getHeaderView(0)
                     .findViewById<ImageView>(R.id.imageView)
                     .drawable as AnimatedVectorDrawable
-            ))
+            )
+        )
     }
 
 
-    fun onExit(item : MenuItem){
-        viewModel.stopService()
-        finish()
+    fun onExit(item: MenuItem) {
+        AlertDialog.Builder(this)
+            .setMessage(getString(R.string.exit_message))
+            .setPositiveButton(android.R.string.ok) { di, i ->
+                viewModel.stopService()
+                di.dismiss()
+                finish()
+            }
+            .setNegativeButton(android.R.string.cancel) { di, i ->
+                di.dismiss()
+            }
+            .show()
     }
 
-    fun onAboutPressed(item : MenuItem) {
-
+    fun onAboutPressed(item: MenuItem) {
+        findNavController(R.id.container).apply {
+            if (currentDestination?.id != R.id.aboutDialogFragment) {
+                navigate(R.id.aboutDialogFragment)
+            }
+        }
     }
 
-    fun unlockDrawer(){
+    fun unlockDrawer() {
         viewModel.startService()
         binding.drawerLayout.setDrawerLockMode(LOCK_MODE_UNLOCKED)
     }
 
-    fun changeTerminalVisibility(){
+    fun changeShellVisibility() {
         binding.navView.menu.getItem(3).isVisible = viewModel.shouldShowTerminal()
     }
 

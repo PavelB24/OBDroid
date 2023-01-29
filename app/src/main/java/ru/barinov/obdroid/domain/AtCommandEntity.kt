@@ -16,9 +16,9 @@ data class AtCommandEntity(
     @ColumnInfo(name = "command_desc_eng")
     val commandDescEng: String,
     @ColumnInfo(name = "command_desc_rus")
-    val commandDescRus: String,
+    val commandDescRus: String?,
     @ColumnInfo(name = "measurement_unit")
-    val measurementUnit: MeasurementUnit,
+    val measurementUnit: MeasurementUnit?,
     @ColumnInfo(name = "accessibility")
     val accessAbleForUser: Boolean,
     @ColumnInfo(name = "is_favorite")

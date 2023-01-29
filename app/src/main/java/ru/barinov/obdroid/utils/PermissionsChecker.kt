@@ -41,18 +41,19 @@ object PermissionsChecker {
 
     @SuppressLint("ObsoleteSdkInt")
     fun hasExternalStoragePermission(context: Context): Boolean {
-        return when {
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.R -> {
-                Environment.isExternalStorageManager()
-            }
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.M -> {
-                ContextCompat.checkSelfPermission(
-                    context,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE
-                ) == PackageManager.PERMISSION_GRANTED
-            }
-            else -> true
-        }
+//        return when {
+//            Build.VERSION.SDK_INT >= Build.VERSION_CODES.R -> {
+//                Environment.isExternalStorageManager()
+//            }
+//            Build.VERSION.SDK_INT >= Build.VERSION_CODES.M -> {
+//                ContextCompat.checkSelfPermission(
+//                    context,
+//                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+//                ) == PackageManager.PERMISSION_GRANTED
+//            }
+//            else -> true
+//        }
+        return true
     }
 
 
@@ -95,20 +96,21 @@ object PermissionsChecker {
     @MainThread
     fun hasDozeOff(context: Context): Boolean {
         val pm = context.getSystemService(PowerManager::class.java)
-        return pm.isIgnoringBatteryOptimizations("package:${context.packageName}")
+        return pm.isIgnoringBatteryOptimizations(context.packageName)
     }
 
     @MainThread
-    fun hasAllPermissions(context: Context, dozeShown : Boolean) : Boolean{
+    fun hasAllPermissions(context: Context) : Boolean{
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            Log.d("@@@", "${hasBTAdminPermission(context)} ${hasBluetoothPermission(context)} ${hasLocationPermission(context)} ${hasBackgroundLocation(context)} ${hasExternalStoragePermission(context)}")
             hasBTAdminPermission(context) && hasBluetoothPermission(context)
                     && hasLocationPermission(context) && hasBackgroundLocation(context) &&
-                    (hasDozeOff(context) || dozeShown) && hasExternalStoragePermission(context)
+                    hasDozeOff(context)
+//                    && hasExternalStoragePermission(context)
         } else {
             hasBTAdminPermission(context) && hasLocationPermission(context)
                     && hasLocationPermission(context) && hasBackgroundLocation(context) &&
-                    (hasDozeOff(context) || dozeShown) && hasExternalStoragePermission(context)
+                    hasDozeOff(context)
+//                    && hasExternalStoragePermission(context)
         }
     }
 

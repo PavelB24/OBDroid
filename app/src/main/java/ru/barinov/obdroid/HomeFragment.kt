@@ -37,6 +37,7 @@ class HomeFragment : Fragment() {
                 Navigation.findNavController(host),
                 activity.getDrawer()
             )
+            binding.toolbar.title = getString(R.string.dash_board)
         }
     }
 

@@ -7,8 +7,9 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
-import org.koin.androidx.viewmodel.ext.android.activityViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.barinov.obdroid.R
+import ru.barinov.obdroid.base.PutGetActions
 import ru.barinov.obdroid.ui.activity.MainActivity
 import ru.barinov.obdroid.databinding.PrefsLayoutBinding
 
@@ -17,7 +18,7 @@ class SettingsFragment : Fragment() {
 
     private lateinit var binding: PrefsLayoutBinding
 
-    private val viewModel by activityViewModel<SettingsFragmentViewModel>()
+    private val viewModel: SettingsFragmentViewModel by viewModel()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -25,36 +26,50 @@ class SettingsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = PrefsLayoutBinding.inflate(inflater, container, false)
-        binding.toolbar.title = getString(R.string.settings)
         return binding.root
     }
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.toolbar.setupWithNavController(findNavController())
-        binding.terminalSwitch.isChecked = viewModel.getTerminalFlag()
-        binding.terminalSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
-            viewModel.changeTerminalEnabled(isChecked)
-            (requireActivity() as MainActivity).changeTerminalVisibility()
-        }
-        binding.wifiSettingsCard.setOnClickListener {
-            findNavController().navigate(R.id.action_settingsFragment_to_wifiSettingsDialog)
-        }
-        binding.onlySupportedSwitch.isChecked = viewModel.getUseOnlySupported()
-        binding.onlySupportedSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
-            viewModel.changeUseOnlySupported(isChecked)
-        }
-        binding.wsSwitch.isChecked = viewModel.getWarmStartsFlag()
-        binding.wsSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
-            viewModel.changeUseWarmStarts(isChecked)
-        }
-
+        initViews()
     }
 
+    private fun initViews() {
+        binding.apply {
+            toolbar.setupWithNavController(findNavController())
+            toolbar.title = getString(R.string.settings)
+            terminalSwitch.isChecked = viewModel.getTerminalFlag()
+            terminalSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
+                viewModel.changeTerminalEnabled(isChecked)
+                (requireActivity() as MainActivity).changeShellVisibility()
+            }
+            wifiSettingsCard.setOnClickListener {
+                findNavController().navigate(R.id.action_settingsFragment_to_wifiSettingsDialog)
+            }
+            onlySupportedSwitch.isChecked = viewModel.getUseOnlySupported()
+            onlySupportedSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
+                viewModel.changeUseOnlySupported(isChecked)
+            }
+            wsSwitch.isChecked = viewModel.getWarmStartsFlag()
+            wsSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
+                viewModel.changeUseWarmStarts(isChecked)
+            }
+            profilesCard.setOnClickListener {
+                findNavController().navigate(R.id.action_settingsFragment_to_profilesFragment)
+            }
+            terminalThemeCard.setOnClickListener {
+                ThemePickerDialogHelper(requireContext(), object : PutGetActions<Int> {
+                    override fun getValue(): Int {
+                        return viewModel.getSavedThemeId()
+                    }
 
+                    override fun saveValue(value: Int) {
+                        viewModel.saveShellThemeIdByOrdinal(value)
+                    }
 
-
-
-
+                }).createThemePickerDialog().show()
+            }
+        }
+    }
 }

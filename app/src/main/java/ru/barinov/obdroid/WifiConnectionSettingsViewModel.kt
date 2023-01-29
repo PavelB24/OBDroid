@@ -22,16 +22,24 @@ class WifiConnectionSettingsViewModel(
 
     fun getPort() = prefs.wifiPort
 
-    fun onNewSettings(getaway: String, port: String, shouldConnect: Boolean = false){
+    fun onNewSettings(getaway: String, port: String, shouldConnect: Boolean = false) {
         setPort(port)
         setGetaway(getaway)
-        if(shouldConnect) {
+        if (shouldConnect) {
             connectWithWiFi()
         }
     }
 
-    fun connectWithWiFi(){
-        connectionWatcher.onChangeState(ConnectionState.OnAddressConfirmed)
+    fun connectWithWiFi() {
+        val lastNetwork = connectionWatcher.getCurrentWfConnection()
+        if (lastNetwork != null && lastNetwork is ConnectionState.WifiConnected) {
+            connectionWatcher.onChangeState(
+                ConnectionState.OnAddressConfirmed(
+                    lastNetwork.bssid,
+                    lastNetwork.network
+                )
+            )
+        }
     }
 
     private fun setGetaway(getaway: String) {

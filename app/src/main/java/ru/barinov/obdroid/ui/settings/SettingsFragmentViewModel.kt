@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import ru.barinov.obdroid.preferences.Preferences
 
 class SettingsFragmentViewModel(
-    private val prefs : Preferences
+    private val prefs: Preferences
 ) : ViewModel() {
 
     fun getTerminalFlag() = prefs.useTerminal
@@ -25,4 +25,10 @@ class SettingsFragmentViewModel(
     fun changeUseOnlySupported(checked: Boolean) {
         prefs.showOnlySupported = checked
     }
+
+    fun saveShellThemeIdByOrdinal(position: Int) {
+        prefs.savedShellThemeId = position
+    }
+
+    fun getSavedThemeId(): Int = prefs.savedShellThemeId
 }

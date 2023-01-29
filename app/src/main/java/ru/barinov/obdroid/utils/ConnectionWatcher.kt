@@ -18,31 +18,27 @@ class ConnectionWatcher {
         private set
 
 
+
     fun onChangeState(state: ConnectionState) {
         _connectionState.value = state
     }
 
-    fun getCurrentWfConnection(): Network? {
+    fun getCurrentWfConnection(): ConnectionState? {
         return when (connectionState.value) {
             is ConnectionState.WifiConnected -> {
-                (connectionState.value as ConnectionState.WifiConnected).network
+                connectionState.value
             }
             is ConnectionState.LinkPropertiesChanged -> {
-                (connectionState.value as ConnectionState.LinkPropertiesChanged).network
+                connectionState.value
             }
             else -> null
         }
     }
 
-    fun getCurrentBtConnection(): BluetoothSocket?{
-        return if(connectionState.value is ConnectionState.ConnectedToBt){
-            (connectionState.value as ConnectionState.ConnectedToBt).socket
-        } else null
-    }
 
-    fun getCurrentBtDevice(): ConnectionState? {
-        return if(connectionState.value is ConnectionState.ConnectedToBt){
-            connectionState.value
+    fun getCurrentBtDevice(): ConnectionState.BtSocketObtained? {
+        return if(connectionState.value is ConnectionState.BtSocketObtained){
+            connectionState.value as ConnectionState.BtSocketObtained
         } else null
     }
 

@@ -19,8 +19,8 @@
             android:title="@string/connection" />
 
         <item
-            android:id="@+id/terminalFragment"
-            android:title="@string/terminal" />
+            android:id="@+id/shellFragment"
+            android:title="@string/shell_title" />
 
     </group>
 

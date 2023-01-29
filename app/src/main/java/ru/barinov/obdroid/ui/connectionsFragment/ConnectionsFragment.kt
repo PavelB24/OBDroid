@@ -1,39 +1,39 @@
 package ru.barinov.obdroid.ui.connectionsFragment
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothManager
 import android.content.IntentFilter
+import android.content.pm.PackageManager
 import android.net.wifi.WifiManager
-import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.widget.Toast
-import androidx.core.content.res.ResourcesCompat
-import androidx.core.view.MenuProvider
+import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
-import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.barinov.obdroid.*
 import ru.barinov.obdroid.ui.activity.MainActivity
-import ru.barinov.obdroid.base.ConnectionItem
 import ru.barinov.obdroid.broadcastReceivers.ConnectionsBroadcastReceiver
-import ru.barinov.obdroid.utils.StartPermissionsUtil
 import ru.barinov.obdroid.databinding.ConnectionsLayoutBinding
-import ru.barinov.obdroid.ui.uiModels.BtConnectionItem
-import ru.barinov.obdroid.ui.uiModels.WifiConnectionItem
+import ru.barinov.obdroid.ui.uiModels.BtItem
 import ru.barinov.obdroid.utils.PermissionsChecker
 import java.util.*
 
 class ConnectionsFragment : Fragment() {
+
+
+    companion object{
+        const val bundleKey = "bk"
+    }
 
 
     //События для flow все перенеси в ресивер, кроме поключения по WF  - там коллбэк, обрабатывай метод коннекта, пытаясь открыть полученный соккет
@@ -46,7 +46,9 @@ class ConnectionsFragment : Fragment() {
 
     private lateinit var btManager: BluetoothManager
 
-    private val viewModel by viewModel<ConnectionsViewModel>()
+    private val viewModel: ConnectionsViewModel by viewModel()
+
+    private lateinit var btEnabler: BtEnabler
 
     private val connectionsReceiver by lazy { ConnectionsBroadcastReceiver() }
 
@@ -60,43 +62,22 @@ class ConnectionsFragment : Fragment() {
         binding.apply {
             (requireActivity() as MainActivity).setSupportActionBar(connectionsToolbar)
             connectionsToolbar.setupWithNavController(findNavController())
-            connectionsToolbar.title = ""
+            connectionsToolbar.title = getString(R.string.connections_title)
         }
-
-        requireActivity().addMenuProvider(object : MenuProvider {
-            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-                menuInflater.inflate(R.menu.connecions_toolbar_menu, menu)
-            }
-
-            @SuppressLint("MissingPermission")
-            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-                when (menuItem.itemId) {
-                    R.id.enable_bt_item -> {
-                        if (BuildConfig.VERSION_CODE >= Build.VERSION_CODES.TIRAMISU) {
-                            //todo
-                        } else {
-                            if(!btManager.adapter.isEnabled) {
-                                btManager.adapter.enable()
-                            }
-                            btManager.adapter.startDiscovery()
-                        }
-
-                    }
-                    R.id.enable_wifi_item -> {
-                        wifiManager.startScan()
-                    }
-
-                }
-                return true
-            }
-        }, viewLifecycleOwner, Lifecycle.State.RESUMED)
+        wifiManager = requireContext().getSystemService(WifiManager::class.java)
+        btManager = requireContext().getSystemService(BluetoothManager::class.java)
+        btEnabler = BtEnabler(this, btManager)
+        requireActivity().addMenuProvider(
+            ConnectionsMenuProvider(
+                btEnabler,
+                requireContext()
+            ), viewLifecycleOwner, Lifecycle.State.CREATED
+        )
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        wifiManager = requireContext().getSystemService(WifiManager::class.java)
-        btManager = requireContext().getSystemService(BluetoothManager::class.java)
         subscribe()
         initViews()
         requireActivity().registerReceiver(connectionsReceiver,
@@ -105,6 +86,7 @@ class ConnectionsFragment : Fragment() {
                 addAction(BluetoothDevice.ACTION_FOUND)
                 addAction(BluetoothDevice.ACTION_BOND_STATE_CHANGED)
                 addAction(BluetoothAdapter.ACTION_CONNECTION_STATE_CHANGED)
+                addAction(BluetoothAdapter.ACTION_STATE_CHANGED)
             }
         )
 //        requireContext().getSystemService(BluetoothManager::class.java).adapter.bluetoothLeScanner.startScan(object : ScanCallback(){
@@ -119,10 +101,11 @@ class ConnectionsFragment : Fragment() {
     }
 
     private fun subscribe() {
-        lifecycleScope.launchWhenStarted {
+        lifecycleScope.launchWhenResumed {
             viewModel.onConnectFlow.onEach { event ->
                 when (event) {
-                    is ConnectedEventType.BluetoothConnected -> {
+                    is ConnectedEventType.BluetoothConnecting -> {
+                        viewModel.removeConnectedBt(event.item)
                         event.apply {
                             displayConnection(item)
                         }
@@ -135,11 +118,13 @@ class ConnectionsFragment : Fragment() {
                         ).show()
                     }
                     is ConnectedEventType.WifiConnected -> {
+                        viewModel.removeConnectedWiFi(event.item)
                         event.apply {
-                            displayConnection(item)
+                            if (findNavController().currentDestination?.id != R.id.wifiSettingsDialog){
                             findNavController().navigate(
                                 R.id.action_connectionsFragment_to_wifiSettingsDialog
                             )
+                        }
                         }
                     }
                 }
@@ -169,6 +154,9 @@ class ConnectionsFragment : Fragment() {
                     is ConnectionReceiverEvent.ReBound -> {
                         //todo
                     }
+                    ConnectionReceiverEvent.AdapterStateChanged -> {
+                        requireActivity().invalidateMenu()
+                    }
                 }
             }.collect()
         }
@@ -182,18 +170,13 @@ class ConnectionsFragment : Fragment() {
     private fun onDeviceBounded(device: BluetoothDevice) {
         binding.connectionsRv.visibility = View.VISIBLE
         binding.progressBar.visibility = View.GONE
-        viewModel.apply {
-            handleBtDevice(device, true)
-        }
+        viewModel.handleBtDevice(device, true)
     }
 
     private fun onFailedBound(device: BluetoothDevice) {
         binding.connectionsRv.visibility = View.VISIBLE
         binding.progressBar.visibility = View.GONE
         viewModel.handleBtDevice(device)
-        Snackbar.make(requireView(), "Bound Failed", Snackbar.LENGTH_SHORT)
-            .setAnchorView(binding.progressBar).show()
-
     }
 
     private fun showProgress() {
@@ -201,31 +184,27 @@ class ConnectionsFragment : Fragment() {
         binding.progressBar.visibility = View.VISIBLE
     }
 
-    private fun displayConnection(item: ConnectionItem) {
-        with(binding) {
-            connectionCard.visibility = View.VISIBLE
-            when (item) {
-                is BtConnectionItem -> {
-                    val img = ResourcesCompat.getDrawable(
-                        resources,
-                        R.drawable.bt_logo,
-                        null
-                    )
-                    curConnectionIcon.setImageDrawable(img)
-                    curConnectionSsidOrAddr.text = item.address
+    private fun displayConnection(item: BtItem) {
+        //todo(Change to progressbar dialog)
+        if (findNavController().currentDestination?.id != R.id.onBtConnectionDialog) {
+            findNavController().navigate(
+                R.id.action_connectionsFragment_to_onBtConnectionDialog,
+                Bundle().also {
+                    it.putStringArray(bundleKey, arrayOf(item.name, item.address))
                 }
-                is WifiConnectionItem -> {
-                    val img = ResourcesCompat.getDrawable(
-                        resources,
-                        R.drawable.wifi_logo,
-                        null
-                    )
-                    curConnectionIcon.setImageDrawable(img)
-                    curConnectionSsidOrAddr.text = item.ssid
-                }
-            }
+            )
         }
-
+//        AlertDialog.Builder(requireContext()).setTitle(
+//            getString(R.string.bt_connected_title)
+//        ).setCancelable(true).setMessage(
+//            getString(
+//                R.string.bt_connected_message,
+//                if (item.name.isNullOrEmpty()) item.address else item.name
+//            )
+//        ).setPositiveButton(android.R.string.ok) { di, i ->
+//            di.dismiss()
+//        }
+//            .show()
     }
 
 
@@ -240,14 +219,31 @@ class ConnectionsFragment : Fragment() {
         viewModel.handleBtDevice(device)
     }
 
-    @SuppressLint("MissingPermission")
     private fun initViews() {
-        wifiManager.startScan()
-        btManager.adapter.startDiscovery()
+        binding.root.setOnRefreshListener {
+            startBtDiscovery()
+            wifiManager.startScan()
+            binding.root.isRefreshing = false
+        }
         binding.connectionsRv.adapter = adapter
         adapter.addItemClickListener(
             viewModel.getConnectionHandler()
         )
+        btEnabler.askForBt()
+        wifiManager.startScan()
+    }
+
+
+    private fun startBtDiscovery() {
+        if (btManager.adapter?.isEnabled == true) {
+            if (ActivityCompat.checkSelfPermission(
+                    requireContext(),
+                    Manifest.permission.BLUETOOTH_SCAN
+                ) == PackageManager.PERMISSION_GRANTED
+            ) {
+                btManager.adapter.startDiscovery()
+            }
+        }
     }
 
     override fun onDestroy() {

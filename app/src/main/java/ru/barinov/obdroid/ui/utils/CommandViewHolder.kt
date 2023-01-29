@@ -1,21 +1,19 @@
 package ru.barinov.obdroid.ui.utils
 
-import android.view.View
 import androidx.core.content.ContextCompat
-import androidx.recyclerview.widget.RecyclerView
 import ru.barinov.obdroid.R
+import ru.barinov.obdroid.base.BaseViewHolder
 import ru.barinov.obdroid.base.Command
 import ru.barinov.obdroid.databinding.CommandItemLayoutBinding
-import ru.barinov.obdroid.databinding.WifiItemLayoutBinding
 import ru.barinov.obdroid.domain.CommandCategory
 import ru.barinov.obdroid.ui.uiModels.PidCommand
 import java.util.Locale
 
 class CommandViewHolder(
     private val binding: CommandItemLayoutBinding
-) : RecyclerView.ViewHolder(binding.root) {
+) : BaseViewHolder<Command>(binding.root) {
 
-    fun onBind(item: Command) {
+    override fun onBind(item: Command) {
         when (item) {
             is PidCommand -> {
                 fillWithPid(item)

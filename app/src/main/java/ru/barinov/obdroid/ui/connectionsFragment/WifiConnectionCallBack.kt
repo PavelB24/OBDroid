@@ -8,13 +8,14 @@ import ru.barinov.obdroid.utils.ConnectionWatcher
 
 class WifiConnectionCallBack(
     private val connectionWatcher : ConnectionWatcher,
+    private val bssid : String,
     private val onConnection : (Network) -> Unit
 ) : NetworkCallback() {
 
     override fun onAvailable(network: Network) {
         super.onAvailable(network)
         onConnection.invoke(network)
-        connectionWatcher.onChangeState(ConnectionState.WifiConnected(network))
+        connectionWatcher.onChangeState(ConnectionState.WifiConnected(bssid, network))
     }
 
     override fun onUnavailable() {
@@ -26,6 +27,7 @@ class WifiConnectionCallBack(
         super.onLinkPropertiesChanged(network, linkProperties)
         connectionWatcher.onChangeState(
             ConnectionState.LinkPropertiesChanged(
+                bssid,
                 network,
                 linkProperties
             )

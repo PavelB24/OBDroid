@@ -5,15 +5,36 @@
     <item
         android:id="@+id/enable_bt_item"
         android:icon="@drawable/bt_logo"
-        android:title="Bt"
-        app:showAsAction="always"
-        />
+        android:title="@string/enable_bluetooth"
+        app:showAsAction="collapseActionView" />
 
     <item
         android:id="@+id/enable_wifi_item"
         android:icon="@drawable/wifi_logo"
         android:title="Wifi"
-        app:showAsAction="always"
-        />
+        android:visible="false"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/simple_connection"
+        android:title="@string/fast_connections"
+        app:showAsAction="collapseActionView">
+
+        <menu>
+            <item
+                android:id="@+id/bt_connect"
+                android:title="@string/fast_bt_connect"
+                app:showAsAction="collapseActionView" />
+
+
+            <item
+                android:id="@+id/wf_connect"
+                android:title="@string/fast_wf_connect"
+                app:showAsAction="collapseActionView" />
+
+        </menu>
+
+    </item>
+
 
 </menu>

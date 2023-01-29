@@ -5,14 +5,14 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import ru.barinov.obdroid.base.Command
+import ru.barinov.obdroid.base.ItemInteractor
 import ru.barinov.obdroid.databinding.CommandItemLayoutBinding
-import ru.barinov.obdroid.domain.CommandActions
 import ru.barinov.obdroid.ui.sensorsFragment.CommandsDiffUtil
 
 class SensorsAdapter : RecyclerView.Adapter<CommandViewHolder>() {
 
     private var commandList: List<Command> = listOf()
-    private var action: CommandActions? = null
+    private var action: ItemInteractor<Command>? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CommandViewHolder {
         return CommandViewHolder(
@@ -28,7 +28,7 @@ class SensorsAdapter : RecyclerView.Adapter<CommandViewHolder>() {
         holder.onBind(item)
         holder.itemView.apply {
             setOnLongClickListener {
-                action?.onLongClick(item, holder.itemView)
+                action?.onLongClick(item, it)
                 true
             }
             setOnClickListener {
@@ -47,7 +47,7 @@ class SensorsAdapter : RecyclerView.Adapter<CommandViewHolder>() {
 
     private fun getItem(position: Int) = commandList[position]
 
-    fun bindActions(actions: CommandActions) {
+    fun bindActions(actions: ItemInteractor<Command>) {
         this.action = actions
     }
 }

@@ -19,9 +19,11 @@ class BTViewHolder(
         }
         binding.apply {
             btAddress.text = item.address
-            if (item.name.isNullOrEmpty() || item.name.isBlank()) {
-                btName.text = itemView.context.getString(R.string.unknown_bt_name)
-            }
+
+            btName.text = if (item.name.isNullOrEmpty())
+                itemView.context.getString(R.string.unknown_bt_name)
+            else item.name
+
             connectionIcon.setImageDrawable(
                 AppCompatResources.getDrawable(
                     itemView.context, R.drawable.bt_logo
@@ -34,6 +36,9 @@ class BTViewHolder(
                         itemView.context, R.drawable.bound_logo
                     )
                 )
+            } else {
+                btBoundIcon.setImageDrawable(null)
+                btBoundIcon.visibility = View.GONE
             }
 
         }

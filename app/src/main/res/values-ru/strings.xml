@@ -5,45 +5,46 @@
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Настройки</string>
 
-    <string name="menu_home">На Старт</string>
+    <string name="menu_home">На старт</string>
     <string name="menu_gallery">Gallery</string>
     <string name="menu_slideshow">Slideshow</string>
-    <string name="unknown_bt_name">Неизвестный Девайс</string>
-    <string name="connection_failed_string">Ошибка Соединения</string>
+    <string name="unknown_bt_name">Неизвестный девайс</string>
+    <string name="connection_failed_string">Ошибка соединения</string>
     <string name="settings">Настройки</string>
     <string name="connection">Соединения</string>
-    <string name="terminal">Терминал</string>
     <string name="exit">Выход</string>
     <string name="main_view">Диагностика</string>
-    <string name="bound_bt_device">Привязать БТ Девайс</string>
-    <string name="connect_to_device">Подключиться к Девайсу</string>
+    <string name="bound_bt_device">Привязать БТ девайс</string>
+    <string name="connect_to_device">Подключиться к девайсу</string>
+    <string name="shell_title">Консоль</string>
+    <string name="theme_picker_title">Выбор темы</string>
     <string name="content_text_notification">OBDroid выполняется</string>
-    <string name="dash_board">Панель Приборов</string>
+    <string name="dash_board">Панель приборов</string>
     <string name="trouble_codes">Ошибоки</string>
     <string name="sensors">Датчики</string>
-    <string name="terminal_pref_title">Активировать Терминал
-        (Для Продвинутых Пользователей)
+    <string name="terminal_pref_title">Активировать консоль
+        (Для продвинутых пользователей)
     </string>
-    <string name="wifi_settings_title">Настройки Wifi Соединения</string>
+    <string name="wifi_settings_title">Настройки Wifi соединения</string>
     <string name="prefs_toolbar_title">Настройки</string>
     <string name="bluetooth_permission">Использование Bluetooth</string>
-    <string name="location_permission">Использование Локации</string>
+    <string name="location_permission">Использование локации</string>
     <string name="save_data_permission">Запись Файлов</string>
-    <string name="battery_optimisation">Отключение Оптимизации Батареи</string>
-    <string name="about">О Программе</string>
-    <string name="show_only_supported_commands">Показывать Только Поддерживаемые Комманды</string>
-    <string name="profiles_standard_by_default">Профили (Стандартный по Умолчанию)</string>
+    <string name="battery_optimisation">Отключение оптимизации батареи</string>
+    <string name="about">О программе</string>
+    <string name="show_only_supported_commands">Показывать только поддерживаемые комманды</string>
+    <string name="profiles_standard_by_default">Профили (Стандартный по умолчанию)</string>
     <string name="use_warm_starts_title">Использовать
-        Тёплые Старты при Соединении с OBD Девайсом
+        тёплые старты при соединении с OBD девайсом
     </string>
-    <string name="connect_to_network">Подсоединиться к Сети</string>
+    <string name="connect_to_network">Подсоединиться к сети</string>
     <string name="cancel">Отмена</string>
     <string name="all_cat">Все</string>
     <string name="common_cat">Общее</string>
     <string name="diesel_cat">Дизель</string>
     <string name="electric_cat">Электрика</string>
-    <string name="oxygen_sensors_cat">Кислородные Датчики</string>
-    <string name="vehicle_info_cat">информация об Автомобие</string>
+    <string name="oxygen_sensors_cat">Кислородные датчики</string>
+    <string name="vehicle_info_cat">Информация об автомобиле</string>
     <string name="favorites_commands_toolbar_title">Избранное</string>
     <string name="categories">Категории</string>
     <string name="temperature">Температура</string>
@@ -51,10 +52,40 @@
     <string name="air_flow">Воздух</string>
     <string name="throttle">Дроссель</string>
     <string name="turbo">Турбина</string>
-    <string name="add_fav">Добавить в Избранное</string>
-    <string name="remove_fav">Удалить из Избранного</string>
-    <string name="show_extended_description">Расширенное Описание</string>
-    <string name="no_troubles_detected">Ошибок не Обнаружено</string>
+    <string name="add_fav">Добавить в избранное</string>
+    <string name="remove_fav">Удалить из избранного</string>
+    <string name="show_extended_description">Расширенное описание</string>
+    <string name="no_troubles_detected">Ошибок не обнаружено</string>
     <string name="clear_troubles">Очистить Ошибки</string>
-    />
+    <string name="default_obd_protocol">Протокол стандартного профиля</string>
+    <string name="add_profile">Добавить Профиль</string>
+    <string name="help">Помощь</string>
+    <string name="create">Создать</string>
+    <string name="back">Назад</string>
+    <string name="profile_name">Имя Профиля:</string>
+    <string name="settings_chain">Цепочка настроек:</string>
+    <string name="commands_chain">Цепочка комманд:</string>
+    <string name="exit_message">Выйти из приложения?</string>
+    <string name="enter_name_and_settings">Введите имя и настройки, пожалуйста</string>
+    <string name="obd_protocol_title">OBD протокол:</string>
+    <string name="select_profile_message">Выбрать этот профиль?</string>
+    <string name="connections_title">Доступные девайсы</string>
+    <string name="disconnect">Отсоединить</string>
+    <string name="send">Отправить</string>
+    <string name="enter_command_hint">Введите команду</string>
+    <string name="shell_themes">Темы консоли</string>
+    <string name="fast_bt_connect">Быстрое подключение bluetooth</string>
+    <string name="fast_wf_connect">Быстрое подключение wifi</string>
+    <string name="fast_connections">Быстрое подключение</string>
+    <string name="bt_connected_title">Девайс подключен</string>
+    <string name="bt_connecting_title">Девайс подключается</string>
+    <string name="bt_connected_message">Девайс %s был подключен</string>
+    <string name="about_obd_droid_text">\nOBDroid версия %s\nАвтор Barinov Pavel\nПо предложениям и комментариям, пожалуйста свяжитесь со мной:\n\nbarinovp363@gmail.com\n\nwww.linkedin.com/in/pavel-barinov-017841236</string>
+    <string name="enable_bluetooth">Включить Bluetooth</string>
+
+    <string-array name="shell_themes_arr">
+        <item name="profile_undefined">Стандартная</item>
+        <item name="profile_sae_1850_pwm">Тёмная</item>
+        <item name="profile_sae_1850_vpw">Гранатовая</item>
+    </string-array>
 </resources>

@@ -43,10 +43,10 @@ class ObdService : Service() {
             connectionWatcher.connectionState.onEach {
                 when(it){
                     is ConnectionState.WifiConnected -> {}
-                    is ConnectionState.ConnectedToBt -> {}
+                    is ConnectionState.BtSocketObtained -> {}
                     is ConnectionState.LinkPropertiesChanged -> {}
                     is ConnectionState.Lost -> {}
-                    ConnectionState.OnAddressConfirmed -> {}
+                    is ConnectionState.OnAddressConfirmed -> {}
                     ConnectionState.UnAvailable -> {}
                 }
             }.collect()

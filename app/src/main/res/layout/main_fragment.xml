@@ -15,5 +15,14 @@
         app:layout_constraintTop_toTopOf="parent"
         app:scaleColor="@color/black" />
 
+    <TextView
+        android:id="@+id/test"
+        app:layout_constraintTop_toBottomOf="@id/speedometerView"
+
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:text="Hello"
+        />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
