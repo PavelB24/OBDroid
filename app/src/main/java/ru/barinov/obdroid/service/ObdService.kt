@@ -6,6 +6,7 @@ import android.app.NotificationManager
 import android.app.Service
 import android.content.Intent
 import android.os.IBinder
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -13,8 +14,14 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import obdKotlin.WorkMode
+import obdKotlin.core.Commander
+import obdKotlin.core.FailOn
+import obdKotlin.core.SystemEventListener
+import obdKotlin.source.BluetoothSource
 import org.koin.android.ext.android.inject
 import ru.barinov.obdroid.R
+import ru.barinov.obdroid.core.ObdEventBus
 import ru.barinov.obdroid.utils.ConnectionWatcher
 import ru.barinov.obdroid.ui.utils.ServiceCommander
 import ru.barinov.obdroid.utils.ConnectionState
@@ -30,7 +37,45 @@ class ObdService : Service() {
     private val connectionWatcher by inject<ConnectionWatcher>()
     private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
+    val commander =  Commander.Builder()
+        .setEventListener(object: SystemEventListener{
+            override fun onConnect(source: SystemEventListener.SourceType) {
+                Log.d("@@@", "Connected")
+                serviceScope.launch {
+                    ObdEventBus.onStateChanged(ObdEventBus.ObdEvents.SuccessConnect)
+                }
+                start()
+            }
+
+            override fun onDecodeError(fail: FailOn?) {
+
+            }
+
+            override fun onSourceError(source: SystemEventListener.SourceType) {
+                Log.d("@@@", "ERR CONNECT ")
+            }
+
+            override fun onSwitchMode(extendedMode: Boolean) {
+
+            }
+
+            override fun onWorkModeChanged(workMode: WorkMode) {
+                Log.d("@@@", workMode.name)
+            }
+        }).enableRawData().build()
+
+    private fun start() {
+        serviceScope.launch {
+            commander.rawDataFlow.onEach {
+                Log.d("@@@", it.toString())
+            }.collect()
+        }
+        commander.startWithAuto()
+    }
+
     override fun onBind(intent: Intent?): IBinder? = null
+
+
 
     override fun onCreate() {
         super.onCreate()
@@ -43,7 +88,11 @@ class ObdService : Service() {
             connectionWatcher.connectionState.onEach {
                 when(it){
                     is ConnectionState.WifiConnected -> {}
-                    is ConnectionState.BtSocketObtained -> {}
+                    is ConnectionState.BtSocketObtained -> {
+                        it.socket?.let { socket ->
+                            commander.bindSource(BluetoothSource(socket))
+                        }
+                    }
                     is ConnectionState.LinkPropertiesChanged -> {}
                     is ConnectionState.Lost -> {}
                     is ConnectionState.OnAddressConfirmed -> {}

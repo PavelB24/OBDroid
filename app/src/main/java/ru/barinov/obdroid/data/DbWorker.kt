@@ -71,7 +71,8 @@ class DbWorker(
                         } else null,
                         isAccessible,
                         false,
-                        CommandCategory.values()[Integer.valueOf(lineContents[1])]
+                        CommandCategory.values()[Integer.valueOf(lineContents[1])],
+                        isAccessible
                     )
                 )
             }

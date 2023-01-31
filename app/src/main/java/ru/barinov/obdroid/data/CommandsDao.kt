@@ -15,6 +15,12 @@ interface CommandsDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertCommand(entity: CommandEntity)
 
+//    @Query("SELECT * FROM pid_commands WHERE hex_value =:hex AND command_section_hex =:sectionHex")
+    @Query("SELECT * FROM pid_commands WHERE hex_value =:hex AND command_section_hex =:sectionHex LIMIT 1")
+    fun getCommandByHexAndSection(hex: String, sectionHex: String): Flow<CommandEntity>
+    @Query("SELECT * FROM at_commands WHERE command =:command AND accessibility == 1 LIMIT 1")
+    fun getAtCommand(command: String): Flow<AtCommandEntity>
+
     @Transaction
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun populateWithCommands(commands: List<CommandEntity>)
@@ -32,7 +38,7 @@ interface CommandsDao {
     @Query("SELECT * FROM pid_commands WHERE category != 2 AND is_fav == 1")
     fun getOnlyFavs(): Flow<List<CommandEntity>>
 
-    @Query("SELECT * FROM pid_commands WHERE category =:categoryOrdinal")
+    @Query("SELECT * FROM pid_commands WHERE category =:categoryOrdinal ")
     fun getCommandsByCategory(categoryOrdinal: Int): Flow<List<CommandEntity>>
 
     @Query("SELECT * FROM pid_commands WHERE category =:categoryOrdinal AND is_fav == 1")

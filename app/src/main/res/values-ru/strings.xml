@@ -82,6 +82,9 @@
     <string name="bt_connected_message">Девайс %s был подключен</string>
     <string name="about_obd_droid_text">\nOBDroid версия %s\nАвтор Barinov Pavel\nПо предложениям и комментариям, пожалуйста свяжитесь со мной:\n\nbarinovp363@gmail.com\n\nwww.linkedin.com/in/pavel-barinov-017841236</string>
     <string name="enable_bluetooth">Включить Bluetooth</string>
+    <string name="graphic_fragment_title">График</string>
+    <string name="simple_view_fragment_title">Текущее значение</string>
+    <string name="widget_view_fragment_title">Виджет</string>
 
     <string-array name="shell_themes_arr">
         <item name="profile_undefined">Стандартная</item>

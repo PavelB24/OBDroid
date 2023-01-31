@@ -10,6 +10,8 @@ class CommandsRepository(
 
     suspend fun insertCommand(command: CommandEntity) = dao.insertCommand(command)
 
+//    fun getCommandByHexAndSection(section: String, command: String) = dao.
+
     suspend fun populateWithCommands(commands: List<CommandEntity>) =
         dao.populateWithCommands(commands)
 

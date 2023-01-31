@@ -83,6 +83,10 @@
     <string name="bt_connected_message">Device %s was connected</string>
     <string name="about_obd_droid_text">\nOBDroid version %s\nAuthor Barinov Pavel\nFor suggestions and comments, please contact me\n\nbarinovp363@gmail.com\n\nwww.linkedin.com/in/pavel-barinov-017841236</string>
     <string name="enable_bluetooth">Enable Bluetooth</string>
+    <string name="graphic_fragment_title">Graphic</string>
+    <string name="simple_view_fragment_title">Current value</string>
+    <string name="widget_view_fragment_title">Widget value</string>
+
 
     <string-array name="available_profiles" translatable="false">
         <item name="profile_undefined">Auto</item>

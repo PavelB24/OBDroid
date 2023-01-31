@@ -23,5 +23,7 @@ data class AtCommandEntity(
     val accessAbleForUser: Boolean,
     @ColumnInfo(name = "is_favorite")
     val isFavorite: Boolean,
-    val category: CommandCategory
+    val category: CommandCategory,
+    @ColumnInfo(name = "is_dynamic")
+    val isDynamic: Boolean
 )

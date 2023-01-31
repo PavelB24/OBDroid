@@ -1,9 +1,14 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id 'kotlin-parcelize'
 }
 apply plugin: 'kotlin-kapt'
-apply plugin: 'kotlin-android-extensions'
+//apply plugin: 'kotlin-android-extensions'
+
+
+
+
 
 android {
     compileSdk 33
@@ -38,6 +43,9 @@ android {
 
 
 dependencies {
+    implementation 'androidx.core:core-ktx:1.9.0'
+    implementation(files("libs/OBDKotlin.jar"))
+
 
     // https://mvnrepository.com/artifact/androidx.core/core-splashscreen
     runtimeOnly("androidx.core:core-splashscreen:1.0.0")

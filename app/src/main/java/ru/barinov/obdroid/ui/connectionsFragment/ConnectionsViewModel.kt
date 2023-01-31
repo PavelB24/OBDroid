@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothSocket
 import android.net.wifi.ScanResult
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.*
@@ -42,7 +43,10 @@ class ConnectionsViewModel(
                 }
 
                 override fun connect(): BluetoothSocket {
-                    val uuid = UUID.fromString(BtConnectionItem.BT_UUID)
+                    val uuid = UUID.fromString("00000000-0000-1000-8000-00805F9B34FB")
+                    //device.uuids[0].uuid
+                    //UUID.fromString("0000111f-0000-1000-8000-00805f9b34fb")
+
                     return device.createInsecureRfcommSocketToServiceRecord(uuid)
                 }
             })

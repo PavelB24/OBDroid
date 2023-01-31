@@ -10,6 +10,12 @@ object ObdEventBus {
 
 
 
+    suspend fun onStateChanged(event: ObdEvents){
+        _eventFlow.emit(event)
+    }
+
+
+
     sealed class ObdEvents(){
 
         object SuccessConnect: ObdEvents()
