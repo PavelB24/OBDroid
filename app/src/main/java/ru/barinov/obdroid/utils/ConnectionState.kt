@@ -27,6 +27,6 @@ sealed class ConnectionState {
 
     data class OnAddressConfirmed(
         val bssid: String,
-        val network: Network): ConnectionState()
+    ): ConnectionState()
 
 }

@@ -16,7 +16,8 @@ class WifiConnectionSettingsViewModel(
     fun getConnectionState() = connectionWatcher.connectionState.value
 
     fun isConnectedToNetwork() =
-        connectionWatcher.connectionState.value is ConnectionState.WifiConnected
+        connectionWatcher.connectionState.value is ConnectionState.WifiConnected ||
+        connectionWatcher.connectionState.value is ConnectionState.LinkPropertiesChanged
 
     fun getGetaway() = prefs.wifiAddress
 
@@ -32,11 +33,10 @@ class WifiConnectionSettingsViewModel(
 
     fun connectWithWiFi() {
         val lastNetwork = connectionWatcher.getCurrentWfConnection()
-        if (lastNetwork != null && lastNetwork is ConnectionState.WifiConnected) {
+        if (lastNetwork != null) {
             connectionWatcher.onChangeState(
                 ConnectionState.OnAddressConfirmed(
-                    lastNetwork.bssid,
-                    lastNetwork.network
+                    ""
                 )
             )
         }

@@ -74,6 +74,7 @@ class ConnectionHandler(
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                                 val builder = WifiNetworkSpecifier.Builder()
                                     .setBssid(MacAddress.fromString(item.bssid))
+                                    .setWpa2Passphrase("111111Ss")
                                 if (item.ssid.isNotEmpty()) {
                                     builder.setSsid(item.ssid)
                                 }
@@ -103,6 +104,7 @@ class ConnectionHandler(
                                             )
                                         }
                                     })
+
 
                             } else {
                                 TODO("VERSION.SDK_INT < Q")

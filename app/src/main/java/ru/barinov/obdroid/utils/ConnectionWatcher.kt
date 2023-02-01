@@ -2,6 +2,7 @@ package ru.barinov.obdroid.utils
 
 import android.bluetooth.BluetoothSocket
 import android.net.Network
+import android.util.Log
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -20,6 +21,7 @@ class ConnectionWatcher {
 
 
     fun onChangeState(state: ConnectionState) {
+        Log.d("@@@", "STATE CHANGED TO $state")
         _connectionState.value = state
     }
 

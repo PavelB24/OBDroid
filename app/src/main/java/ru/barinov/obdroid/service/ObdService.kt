@@ -19,12 +19,15 @@ import obdKotlin.core.Commander
 import obdKotlin.core.FailOn
 import obdKotlin.core.SystemEventListener
 import obdKotlin.source.BluetoothSource
+import obdKotlin.source.WiFiSource
 import org.koin.android.ext.android.inject
 import ru.barinov.obdroid.R
 import ru.barinov.obdroid.core.ObdEventBus
+import ru.barinov.obdroid.preferences.Preferences
 import ru.barinov.obdroid.utils.ConnectionWatcher
 import ru.barinov.obdroid.ui.utils.ServiceCommander
 import ru.barinov.obdroid.utils.ConnectionState
+import java.net.InetSocketAddress
 
 class ObdService : Service() {
 
@@ -35,6 +38,7 @@ class ObdService : Service() {
     }
 
     private val connectionWatcher by inject<ConnectionWatcher>()
+    private val prefs by inject<Preferences>()
     private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     val commander =  Commander.Builder()
@@ -61,8 +65,15 @@ class ObdService : Service() {
 
             override fun onWorkModeChanged(workMode: WorkMode) {
                 Log.d("@@@", workMode.name)
+                if(workMode == WorkMode.COMMANDS) {
+                    sendCommand()
+                }
             }
         }).enableRawData().build()
+
+    private fun sendCommand() {
+        commander.sendCommand("0105")
+    }
 
     private fun start() {
         serviceScope.launch {
@@ -95,7 +106,10 @@ class ObdService : Service() {
                     }
                     is ConnectionState.LinkPropertiesChanged -> {}
                     is ConnectionState.Lost -> {}
-                    is ConnectionState.OnAddressConfirmed -> {}
+                    is ConnectionState.OnAddressConfirmed -> {
+                        Log.d("@@@", "ADDR CONF")
+                        commander.bindSource(WiFiSource(InetSocketAddress( "192.168.1.102", 35355)))
+                    }
                     ConnectionState.UnAvailable -> {}
                 }
             }.collect()
