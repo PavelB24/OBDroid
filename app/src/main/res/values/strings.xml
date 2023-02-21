@@ -86,6 +86,17 @@
     <string name="graphic_fragment_title">Graphic</string>
     <string name="simple_view_fragment_title">Current value</string>
     <string name="widget_view_fragment_title">Widget value</string>
+    <string name="bad_bt_rssi_signal">Bad signal</string>
+    <string name="mid_bt_rssi_signal">Medium signal</string>
+    <string name="good_bt_rssi_signal">Strong signal</string>
+    <string name="on_cant_connect">Connection lost or failed to connect</string>
+    <string name="bound_bt_title">Paired devices</string>
+    <string name="pro_mode_menu_title">Activate advanced settings</string>
+    <string name="no_paired_devices_yet">No paired devices</string>
+    <string name="diagnostic_fragment_title">Troubles scanning</string>
+    <string name="sensors_fragment_title">Sensor data</string>
+    <string name="trouble_history">Detected troubles history</string>
+    <string name="troubles_data_base">Troubles data base</string>
 
 
     <string-array name="available_profiles" translatable="false">

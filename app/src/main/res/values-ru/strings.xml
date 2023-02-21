@@ -85,6 +85,18 @@
     <string name="graphic_fragment_title">График</string>
     <string name="simple_view_fragment_title">Текущее значение</string>
     <string name="widget_view_fragment_title">Виджет</string>
+    <string name="bad_bt_rssi_signal">Плохой сигнал</string>
+    <string name="mid_bt_rssi_signal">Средний сигнал</string>
+    <string name="good_bt_rssi_signal">Сильный сигнал</string>
+    <string name="on_cant_connect">Соединение потеряно или невозможно подключиться</string>
+    <string name="bound_bt_title">Связанные девайсы</string>
+    <string name="pro_mode_menu_title">Вкл продвинутые настройки</string>
+    <string name="no_paired_devices_yet">Связанные девайсы не обнаружены</string>
+    <string name="diagnostic_fragment_title">Поиск ошибок</string>
+    <string name="sensors_fragment_title">Показатели</string>
+    <string name="trouble_history">История ошибок</string>
+    <string name="troubles_data_base">База данных ошибок</string>
+
 
     <string-array name="shell_themes_arr">
         <item name="profile_undefined">Стандартная</item>

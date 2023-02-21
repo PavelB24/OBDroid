@@ -153,14 +153,14 @@ class DbWorker(
         val encryptedArray = context.assets.open(EXTRA_ASSET_NAME, ACCESS_STREAMING).readBytes()
         val decrypted = cipher.doFinal(encryptedArray)
         decrypted.inputStream().bufferedReader().use {
-            val buffer = mutableListOf<CommandEntity>()
+            val buffer = mutableListOf<PidCommandEntity>()
             while (it.ready()) {
                 val lineContents = it.readLine().split("//")
                 val translate = if (lineContents.size == 8) lineContents[6] else null
                 val category: CommandCategory =
                     CommandCategory.values()[Integer.valueOf(lineContents[1])]
                 buffer.add(
-                    CommandEntity(
+                    PidCommandEntity(
                         lineContents[3],
                         Integer.valueOf(lineContents[4]),
                         lineContents[2],
@@ -213,14 +213,14 @@ class DbWorker(
         val encryptedArray = context.assets.open(COMMANDS_ASSET_NAME, ACCESS_STREAMING).readBytes()
         val decrypted = cipher.doFinal(encryptedArray)
         decrypted.inputStream().bufferedReader().use {
-            val buffer = mutableListOf<CommandEntity>()
+            val buffer = mutableListOf<PidCommandEntity>()
             while (it.ready()) {
                 val lineContents = it.readLine().split("//")
                 val translate = if (lineContents.size == 7) lineContents[5] else null
                 val category: CommandCategory =
                     CommandCategory.values()[Integer.valueOf(lineContents[1])]
                 buffer.add(
-                    CommandEntity(
+                    PidCommandEntity(
                         lineContents[2],
                         Integer.valueOf(lineContents[3]),
                         "01",

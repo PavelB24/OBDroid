@@ -9,6 +9,13 @@
         app:showAsAction="collapseActionView" />
 
     <item
+        android:id="@+id/connection_icon_item"
+        android:title="Connection item"
+        app:showAsAction="always"
+        android:visible="false"
+        />
+
+    <item
         android:id="@+id/enable_wifi_item"
         android:icon="@drawable/wifi_logo"
         android:title="Wifi"

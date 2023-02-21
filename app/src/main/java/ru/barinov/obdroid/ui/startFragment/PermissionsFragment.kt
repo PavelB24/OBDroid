@@ -3,28 +3,26 @@ package ru.barinov.obdroid.ui.startFragment
 import android.graphics.drawable.AnimatedVectorDrawable
 import android.os.Build
 import android.os.Bundle
-import android.os.PowerManager
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
 import android.view.ViewGroup
-import androidx.core.content.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.flow.collectLatest
-import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.barinov.obdroid.*
 import ru.barinov.obdroid.ui.activity.MainActivity
 import ru.barinov.obdroid.databinding.PermissionsFragmentBinding
-import ru.barinov.obdroid.preferences.Preferences
 import ru.barinov.obdroid.utils.StartPermissionsUtil
 
 class PermissionsFragment : Fragment() {
 
     private lateinit var binding: PermissionsFragmentBinding
     private val permissionsUtil by lazy { StartPermissionsUtil() }
+    private val viewModel: PermissionsFragmentViewModel by viewModel()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -41,11 +39,14 @@ class PermissionsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         if (permissionsUtil.hasNecessaryPermissions(requireContext())) {
             lifecycleScope.launchWhenStarted {
-                rebase()
+                rebase(true)
             }
         } else {
             subscribe()
             initStates()
+        }
+        lifecycleScope.launchWhenStarted {
+            (requireActivity() as MainActivity).hideToolbar()
         }
 
     }
@@ -54,7 +55,7 @@ class PermissionsFragment : Fragment() {
         with(binding) {
             onStartButton.setOnClickListener {
                 PermissionViewHelper.animateRebase(binding) {
-                    rebase()
+                    rebase(false)
                 }
             }
             headImage.setOnClickListener {
@@ -107,8 +108,8 @@ class PermissionsFragment : Fragment() {
                         } else handleNegative(it)
                         PermissionViewHelper.apply {
                             if (hasAllPermissions(requireContext())) {
-                                animateRebase(binding){
-                                    rebase()
+                                animateRebase(binding) {
+                                    rebase(false)
                                 }
                             }
                         }
@@ -123,7 +124,9 @@ class PermissionsFragment : Fragment() {
             when (type) {
                 is PermissionType.BackGroundLocation -> locationPermissionSwitch.isChecked = false
                 is PermissionType.BluetoothPermission -> btPermissionSwitch.isChecked = false
-                is PermissionType.Doze -> { dozePermissionSwitch.isChecked = false }
+                is PermissionType.Doze -> {
+                    dozePermissionSwitch.isChecked = false
+                }
                 is PermissionType.FileSystemPermission -> fileSystemSwitch.isChecked = false
                 is PermissionType.RuntimeLocation -> locationPermissionSwitch.isChecked = false
                 is PermissionType.WiFiPermission -> TODO()
@@ -132,7 +135,7 @@ class PermissionsFragment : Fragment() {
     }
 
 
-    private fun handlePositive(type : PermissionType) {
+    private fun handlePositive(type: PermissionType) {
         when (type) {
             is PermissionType.BackGroundLocation -> {
                 PermissionViewHelper.hideLocationAnimate(binding)
@@ -176,10 +179,16 @@ class PermissionsFragment : Fragment() {
         }
     }
 
-    private fun rebase() {
-        val graph = findNavController().navInflater.inflate(R.navigation.root_navigation)
-        graph.setStartDestination(R.id.homeFragment)
-        findNavController().graph = graph
-        (requireActivity() as MainActivity).unlockDrawer()
+    private fun rebase(skipped: Boolean) {
+        permissionsUtil.free()
+        Log.d("@@@", "REBASE")
+        (requireActivity() as MainActivity).apply {
+            startService()
+            if(!skipped) {
+                setupToolbar()
+            }
+            unlockDrawer()
+            showToolbar()
+        }
     }
 }

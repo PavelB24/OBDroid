@@ -46,5 +46,14 @@
         android:layout_marginBottom="60dp"
         />
 
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_history_kb_panel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/BottomNavStyle"
+        app:menu="@menu/troubles_history_bottom_menu"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

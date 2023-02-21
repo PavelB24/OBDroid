@@ -28,7 +28,7 @@ class ConnectionsListHandler(private val scope: CoroutineScope) {
             lastList?.toMutableList()?.let { list ->
                 list.removeIf { it is BtConnectionItem && it.address == btDevice.address }
                 resultList.addAll(list)
-                resultList.add(btDevice)
+                resultList.add(0, btDevice)
             }
             lastList = resultList
             scope.launch {
@@ -51,7 +51,7 @@ class ConnectionsListHandler(private val scope: CoroutineScope) {
         lastList?.toMutableList()?.let { list ->
             list.removeIf { it is WifiConnectionItem }
             resultList.addAll(list)
-            resultList.addAll(wifiDevices)
+            resultList.addAll(0, wifiDevices)
         }
         lastList = resultList
         scope.launch {

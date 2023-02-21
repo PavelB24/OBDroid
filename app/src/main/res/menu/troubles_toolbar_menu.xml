@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/recent_troubles"
+        android:title="@string/trouble_history"
+        />
+
+    <item
+        android:id="@+id/trouble_save_option"
+        android:title="Save detected to History"
+        android:checkable="true"
+        />
+
+</menu>

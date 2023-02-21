@@ -11,6 +11,7 @@ import ru.barinov.obdroid.HomeFragment
 import ru.barinov.obdroid.base.Command
 import ru.barinov.obdroid.base.ItemInteractor
 import ru.barinov.obdroid.databinding.SensorsFragmentBinding
+import ru.barinov.obdroid.ui.activity.MainActivity
 import ru.barinov.obdroid.ui.utils.SensorsAdapter
 
 class SensorsFragment : Fragment() {
@@ -27,8 +28,8 @@ class SensorsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = SensorsFragmentBinding.inflate(inflater, container, false)
-        lifecycleScope.launchWhenStarted {
-            (parentFragment?.parentFragment as HomeFragment).getToolbar().addMenuProvider(
+        lifecycleScope.launchWhenCreated {
+            requireActivity().addMenuProvider(
                 SensorsFragmentMenuProvider(viewModel),
                 viewLifecycleOwner,
                 Lifecycle.State.RESUMED
@@ -60,8 +61,8 @@ class SensorsFragment : Fragment() {
     private fun getActions(): ItemInteractor<Command> {
         return object : ItemInteractor<Command> {
             override fun onLongClick(item: Command, view: View) {
-                popUpHandler.buildPopUp(item, view){ isFav, section, command ->
-                    viewModel.handleFav(isFav, section, command)
+                popUpHandler.buildPopUp(item, view){ command, fav ->
+                    viewModel.handleFav(command, fav)
                 }
             }
 

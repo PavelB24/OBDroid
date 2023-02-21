@@ -22,6 +22,13 @@
     <style name="CircularProgress" parent="Theme.AppCompat.Light">
         <item name="colorAccent">@color/blue</item>
     </style>
+
+    <style name="BottomNavStyle">
+        <item name="android:background">@color/bottom_nav_color</item>
+        <item name="itemBackground">@drawable/item_bottom_nav_backgroud</item>
+        <item name="itemIconTint">@color/bottom_menu_item_selector</item>
+        <item name="itemTextColor">@color/bottom_menu_item_selector</item>
+    </style>
     
     
     <style name="DefaultSpeedometerStyle">

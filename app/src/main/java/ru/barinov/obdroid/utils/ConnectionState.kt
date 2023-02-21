@@ -14,7 +14,7 @@ sealed class ConnectionState {
 
     data class BtSocketObtained(
         val mac: String,
-        val socket: BluetoothSocket?
+        val socket: BluetoothSocket
     ) : ConnectionState()
 
     data class LinkPropertiesChanged(
@@ -23,10 +23,16 @@ sealed class ConnectionState {
         val linkProperties: LinkProperties
     ): ConnectionState()
 
-    data class Lost(val network: Network): ConnectionState()
+    data class Lost(
+        val network: Network
+        ): ConnectionState()
+
 
     data class OnAddressConfirmed(
         val bssid: String,
+        val network: Network
     ): ConnectionState()
+
+    object OnQuickWiFiSetUp: ConnectionState()
 
 }

@@ -35,7 +35,6 @@ class ProfilesFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = ProfilesFragmentLayoutBinding.inflate(inflater, container, false)
-        binding.toolbar.setupWithNavController(findNavController())
         return binding.root
     }
 

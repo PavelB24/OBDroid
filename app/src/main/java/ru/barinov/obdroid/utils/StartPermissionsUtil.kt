@@ -172,4 +172,14 @@ class StartPermissionsUtil {
 
     }
 
+    fun free(){
+        btLauncher = null
+        oldBtLauncher = null
+        dozeLauncher = null
+        locationLauncher = null
+        backLocationLauncher = null
+        externalLauncher = null
+        newExternalLauncher = null
+    }
+
 }

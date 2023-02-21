@@ -13,32 +13,57 @@ class WifiConnectionSettingsViewModel(
 ) : ViewModel() {
 
 
-    fun getConnectionState() = connectionWatcher.connectionState.value
+    fun getConnectionState() = connectionWatcher.lastState
 
     fun isConnectedToNetwork() =
-        connectionWatcher.connectionState.value is ConnectionState.WifiConnected ||
-        connectionWatcher.connectionState.value is ConnectionState.LinkPropertiesChanged
+        connectionWatcher.lastState is ConnectionState.WifiConnected ||
+                connectionWatcher.lastState is ConnectionState.LinkPropertiesChanged
 
     fun getGetaway() = prefs.wifiAddress
 
     fun getPort() = prefs.wifiPort
 
-    fun onNewSettings(getaway: String, port: String, shouldConnect: Boolean = false) {
+    fun onNewSettings(
+        getaway: String,
+        port: String,
+        shouldConnect: Boolean,
+        quickSetUp: Boolean
+    ) {
         setPort(port)
         setGetaway(getaway)
-        if (shouldConnect) {
-            connectWithWiFi()
+        if(quickSetUp){
+            quickWiFiConnect()
+        } else {
+            if (shouldConnect) {
+                connectWithWiFi()
+            }
         }
+    }
+
+    private fun quickWiFiConnect() {
+        connectionWatcher.onChangeState(ConnectionState.OnQuickWiFiSetUp)
     }
 
     fun connectWithWiFi() {
         val lastNetwork = connectionWatcher.getCurrentWfConnection()
         if (lastNetwork != null) {
-            connectionWatcher.onChangeState(
-                ConnectionState.OnAddressConfirmed(
-                    ""
+            val networkData = when (lastNetwork) {
+                is ConnectionState.WifiConnected -> {
+                    Pair(lastNetwork.network, lastNetwork.bssid)
+                }
+                is ConnectionState.LinkPropertiesChanged -> {
+                    Pair(lastNetwork.network, lastNetwork.bssid)
+                }
+                else -> null
+            }
+            networkData?.let {
+                connectionWatcher.onChangeState(
+                    ConnectionState.OnAddressConfirmed(
+                        it.second,
+                        it.first
+                    )
                 )
-            )
+            }
         }
     }
 
@@ -47,7 +72,7 @@ class WifiConnectionSettingsViewModel(
     }
 
     private fun setPort(port: String) {
-        prefs.wifiPort = port
+        prefs.wifiPort = Integer.valueOf(port)
     }
 
 

@@ -65,7 +65,6 @@ class ConnectionsAdapter : RecyclerView.Adapter<BaseViewHolder<ConnectionItem>>(
     }
 
     interface ConnectionClickListener {
-
         fun onItemClick(item: ConnectionItem, itemView : View)
     }
 }

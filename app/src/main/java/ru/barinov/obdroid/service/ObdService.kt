@@ -1,19 +1,13 @@
 package ru.barinov.obdroid.service
 
-import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.Service
+import android.app.*
 import android.content.Intent
 import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
 import obdKotlin.WorkMode
 import obdKotlin.core.Commander
 import obdKotlin.core.FailOn
@@ -22,7 +16,8 @@ import obdKotlin.source.BluetoothSource
 import obdKotlin.source.WiFiSource
 import org.koin.android.ext.android.inject
 import ru.barinov.obdroid.R
-import ru.barinov.obdroid.core.ObdEventBus
+import ru.barinov.obdroid.core.ObdBus
+import ru.barinov.obdroid.core.ObdController
 import ru.barinov.obdroid.preferences.Preferences
 import ru.barinov.obdroid.utils.ConnectionWatcher
 import ru.barinov.obdroid.ui.utils.ServiceCommander
@@ -37,83 +32,18 @@ class ObdService : Service() {
         private const val NOTIFICATION_CHANNEL_NAME = "OBD service notification"
     }
 
-    private val connectionWatcher by inject<ConnectionWatcher>()
-    private val prefs by inject<Preferences>()
     private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+    private val controller: ObdController by inject()
 
-    val commander =  Commander.Builder()
-        .setEventListener(object: SystemEventListener{
-            override fun onConnect(source: SystemEventListener.SourceType) {
-                Log.d("@@@", "Connected")
-                serviceScope.launch {
-                    ObdEventBus.onStateChanged(ObdEventBus.ObdEvents.SuccessConnect)
-                }
-                start()
-            }
-
-            override fun onDecodeError(fail: FailOn?) {
-
-            }
-
-            override fun onSourceError(source: SystemEventListener.SourceType) {
-                Log.d("@@@", "ERR CONNECT ")
-            }
-
-            override fun onSwitchMode(extendedMode: Boolean) {
-
-            }
-
-            override fun onWorkModeChanged(workMode: WorkMode) {
-                Log.d("@@@", workMode.name)
-                if(workMode == WorkMode.COMMANDS) {
-                    sendCommand()
-                }
-            }
-        }).enableRawData().build()
-
-    private fun sendCommand() {
-        commander.sendCommand("0105")
-    }
-
-    private fun start() {
-        serviceScope.launch {
-            commander.rawDataFlow.onEach {
-                Log.d("@@@", it.toString())
-            }.collect()
-        }
-        commander.startWithAuto()
-    }
 
     override fun onBind(intent: Intent?): IBinder? = null
-
 
 
     override fun onCreate() {
         super.onCreate()
         createNotificationChannel()
-        subscribeOnConnection()
-    }
+        controller.create(serviceScope)
 
-    private fun subscribeOnConnection() {
-        serviceScope.launch {
-            connectionWatcher.connectionState.onEach {
-                when(it){
-                    is ConnectionState.WifiConnected -> {}
-                    is ConnectionState.BtSocketObtained -> {
-                        it.socket?.let { socket ->
-                            commander.bindSource(BluetoothSource(socket))
-                        }
-                    }
-                    is ConnectionState.LinkPropertiesChanged -> {}
-                    is ConnectionState.Lost -> {}
-                    is ConnectionState.OnAddressConfirmed -> {
-                        Log.d("@@@", "ADDR CONF")
-                        commander.bindSource(WiFiSource(InetSocketAddress( "192.168.1.102", 35355)))
-                    }
-                    ConnectionState.UnAvailable -> {}
-                }
-            }.collect()
-        }
     }
 
     private fun createServiceNotification(): Notification {
@@ -143,9 +73,11 @@ class ObdService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         startForeground(NOTIFICATION_SERVICE_ID, createServiceNotification())
         intent?.let {
-            if(it.hasExtra(ServiceCommander.SERVICE_COMMAND_KEY)){
-                when(it.getStringExtra(ServiceCommander.SERVICE_COMMAND_KEY)){
-                    ServiceCommander.SERVICE_COMMAND_EXIT -> {stopSelf()}
+            if (it.hasExtra(ServiceCommander.SERVICE_COMMAND_KEY)) {
+                when (it.getStringExtra(ServiceCommander.SERVICE_COMMAND_KEY)) {
+                    ServiceCommander.SERVICE_COMMAND_EXIT -> {
+                        stopSelf()
+                    }
                 }
             }
         }

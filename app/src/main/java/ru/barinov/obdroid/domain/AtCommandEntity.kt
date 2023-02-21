@@ -6,16 +6,16 @@ import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
 
 @TypeConverters(
-    CommandEntity.CommandCategoryTypeConverter::class,
+    CommandCategoryTypeConverter::class,
     MeasurementUnitTypeConverter::class
 )
 @Entity(tableName = "at_commands")
 data class AtCommandEntity(
     @PrimaryKey
     val command: String,
-    @ColumnInfo(name = "command_desc_eng")
+    @ColumnInfo(name = "command_desc_eng", typeAffinity = ColumnInfo.TEXT)
     val commandDescEng: String,
-    @ColumnInfo(name = "command_desc_rus")
+    @ColumnInfo(name = "command_desc_rus", typeAffinity = ColumnInfo.TEXT)
     val commandDescRus: String?,
     @ColumnInfo(name = "measurement_unit")
     val measurementUnit: MeasurementUnit?,

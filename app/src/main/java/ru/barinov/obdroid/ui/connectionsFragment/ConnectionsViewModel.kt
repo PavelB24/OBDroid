@@ -1,15 +1,16 @@
 package ru.barinov.obdroid.ui.connectionsFragment
 
 import android.annotation.SuppressLint
+import android.bluetooth.BluetoothClass
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothSocket
 import android.net.wifi.ScanResult
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.*
 import ru.barinov.obdroid.ConnectedEventType
 import ru.barinov.obdroid.base.ConnectionItem
+import ru.barinov.obdroid.core.ObdBus
 import ru.barinov.obdroid.core.toBtConnectionItem
 import ru.barinov.obdroid.ui.uiModels.BtConnectionItem
 import ru.barinov.obdroid.ui.uiModels.BtItem
@@ -18,8 +19,10 @@ import ru.barinov.obdroid.utils.ConnectionState
 import java.util.*
 
 class ConnectionsViewModel(
-    private val connectionHandler: ConnectionHandler
+    private val connectionHandler: ConnectionHandler,
 ) : ViewModel() {
+
+    val eventBusFlow = ObdBus.eventFlow
 
     private val listHandler by lazy { ConnectionsListHandler(viewModelScope) }
 
@@ -29,33 +32,50 @@ class ConnectionsViewModel(
 
     val scanResult: SharedFlow<List<ConnectionItem>> = listHandler.scanResult
 
-
     fun getConnectionHandler() = connectionHandler
 
     @SuppressLint("MissingPermission")
-    fun handleBtDevice(device: BluetoothDevice, andConnect: Boolean = false) {
+    fun handleBtDevice(
+        device: BluetoothDevice,
+        rssi: Short?,
+        clazz: BluetoothClass?,
+        andConnect: Boolean = false
+    ) {
         val currentConnection = connectionHandler.getCurrentBtConnection()
-        if(currentConnection == null || currentConnection.mac != device.address) {
-            val handledBt = device.toBtConnectionItem(object : BtConnectionI {
+        if (currentConnection == null || (currentConnection.mac != device.address
+            && ObdBus.lastEvent is ObdBus.ObdEvents.SuccessConnect)
+        ) {
+            val handledBt = device.toBtConnectionItem(
+                rssi,
+                clazz,
+                object: BtConnectionI {
 
-                override fun createBound(): Boolean {
-                    return device.createBond()
-                }
+                    override fun createBound(): Boolean {
+                        return device.createBond()
+                    }
 
-                override fun connect(): BluetoothSocket {
-                    val uuid = UUID.fromString("00000000-0000-1000-8000-00805F9B34FB")
-                    //device.uuids[0].uuid
-                    //UUID.fromString("0000111f-0000-1000-8000-00805f9b34fb")
+                    override fun connect(): BluetoothSocket {
+                        val uuid = UUID.fromString(BtConnectionItem.BT_UUID)
+                        //device.uuids[0].uuid
+                        //UUID.fromString("0000111f-0000-1000-8000-00805f9b34fb")
 
-                    return device.createInsecureRfcommSocketToServiceRecord(uuid)
-                }
-            })
+                        return device.createInsecureRfcommSocketToServiceRecord(uuid)
+                    }
+                })
 
             listHandler.addBt(handledBt)
             if (andConnect) {
                 connectionHandler.connectBt(handledBt)
             }
         }
+    }
+
+
+    fun connectBtDirectly(
+        address: String,
+        socket: BluetoothSocket
+    ){
+        connectionHandler.connectBt(address, socket)
     }
 
     fun handleScanResults(scanResult: List<ScanResult>) {
@@ -70,13 +90,13 @@ class ConnectionsViewModel(
                 it.SSID
             )
         }
-        currentConnection?.let { state->
+        currentConnection?.let { state ->
             when (state) {
                 is ConnectionState.WifiConnected -> {
-                    result.filter { it.bssid != state.bssid}
+                    result.filter { it.bssid != state.bssid }
                 }
                 is ConnectionState.OnAddressConfirmed -> {
-                    result.filter { it.bssid != state.bssid}
+                    result.filter { it.bssid != state.bssid }
                 }
                 else -> throw IllegalStateException()
             }

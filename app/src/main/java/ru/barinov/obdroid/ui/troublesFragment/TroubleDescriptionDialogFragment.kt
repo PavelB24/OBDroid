@@ -1,4 +1,4 @@
-package ru.barinov.obdroid
+package ru.barinov.obdroid.ui.troublesFragment
 
 import androidx.fragment.app.DialogFragment
 

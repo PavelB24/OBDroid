@@ -1,10 +1,12 @@
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="284dp"
-    android:height="341dp"
+    android:width="44dp"
+    android:height="44dp"
     android:viewportWidth="284"
     android:viewportHeight="341"
     >
   <group
+      android:pivotX="12"
+      android:pivotY="12"
       android:scaleX="0.6"
       android:scaleY="0.6"
       android:translateX="60"

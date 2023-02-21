@@ -28,7 +28,6 @@ object PermissionViewHelper {
                 }
             }
         }
-
     }
 
     @MainThread

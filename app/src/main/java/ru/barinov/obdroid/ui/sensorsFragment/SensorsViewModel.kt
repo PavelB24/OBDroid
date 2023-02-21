@@ -5,10 +5,12 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import ru.barinov.obdroid.base.Command
 import ru.barinov.obdroid.data.CommandsRepository
 import ru.barinov.obdroid.domain.CommandCategory
 import ru.barinov.obdroid.domain.toPidCommand
 import ru.barinov.obdroid.preferences.Preferences
+import ru.barinov.obdroid.ui.uiModels.PidCommand
 
 class SensorsViewModel(
     private val commandsRepository: CommandsRepository,
@@ -17,7 +19,7 @@ class SensorsViewModel(
 
     private val showFavsFlow = MutableStateFlow(prefs.showFavs)
 
-    private val commandsCatFlow = MutableStateFlow(CommandCategory.UNDEFINED)
+    private val commandsCatFlow = MutableStateFlow(CommandCategory.values()[prefs.commandsSort])
 
     val commandsFlow = commandsCatFlow.flatMapLatest { category ->
         showFavsFlow.flatMapLatest { showFavs ->
@@ -32,7 +34,7 @@ class SensorsViewModel(
             }
         }
     }.map { list->
-        list.map { it.toPidCommand() }
+        list.map { (it.toHandledCommand())}
     }
 
     fun changeCategory(category: CommandCategory) {
@@ -49,9 +51,9 @@ class SensorsViewModel(
 
     fun getSavedFavsState() = prefs.showFavs
 
-    fun handleFav(fav: Boolean, section: String, command: String) {
+    fun handleFav(command: Command, favFlag: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
-            commandsRepository.handleFav(fav, section, command)
+            commandsRepository.handleFav(command, favFlag)
         }
     }
 

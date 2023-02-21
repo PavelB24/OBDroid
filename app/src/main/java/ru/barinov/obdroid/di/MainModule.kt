@@ -11,6 +11,7 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 import ru.barinov.obdroid.WifiConnectionSettingsViewModel
+import ru.barinov.obdroid.core.ObdController
 import ru.barinov.obdroid.data.*
 import ru.barinov.obdroid.ui.utils.ServiceCommander
 import ru.barinov.obdroid.utils.ConnectionWatcher
@@ -19,10 +20,11 @@ import ru.barinov.obdroid.ui.connectionsFragment.ConnectionHandler
 import ru.barinov.obdroid.ui.connectionsFragment.ConnectionsViewModel
 import ru.barinov.obdroid.preferences.Preferences
 import ru.barinov.obdroid.ui.ShellViewModel
-import ru.barinov.obdroid.ui.connectionsFragment.bindedDialogs.OnConnectingDialogViewModel
 import ru.barinov.obdroid.ui.profilesListFragment.ProfilesViewModel
 import ru.barinov.obdroid.ui.sensorsFragment.SensorsViewModel
 import ru.barinov.obdroid.ui.settings.SettingsFragmentViewModel
+import ru.barinov.obdroid.ui.startFragment.PermissionsFragmentViewModel
+import ru.barinov.obdroid.ui.troublesFragment.TroubleHistoryViewModel
 
 private const val SHARED_PREFS_NAME = "prefs"
 private const val DATABASE_NAME = "obd_droid_db"
@@ -43,6 +45,12 @@ val mainModule = module {
                 val prepopulateWork = OneTimeWorkRequestBuilder<DbWorker>().build()
                 WorkManager.getInstance(androidApplication()).enqueue(prepopulateWork)
             }
+
+            override fun onDestructiveMigration(db: SupportSQLiteDatabase) {
+                super.onDestructiveMigration(db)
+                val prepopulateWork = OneTimeWorkRequestBuilder<DbWorker>().build()
+                WorkManager.getInstance(androidApplication()).enqueue(prepopulateWork)
+            }
         }).fallbackToDestructiveMigration().build()
     }
 
@@ -53,6 +61,11 @@ val mainModule = module {
     factory {
         ConnectionHandler(androidContext(), get(), get())
     }
+
+    single {
+        ObdController(get(), get())
+    }
+
 
     single {
         TroublesRepository(
@@ -75,7 +88,6 @@ val mainModule = module {
         )
     }
 
-
     single {
         Preferences(get())
     }
@@ -93,11 +105,19 @@ val mainModule = module {
     }
 
     viewModel {
+        PermissionsFragmentViewModel()
+    }
+
+    viewModel {
         ConnectionsViewModel(get())
     }
 
     viewModel {
         ShellViewModel(get())
+    }
+
+    viewModel {
+        TroubleHistoryViewModel(get(), get())
     }
 
     viewModel {
@@ -110,10 +130,6 @@ val mainModule = module {
 
     viewModel {
         SettingsFragmentViewModel(get())
-    }
-
-    viewModel {
-        OnConnectingDialogViewModel()
     }
 
 }

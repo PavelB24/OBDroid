@@ -7,11 +7,8 @@ import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.onEach
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.barinov.obdroid.databinding.ShellFragmentLayoutBinding
-import ru.barinov.obdroid.databinding.TerminalFragmentBinding
 import ru.barinov.obdroid.ui.ShellViewModel
 
 class ShellFragment : Fragment() {

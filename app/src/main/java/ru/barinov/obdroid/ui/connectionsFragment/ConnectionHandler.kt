@@ -1,9 +1,11 @@
 package ru.barinov.obdroid.ui.connectionsFragment
 
 import android.bluetooth.BluetoothDevice
+import android.bluetooth.BluetoothSocket
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.MacAddress
+import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
 import android.net.wifi.WifiNetworkSpecifier
@@ -19,6 +21,7 @@ import ru.barinov.obdroid.ConnectedEventType
 import ru.barinov.obdroid.R
 import ru.barinov.obdroid.utils.ConnectionWatcher
 import ru.barinov.obdroid.base.ConnectionItem
+import ru.barinov.obdroid.domain.BtConnector
 import ru.barinov.obdroid.preferences.Preferences
 import ru.barinov.obdroid.ui.uiModels.BtConnectionItem
 import ru.barinov.obdroid.ui.uiModels.WifiConnectionItem
@@ -28,7 +31,7 @@ class ConnectionHandler(
     private val context: Context,
     private val connectionWatcher : ConnectionWatcher,
     private val preferences: Preferences
-) : ConnectionsAdapter.ConnectionClickListener {
+) : ConnectionsAdapter.ConnectionClickListener, BtConnector {
 
 
     val onConnectFlow: MutableSharedFlow<ConnectedEventType> = MutableSharedFlow(
@@ -84,8 +87,11 @@ class ConnectionHandler(
                                     .build()
                                 cm.requestNetwork(
                                     networkRequest,
-                                    WifiConnectionCallBack(connectionWatcher, item.bssid) { network ->
-                                        val result = cm.bindProcessToNetwork(network)
+                                    WifiConnectionCallBack(
+                                        connectionWatcher = connectionWatcher,
+                                        bssid = item.bssid,
+                                        connManager = cm
+                                    ) { result, network ->
                                         if (result) {
                                             cm.getLinkProperties(network)
                                                 ?.routes
@@ -119,7 +125,7 @@ class ConnectionHandler(
         }
     }
 
-    fun connectBt(item: BtConnectionItem) {
+    override fun connectBt(item: BtConnectionItem) {
         try {
             val socket = item.actions.connect()
             onConnection(
@@ -129,7 +135,14 @@ class ConnectionHandler(
                     )
                 else ConnectedEventType.Fail
             )
-            connectionWatcher.onChangeState(ConnectionState.BtSocketObtained(item.address, socket))
+            socket?.let {
+                connectionWatcher.onChangeState(
+                    ConnectionState.BtSocketObtained(
+                        item.address,
+                        socket
+                    )
+                )
+            }
         } catch (e: Exception){
             e.printStackTrace()
             onConnection(
@@ -142,6 +155,13 @@ class ConnectionHandler(
         CoroutineScope(Dispatchers.IO).launch {
             onConnectFlow.emit(event)
         }
+    }
+
+    override fun connectBt(
+        address: String,
+        socket: BluetoothSocket
+    ) {
+        connectionWatcher.onChangeState(ConnectionState.BtSocketObtained(address, socket))
     }
 
 

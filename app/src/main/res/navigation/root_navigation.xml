@@ -15,9 +15,6 @@
         <action
             android:id="@+id/action_settingsFragment_to_profilesFragment"
             app:destination="@id/profilesFragment" />
-        <action
-            android:id="@+id/action_settingsFragment_to_wifiSettingsDialog"
-            app:destination="@id/wifiSettingsDialog" />
     </fragment>
     <fragment
         android:id="@+id/connectionsFragment"
@@ -27,9 +24,6 @@
             android:id="@+id/action_connectionsFragment_to_wifiSettingsDialog"
             app:destination="@id/wifiSettingsDialog"
             app:launchSingleTop="false" />
-        <action
-            android:id="@+id/action_connectionsFragment_to_onBtConnectionDialog"
-            app:destination="@id/onBtConnectionDialog" />
     </fragment>
     <fragment
         android:id="@+id/shellFragment"
@@ -66,8 +60,4 @@
         android:id="@+id/aboutDialogFragment"
         android:name="ru.barinov.obdroid.ui.AboutDialogFragment"
         android:label="AboutDialogFragment" />
-    <dialog
-        android:id="@+id/onBtConnectionDialog"
-        android:name="ru.barinov.obdroid.ui.connectionsFragment.bindedDialogs.OnBtConnectionDialog"
-        android:label="OnBtConnectionDialog" />
 </navigation>

@@ -15,7 +15,6 @@ class ProfileViewHolder(
 
     override fun onBind(item: Profile) {
         binding.protocolList.visibility = if(showProtoSelector) View.VISIBLE else View.GONE
-        binding.protocolsTitle.visibility = if(showProtoSelector) View.VISIBLE else View.GONE
         binding.profileName.text = item.name
         if(showProtoSelector) {
             binding.protocolList.onItemSelectedListener = object : OnItemSelectedListener {

@@ -1,5 +1,6 @@
 package ru.barinov.obdroid
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -13,9 +14,20 @@ import ru.barinov.obdroid.ui.utils.AddressTextWatcher
 
 class WifiSettingsDialog : DialogFragment() {
 
+
+    companion object{
+        const val setUpKey = "qsu"
+    }
+
     private val viewModel by viewModel<WifiConnectionSettingsViewModel>()
     private lateinit var binding: WifiConnectionSettingsDialogBinding
+    private var quickSetUp = false
 
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        quickSetUp = requireArguments().getBoolean(setUpKey)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -36,13 +48,13 @@ class WifiSettingsDialog : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.apply {
-            if (viewModel.isConnectedToNetwork()) {
-                getawayEt.isEnabled = false
-            }
+            val isConnected = viewModel.isConnectedToNetwork()
+            getawayEt.isEnabled = !isConnected
+            positiveButton.isEnabled = isConnected
             val textWatcher =
                 AddressTextWatcher(portEt, getawayEt, positiveButton)
             getawayEt.setText(viewModel.getGetaway())
-            portEt.setText(viewModel.getPort())
+            portEt.setText(viewModel.getPort().toString())
             portEt.addTextChangedListener(textWatcher)
             getawayEt.addTextChangedListener(textWatcher)
             negativeButton.setOnClickListener {
@@ -60,7 +72,8 @@ class WifiSettingsDialog : DialogFragment() {
                 viewModel.onNewSettings(
                     getawayEt.text.toString(),
                     portEt.text.toString(),
-                    viewModel.isConnectedToNetwork()
+                    viewModel.isConnectedToNetwork(),
+                    quickSetUp
                 )
                 dismiss()
             }

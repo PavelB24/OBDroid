@@ -3,10 +3,14 @@ package ru.barinov.obdroid.ui.activity
 import android.annotation.SuppressLint
 import android.graphics.drawable.AnimatedVectorDrawable
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
+import android.view.View
 import android.widget.ImageView
 
 import android.widget.TextView
+import android.widget.Toolbar
+import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AlertDialog
 import com.google.android.material.navigation.NavigationView
 import androidx.navigation.findNavController
@@ -15,10 +19,12 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout.LOCK_MODE_LOCKED_CLOSED
 import androidx.drawerlayout.widget.DrawerLayout.LOCK_MODE_UNLOCKED
+
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.barinov.obdroid.BuildConfig
 import ru.barinov.obdroid.R
 import ru.barinov.obdroid.databinding.ActivityMainBinding
+import ru.barinov.obdroid.utils.PermissionsChecker
 
 class MainActivity : AppCompatActivity() {
 
@@ -52,6 +58,57 @@ class MainActivity : AppCompatActivity() {
                     .drawable as AnimatedVectorDrawable
             )
         )
+        setSupportActionBar(binding.mainToolbar)
+        setupToolbar()
+    }
+
+    fun showAbout(){
+        binding.navView.menu.getItem(4).isVisible = true
+    }
+
+    fun hideAbout(){
+        binding.navView.menu.getItem(4).isVisible = false
+    }
+
+    fun hideToolbar(){
+        binding.mainToolbar.visibility = View.GONE
+    }
+
+    fun showToolbar(){
+        binding.mainToolbar.visibility = View.VISIBLE
+    }
+
+    fun getToolbar() = binding.mainToolbar
+
+    fun setupToolbar(){
+        if(PermissionsChecker.hasNecessaryPermissions(this)) {
+            val navController = findNavController(R.id.container)
+            val graph = navController.navInflater.inflate(R.navigation.root_navigation)
+            graph.setStartDestination(
+                if (viewModel.isObdConnected())
+                    R.id.homeFragment
+                else R.id.connectionsFragment
+            )
+            val current = navController.currentDestination?.id
+            navController.graph = graph
+            binding.mainToolbar.setupWithNavController(navController, binding.drawerLayout)
+            unlockDrawer()
+            current?.let {
+                if(it != R.id.permissionsFragment) {
+                    navController.navigate(it)
+//                    if(it == R.id.homeFragment){
+//                        val innerController = findNavController(R.id.container2)
+//                       val currentInner = innerController.currentDestination?.id
+//                        Log.d("@@@", innerController.currentDestination?.displayName.toString())
+//                        currentInner?.let {
+//                            Log.d("@@@", "navigateInner ${innerController.currentDestination}")
+//                            innerController.navigate(it)
+//                        }
+//
+//                    }
+                }
+            }
+        }
     }
 
 
@@ -77,8 +134,11 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun unlockDrawer() {
+    fun startService(){
         viewModel.startService()
+    }
+
+    fun unlockDrawer() {
         binding.drawerLayout.setDrawerLockMode(LOCK_MODE_UNLOCKED)
     }
 

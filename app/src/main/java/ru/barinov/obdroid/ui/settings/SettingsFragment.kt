@@ -1,10 +1,10 @@
 package ru.barinov.obdroid.ui.settings
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -36,16 +36,12 @@ class SettingsFragment : Fragment() {
     }
 
     private fun initViews() {
+//        setAdvancedSettingsVisibility(viewModel.getAdvancedSettingsMenuState())
         binding.apply {
-            toolbar.setupWithNavController(findNavController())
-            toolbar.title = getString(R.string.settings)
             terminalSwitch.isChecked = viewModel.getTerminalFlag()
             terminalSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
                 viewModel.changeTerminalEnabled(isChecked)
                 (requireActivity() as MainActivity).changeShellVisibility()
-            }
-            wifiSettingsCard.setOnClickListener {
-                findNavController().navigate(R.id.action_settingsFragment_to_wifiSettingsDialog)
             }
             onlySupportedSwitch.isChecked = viewModel.getUseOnlySupported()
             onlySupportedSwitch.setOnCheckedChangeListener { buttonView, isChecked ->

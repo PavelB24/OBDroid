@@ -8,22 +8,34 @@ import androidx.room.Transaction
 import kotlinx.coroutines.flow.Flow
 import ru.barinov.obdroid.domain.AtCommandEntity
 import ru.barinov.obdroid.domain.CommandEntity
+import ru.barinov.obdroid.domain.PidCommandEntity
 
 @Dao
 interface CommandsDao {
 
+    companion object {
+        const val pidQuery = "SELECT hex_value as command_body," +
+        " octal_value, command_section_hex, category, command_desc_eng, command_desc_rus," +
+        " is_favorite, is_custom_command, measurement_unit, available as accessibility, is_dynamic," +
+        " 1 as is_pid FROM pid_commands"
+
+        const val atQuery = "SELECT command as command_body, null as octal_value, null as command_section_hex," +
+        "  category, command_desc_eng, command_desc_rus,  is_favorite, 0 as is_custom_command, measurement_unit," +
+        " accessibility, is_dynamic, 0 as is_pid FROM at_commands"
+    }
+
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertCommand(entity: CommandEntity)
+    suspend fun insertCommand(entity: PidCommandEntity)
 
 //    @Query("SELECT * FROM pid_commands WHERE hex_value =:hex AND command_section_hex =:sectionHex")
     @Query("SELECT * FROM pid_commands WHERE hex_value =:hex AND command_section_hex =:sectionHex LIMIT 1")
-    fun getCommandByHexAndSection(hex: String, sectionHex: String): Flow<CommandEntity>
+    fun getCommandByHexAndSection(hex: String, sectionHex: String): Flow<PidCommandEntity>
     @Query("SELECT * FROM at_commands WHERE command =:command AND accessibility == 1 LIMIT 1")
-    fun getAtCommand(command: String): Flow<AtCommandEntity>
+    fun getAtCommands(command: String): Flow<AtCommandEntity>
 
     @Transaction
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun populateWithCommands(commands: List<CommandEntity>)
+    suspend fun populateWithPidCommands(commands: List<PidCommandEntity>)
 
     @Transaction
     @Insert(onConflict = OnConflictStrategy.IGNORE)
@@ -32,20 +44,24 @@ interface CommandsDao {
     @Query("SELECT COUNT(*) FROM pid_commands")
     fun count() : Int
 
-    @Query("SELECT * FROM pid_commands WHERE category != 2")
+    @Query("$pidQuery WHERE category != 2 UNION $atQuery WHERE category != 2 AND accessibility == 1")
     fun getAllCommands(): Flow<List<CommandEntity>>
 
-    @Query("SELECT * FROM pid_commands WHERE category != 2 AND is_fav == 1")
+    @Query("$pidQuery WHERE category != 2 AND is_favorite == 1 UNION $atQuery WHERE category != 2 AND is_favorite == 1")
     fun getOnlyFavs(): Flow<List<CommandEntity>>
 
-    @Query("SELECT * FROM pid_commands WHERE category =:categoryOrdinal ")
+    @Query("$pidQuery WHERE category =:categoryOrdinal UNION $atQuery WHERE category =:categoryOrdinal AND accessibility == 1")
     fun getCommandsByCategory(categoryOrdinal: Int): Flow<List<CommandEntity>>
 
-    @Query("SELECT * FROM pid_commands WHERE category =:categoryOrdinal AND is_fav == 1")
+    @Query("$pidQuery WHERE category =:categoryOrdinal AND is_favorite == 1 UNION $atQuery WHERE category =:categoryOrdinal AND accessibility == 1 AND is_favorite == 1")
     fun getCommandsByCategoryOnlyFavs(categoryOrdinal: Int): Flow<List<CommandEntity>>
 
-    @Query("UPDATE pid_commands SET is_fav =:fav" +
+    @Query("UPDATE pid_commands SET is_favorite =:fav" +
             " WHERE command_section_hex =:section AND hex_value =:command")
-    suspend fun handleFav(fav: Boolean, section: String, command: String)
+    suspend fun handlePidFav(fav: Boolean, section: String, command: String)
+
+    @Query("UPDATE at_commands SET is_favorite =:fav" +
+            " WHERE command =:command")
+    suspend fun handleAtFav(fav: Boolean, command: String): Int
 
 }

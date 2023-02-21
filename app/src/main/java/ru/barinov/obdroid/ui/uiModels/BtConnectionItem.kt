@@ -1,12 +1,15 @@
 package ru.barinov.obdroid.ui.uiModels
 
 
+import android.bluetooth.BluetoothClass
 import kotlinx.android.parcel.Parcelize
 import ru.barinov.obdroid.base.ConnectionItem
 import ru.barinov.obdroid.ui.connectionsFragment.BtConnectionI
 
 data class BtConnectionItem(
     override val type : ConnectionType,
+    val rssi: Short?,
+    val btClass: BluetoothClass?,
     val address : String,
     val name : String?,
     val boundState : Int,

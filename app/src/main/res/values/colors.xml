@@ -27,4 +27,7 @@
     <color name="status_bar">#0C6BB8</color>
     <color name="orange">#D3700A</color>
     <color name="green">#089E0A</color>
+    <color name="high_signal_green_color">#109541</color>
+    <color name="mid_signal_dark_yellow">#BA7207</color>
+    <color name="low_signal_extra_dark_cherry">#6A0808</color>
 </resources>

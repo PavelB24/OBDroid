@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/troubles_history_item"
+        android:title="History"
+        />
+
+    <item
+        android:id="@+id/knowledge_base_item"
+        android:title="Knowledge base"
+        />
+
+
+</menu>
