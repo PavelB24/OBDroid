@@ -17,7 +17,7 @@ class BTViewHolder(
     private val binding: BtItemBinding
 ) : BaseViewHolder<ConnectionItem>(binding.root) {
 
-    override fun onBind(item: ConnectionItem) {
+    override fun onBind(item: ConnectionItem?) {
         if (item !is BtConnectionItem) {
             throw IllegalAccessException()
         }

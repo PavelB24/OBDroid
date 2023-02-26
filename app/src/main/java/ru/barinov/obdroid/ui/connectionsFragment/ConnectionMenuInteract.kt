@@ -2,7 +2,7 @@ package ru.barinov.obdroid.ui.connectionsFragment
 
 import android.bluetooth.BluetoothSocket
 
-interface SimpleConnectionI {
+interface ConnectionMenuInteract {
 
    fun onBtSelected(
       address: String,

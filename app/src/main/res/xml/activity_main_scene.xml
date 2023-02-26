@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<MotionScene xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:motion="http://schemas.android.com/apk/res-auto">
+    >
+
+
+    <ConstraintSet android:id="@+id/normal">
+        <Constraint
+            android:id="@+id/main_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent" />
+        <Constraint android:id="@+id/container"
+            app:visibilityMode="ignore"
+            />
+    </ConstraintSet>
+
+    <ConstraintSet android:id="@+id/hide">
+        <Constraint
+            android:id="@id/main_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toTopOf="parent" />
+        <Constraint android:id="@+id/container"
+            app:visibilityMode="ignore"
+            />
+    </ConstraintSet>
+
+    <Transition
+        app:constraintSetEnd="@id/hide"
+        app:constraintSetStart="@+id/normal"
+        motion:duration="1500"
+        >
+        <OnSwipe
+            app:dragDirection="dragUp"
+            app:dragScale="0.1"
+            app:maxAcceleration="20"
+            app:dragThreshold="100"
+            app:maxVelocity="20"
+            app:moveWhenScrollAtTop="@+id/main_toolbar"
+            app:touchAnchorId="@+id/main_toolbar" />
+    </Transition>
+</MotionScene>

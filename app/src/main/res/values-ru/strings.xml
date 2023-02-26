@@ -96,6 +96,7 @@
     <string name="sensors_fragment_title">Показатели</string>
     <string name="trouble_history">История ошибок</string>
     <string name="troubles_data_base">База данных ошибок</string>
+    <string name="connection_state">Состояние подключения</string>
 
 
     <string-array name="shell_themes_arr">

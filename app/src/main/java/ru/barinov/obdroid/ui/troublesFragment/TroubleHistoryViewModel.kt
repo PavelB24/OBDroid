@@ -1,11 +1,15 @@
 package ru.barinov.obdroid.ui.troublesFragment
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.cachedIn
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 import ru.barinov.obdroid.data.TroublesRepository
 import ru.barinov.obdroid.domain.TroubleCodeType
@@ -29,19 +33,19 @@ class TroubleHistoryViewModel(
 
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    private val troubleCodesFlow = pageTypeFlow.flatMapLatest { type ->
+    val troubleCodesFlow = pageTypeFlow.flatMapLatest { type ->
         searchFlow.flatMapLatest { searchBy ->
             timeLimitFlow.flatMapLatest { time ->
                 selectedCategoryType.flatMapLatest { category ->
                     if (type == TroublePageType.ALL_KNOWN) {
                         troublesRepository.getAllKnownTroublesByType(category, searchBy)
                     } else {
-                        troublesRepository.getHistoryTroubles(time, category, searchBy, category)
+                        troublesRepository.getHistoryTroubles(time,  searchBy, category)
                     }
                 }
             }
         }
-    }
+    }.flowOn(Dispatchers.IO).cachedIn(viewModelScope)
 
 
     fun changeTimeLimit(targetTime: Long){
@@ -53,6 +57,7 @@ class TroubleHistoryViewModel(
 
     fun changePageType(type: TroublePageType) {
         viewModelScope.launch {
+            Log.d("@@@", "CHANGE TO $type")
             pageTypeFlow.emit(type)
         }
     }

@@ -15,7 +15,7 @@ class CommandViewHolder(
     private val binding: CommandItemLayoutBinding
 ) : BaseViewHolder<Command>(binding.root) {
 
-    override fun onBind(item: Command) {
+    override fun onBind(item: Command?) {
         when (item) {
             is PidCommand -> {
                 fillWithPid(item)

@@ -9,6 +9,9 @@ import androidx.navigation.NavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.scan
 import ru.barinov.obdroid.base.ConnectionItem
 import ru.barinov.obdroid.ui.connectionsFragment.BtConnectionI
 import ru.barinov.obdroid.ui.uiModels.BtConnectionItem
@@ -28,6 +31,13 @@ fun BluetoothDevice.toBtConnectionItem(
         actions
     )
 }
+
+@ExperimentalCoroutinesApi
+fun <T> Flow<T>.simpleScan(count: Int): Flow<List<T?>> {
+    val items = List<T?>(count) { null }
+    return this.scan(items) { previous, value -> previous.drop(1) + value }
+}
+
 
 fun Toolbar.setupWithNavController(
     navController: NavController,

@@ -16,18 +16,19 @@ import androidx.core.view.MenuProvider
 import kotlinx.coroutines.*
 import ru.barinov.obdroid.BuildConfig
 import ru.barinov.obdroid.R
+import ru.barinov.obdroid.base.CommonMenuInflater
 import ru.barinov.obdroid.ui.uiModels.BtConnectionItem
 import java.util.*
 
 class ConnectionsMenuProvider(
     private val btHelper: BtHelper,
     private val context: Context,
-    private val simpleConnectionI: SimpleConnectionI
-) : MenuProvider {
+    private val simpleConnectionI: ConnectionMenuInteract
+) : MenuProvider, CommonMenuInflater {
 
 
     override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-        menuInflater.inflate(R.menu.connecions_toolbar_menu, menu)
+        super.inflateAndManageAnimation(menu, menuInflater, R.menu.connecions_toolbar_menu)
         menu.findItem(R.id.enable_bt_item)?.isVisible = !btHelper.isBtEnabled()
     }
 
@@ -35,14 +36,10 @@ class ConnectionsMenuProvider(
     override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
         when (menuItem.itemId) {
             R.id.enable_bt_item -> {
-                if (BuildConfig.VERSION_CODE >= Build.VERSION_CODES.TIRAMISU) {
-                    //todo
+                if (btHelper.askForBt()) {
+
                 } else {
-                    if (btHelper.askForBt()) {
 
-                    } else {
-
-                    }
                 }
             }
 

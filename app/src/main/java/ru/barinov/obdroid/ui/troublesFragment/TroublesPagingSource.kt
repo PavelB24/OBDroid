@@ -1,5 +1,6 @@
 package ru.barinov.obdroid.ui.troublesFragment
 
+import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import ru.barinov.obdroid.BuildConfig
@@ -33,9 +34,14 @@ class TroublesPagingSource(
         try {
             val pageData = when (time) {
                 null -> {
-                    dao.getAllKnownTroublesByType(
-                        PAGE_SIZE, PAGE_SIZE * pageIndex, category.ordinal, searchBy
-                    ).map { it.toTroubleCode() }
+                    if (category == TroubleCodeType.UNDEFINED) {
+                        dao.getAllKnownTroubles(PAGE_SIZE, PAGE_SIZE * pageIndex, searchBy)
+                            .map { it.toTroubleCode() }
+                    } else {
+                        dao.getAllKnownTroublesByType(
+                            PAGE_SIZE, PAGE_SIZE * pageIndex, category.ordinal, searchBy
+                        ).map { it.toTroubleCode() }
+                    }
                 }
                 else -> {
                     dao.getHistoryTroublesByTime(
@@ -48,8 +54,8 @@ class TroublesPagingSource(
                 prevKey = if (pageIndex == 0) null else pageIndex - 1,
                 nextKey = if (pageData.size == params.loadSize) pageIndex + 1 else null
             )
-        } catch (e: Exception){
-            if(BuildConfig.DEBUG) {
+        } catch (e: Exception) {
+            if (BuildConfig.DEBUG) {
                 e.printStackTrace()
             }
             return LoadResult.Error(throwable = e)

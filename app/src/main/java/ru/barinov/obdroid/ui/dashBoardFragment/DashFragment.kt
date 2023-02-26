@@ -1,10 +1,11 @@
-package ru.barinov.obdroid
+package ru.barinov.obdroid.ui.dashBoardFragment
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
 import ru.barinov.obdroid.databinding.MainFragmentBinding
 
 class DashFragment : Fragment() {
@@ -22,6 +23,11 @@ class DashFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        requireActivity().addMenuProvider(
+            DashBoardMenuProvider(),
+            viewLifecycleOwner,
+            Lifecycle.State.STARTED
+        )
 //        val first = layoutInflater.inflate(R.layout.e, FrameLayout(requireContext()))
 //        binding.speedometerView.doOnPreDraw {
 //            Log.d("@@@", "${it.x} ${it.y}")

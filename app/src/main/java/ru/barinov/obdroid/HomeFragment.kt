@@ -3,20 +3,14 @@ package ru.barinov.obdroid
 import android.os.Bundle
 import android.util.Log
 import android.view.*
-import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
-import org.koin.android.ext.android.inject
 import ru.barinov.obdroid.ui.activity.MainActivity
 import ru.barinov.obdroid.databinding.HomeLayoutBinding
-import ru.barinov.obdroid.databinding.PrefsLayoutBinding
-import ru.barinov.obdroid.preferences.Preferences
-import ru.barinov.obdroid.ui.sensorsFragment.SensorsFragment
-import ru.barinov.obdroid.ui.startFragment.PermissionsFragmentViewModel
 
 
 class HomeFragment : Fragment() {
@@ -29,7 +23,6 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = HomeLayoutBinding.inflate(inflater, container, false)
-
         return binding.root
     }
 
@@ -46,6 +39,42 @@ class HomeFragment : Fragment() {
                 )
             }
         }
+
+        binding.root.setTransitionListener(object: MotionLayout.TransitionListener{
+            override fun onTransitionStarted(
+                motionLayout: MotionLayout?,
+                startId: Int,
+                endId: Int
+            ) {
+            }
+
+            override fun onTransitionChange(
+                motionLayout: MotionLayout?,
+                startId: Int,
+                endId: Int,
+                progress: Float
+            ) {
+            }
+
+            override fun onTransitionCompleted(motionLayout: MotionLayout?, currentId: Int) {
+//                if (Navigation.findNavController(host).currentDestination?.id != R.id.diagnosticFragment &&
+//                Navigation.findNavController(host).currentDestination?.id != R.id.mainFragment) {
+                    if (currentId == R.id.normalBottom) {
+                        (requireActivity() as MainActivity).showToolbarOnScroll()
+                    } else {
+                        (requireActivity() as MainActivity).hideToolbarOnScroll()
+                    }
+//                }
+            }
+
+            override fun onTransitionTrigger(
+                motionLayout: MotionLayout?,
+                triggerId: Int,
+                positive: Boolean,
+                progress: Float
+            ) {
+            }
+        })
     }
 
 

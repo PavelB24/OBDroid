@@ -1,6 +1,7 @@
 package ru.barinov.obdroid.ui.sensorsFragment
 
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
@@ -32,7 +33,7 @@ class SensorsFragment : Fragment() {
             requireActivity().addMenuProvider(
                 SensorsFragmentMenuProvider(viewModel),
                 viewLifecycleOwner,
-                Lifecycle.State.RESUMED
+                Lifecycle.State.STARTED
             )
         }
         return binding.root

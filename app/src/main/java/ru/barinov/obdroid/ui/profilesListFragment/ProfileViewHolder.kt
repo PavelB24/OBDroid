@@ -13,21 +13,23 @@ class ProfileViewHolder(
     private val directProtoPicker: ((Int) -> (Unit))? = null
 ) : BaseViewHolder<Profile>(binding.root) {
 
-    override fun onBind(item: Profile) {
-        binding.protocolList.visibility = if(showProtoSelector) View.VISIBLE else View.GONE
-        binding.profileName.text = item.name
-        if(showProtoSelector) {
-            binding.protocolList.onItemSelectedListener = object : OnItemSelectedListener {
-                override fun onItemSelected(
-                    parent: AdapterView<*>?,
-                    view: View?,
-                    position: Int,
-                    id: Long
-                ) {
-                    directProtoPicker?.invoke(position)
-                }
+    override fun onBind(item: Profile?) {
+        item?.let {
+            binding.protocolList.visibility = if (showProtoSelector) View.VISIBLE else View.GONE
+            binding.profileName.text = it.name
+            if (showProtoSelector) {
+                binding.protocolList.onItemSelectedListener = object : OnItemSelectedListener {
+                    override fun onItemSelected(
+                        parent: AdapterView<*>?,
+                        view: View?,
+                        position: Int,
+                        id: Long
+                    ) {
+                        directProtoPicker?.invoke(position)
+                    }
 
-                override fun onNothingSelected(parent: AdapterView<*>?) {}
+                    override fun onNothingSelected(parent: AdapterView<*>?) {}
+                }
             }
         }
     }

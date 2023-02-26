@@ -5,7 +5,6 @@ import android.bluetooth.BluetoothSocket
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.MacAddress
-import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
 import android.net.wifi.WifiNetworkSpecifier
@@ -17,7 +16,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
-import ru.barinov.obdroid.ConnectedEventType
+import ru.barinov.obdroid.domain.ConnectedEventType
 import ru.barinov.obdroid.R
 import ru.barinov.obdroid.utils.ConnectionWatcher
 import ru.barinov.obdroid.base.ConnectionItem

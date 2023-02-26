@@ -1,4 +1,4 @@
-package ru.barinov.obdroid
+package ru.barinov.obdroid.domain
 
 import ru.barinov.obdroid.ui.uiModels.BtItem
 import ru.barinov.obdroid.ui.uiModels.WifiConnectionItem

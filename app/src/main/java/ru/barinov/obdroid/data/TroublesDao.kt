@@ -19,24 +19,47 @@ interface TroublesDao {
 
 
     @Query("SELECT * FROM trouble_codes WHERE is_history == 0")
-    fun getAllKnownTroubles(): List<TroubleCodeEntity>
+    suspend fun getAllKnownTroubles(): List<TroubleCodeEntity>
 
-    @Query("SELECT * FROM trouble_codes WHERE is_history == 0 AND type =:typeOrdinal  LIMIT :limit OFFSET :offset")
-    fun getAllKnownTroublesByType(
+    @Query("SELECT * FROM trouble_codes WHERE" +
+            " ((code LIKE '%'|| :searchBy || '%') OR " +
+            " (description LIKE '%'|| :searchBy || '%') OR " +
+            " (rus_translate LIKE '%'|| :searchBy || '%'))  " +
+            " AND is_history == 0 AND type =:typeOrdinal  LIMIT :limit OFFSET :offset")
+    suspend fun getAllKnownTroublesByType(
         limit: Int,
         offset: Int,
         typeOrdinal: Int,
         searchBy: String
     ): List<TroubleCodeEntity>
 
+    @Query("SELECT * FROM trouble_codes WHERE" +
+            " ((code LIKE '%'|| :searchBy || '%') OR " +
+            " (description LIKE '%'|| :searchBy || '%') OR " +
+            " (rus_translate LIKE '%'|| :searchBy || '%'))  " +
+            " AND is_history == 0 AND type != 10  LIMIT :limit OFFSET :offset")
+    suspend fun getAllKnownTroubles(
+        limit: Int,
+        offset: Int,
+        searchBy: String
+    ): List<TroubleCodeEntity>
 
-    @Query("SELECT * FROM trouble_codes WHERE is_history == 1 AND detection_time >=:timeBarrier  LIMIT :limit OFFSET :offset")
-    fun getHistoryTroublesByTime(
+
+    @Query("SELECT * FROM trouble_codes " +
+            " WHERE ((:searchBy ='') OR " +
+            " (code LIKE '%'|| :searchBy || '%') OR " +
+            " (description LIKE '%'|| :searchBy || '%') OR " +
+            " (rus_translate LIKE '%'|| :searchBy || '%'))  " +
+            "AND detection_time >=:timeBarrier AND is_history == 1 AND type != 10 " +
+            "LIMIT :limit " +
+            "OFFSET :offset")
+    suspend fun getHistoryTroublesByTime(
         limit: Int,
         offset: Int,
         timeBarrier: Long,
         searchBy: String
     ): List<TroubleCodeEntity>
+
 
     @Query("SELECT * FROM trouble_codes WHERE is_history == 1 AND detection_time >=:timeBarrier AND type =:catOrdinal")
     fun getHistoryTroublesByTimeAndCategory(

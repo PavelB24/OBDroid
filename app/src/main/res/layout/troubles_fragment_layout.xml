@@ -24,12 +24,18 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="20dp"
-        app:layout_constraintBottom_toTopOf="@id/clear_codes_button"
-        android:layout_marginHorizontal="40dp"
+        app:layout_constraintBottom_toTopOf="@id/barrier"
+        android:layout_marginHorizontal="5dp"
         android:layout_width="0dp"
         android:layout_height="0dp"/>
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:barrierDirection="top"
+        app:constraint_referenced_ids="clear_codes_button, bottom_history_kb_panel"
+        />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/clear_codes_button"

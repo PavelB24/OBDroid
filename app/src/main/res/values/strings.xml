@@ -97,6 +97,7 @@
     <string name="sensors_fragment_title">Sensor data</string>
     <string name="trouble_history">Detected troubles history</string>
     <string name="troubles_data_base">Troubles data base</string>
+    <string name="connection_state">Connection state</string>
 
 
     <string-array name="available_profiles" translatable="false">

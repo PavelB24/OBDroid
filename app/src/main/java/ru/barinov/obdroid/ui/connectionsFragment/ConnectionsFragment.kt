@@ -10,22 +10,23 @@ import android.os.Bundle
 import android.util.Log
 import android.view.*
 import android.widget.Toast
+import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.ui.setupWithNavController
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.single
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.barinov.obdroid.*
-import ru.barinov.obdroid.ui.activity.MainActivity
 import ru.barinov.obdroid.broadcastReceivers.ConnectionsBroadcastReceiver
 import ru.barinov.obdroid.core.ObdBus
+import ru.barinov.obdroid.core.simpleScan
 import ru.barinov.obdroid.databinding.ConnectionsLayoutBinding
+import ru.barinov.obdroid.domain.ConnectedEventType
+import ru.barinov.obdroid.ui.activity.MainActivity
 import ru.barinov.obdroid.ui.utils.CommonDialogUtil
 import ru.barinov.obdroid.utils.PermissionsChecker
 import java.util.*
@@ -74,14 +75,12 @@ class ConnectionsFragment : Fragment() {
                 ConnectionsMenuProvider(
                     btHelper,
                     requireContext(),
-                    object : SimpleConnectionI {
+                    object : ConnectionMenuInteract {
                         override fun onBtSelected(address: String, socket: BluetoothSocket) {
-                            showProgress()
                             viewModel.connectBtDirectly(address, socket)
                         }
 
                         override fun onWiFiSelected() {
-                            showProgress()
                             findNavController().navigate(
                                 R.id.action_connectionsFragment_to_wifiSettingsDialog,
                                 Bundle().also {
@@ -93,7 +92,7 @@ class ConnectionsFragment : Fragment() {
                     }
                 ), viewLifecycleOwner, Lifecycle.State.RESUMED
             )
-        requireActivity().title = requireContext().getString(R.string.connections_title)
+        requireActivity().title = getString(R.string.connections_title)
         return binding.root
     }
 
@@ -123,8 +122,8 @@ class ConnectionsFragment : Fragment() {
 
     private fun subscribe() {
         lifecycleScope.launchWhenResumed {
-            viewModel.eventBusFlow.collectLatest {
-                when (it) {
+            viewModel.eventBusFlow.simpleScan(2).collectLatest { (old, new)->
+                when (new) {
                     is ObdBus.ObdEvents.SuccessConnect -> {
                         hideProgress()
                         //with animations
@@ -134,6 +133,10 @@ class ConnectionsFragment : Fragment() {
                         hideProgress()
                         CommonDialogUtil.showCantOrFailConnectDialog(requireContext())
                     }
+                    else -> {}
+                }
+                if(new != old){
+                    requireActivity().invalidateOptionsMenu()
                 }
             }
         }
@@ -166,7 +169,7 @@ class ConnectionsFragment : Fragment() {
                 }
             }.collect()
         }
-        lifecycleScope.launchWhenStarted {
+        lifecycleScope.launchWhenCreated {
             connectionsReceiver.receiverEvents.onEach { event ->
                 when (event) {
                     is ConnectionReceiverEvent.BluetoothBounded -> {
@@ -212,7 +215,39 @@ class ConnectionsFragment : Fragment() {
     }
 
     private fun rebaseAfterConnect() {
+        binding.motionRoot.addTransitionListener(object: MotionLayout.TransitionListener{
+            override fun onTransitionStarted(
+                motionLayout: MotionLayout?,
+                startId: Int,
+                endId: Int
+            ) {
 
+            }
+
+            override fun onTransitionChange(
+                motionLayout: MotionLayout?,
+                startId: Int,
+                endId: Int,
+                progress: Float
+            ) {
+
+            }
+
+            override fun onTransitionCompleted(motionLayout: MotionLayout?, currentId: Int) {
+                (requireActivity() as MainActivity).setupToolbar()
+            }
+
+            override fun onTransitionTrigger(
+                motionLayout: MotionLayout?,
+                triggerId: Int,
+                positive: Boolean,
+                progress: Float
+            ) {
+
+            }
+
+        })
+        binding.motionRoot.transitionToState(R.id.end)
     }
 
     private fun onDeviceBounded(
@@ -243,13 +278,13 @@ class ConnectionsFragment : Fragment() {
     }
 
     private fun hideProgress() {
-        binding.connectionsRv.visibility = View.VISIBLE
-        binding.progressBar.visibility = View.GONE
+        Log.d("@@@", "HIDE")
+        binding.motionRoot.transitionToState(R.id.start)
     }
 
     private fun showProgress() {
-        binding.connectionsRv.visibility = View.GONE
-        binding.progressBar.visibility = View.VISIBLE
+        Log.d("@@@", "SHOWPG")
+        binding.motionRoot.transitionToState(R.id.loading)
     }
 
     private fun displayConnection() {
@@ -312,4 +347,5 @@ class ConnectionsFragment : Fragment() {
         }
         super.onDestroy()
     }
+
 }

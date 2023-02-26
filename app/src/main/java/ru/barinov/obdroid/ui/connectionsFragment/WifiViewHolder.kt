@@ -11,7 +11,7 @@ class WifiViewHolder(
     private val binding: WifiItemLayoutBinding
 ) : BaseViewHolder<ConnectionItem>(binding.root) {
 
-    override fun onBind(item: ConnectionItem) {
+    override fun onBind(item: ConnectionItem?) {
         if (item !is WifiConnectionItem){
             throw IllegalAccessException()
         }

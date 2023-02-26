@@ -8,7 +8,7 @@ import android.net.wifi.ScanResult
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.*
-import ru.barinov.obdroid.ConnectedEventType
+import ru.barinov.obdroid.domain.ConnectedEventType
 import ru.barinov.obdroid.base.ConnectionItem
 import ru.barinov.obdroid.core.ObdBus
 import ru.barinov.obdroid.core.toBtConnectionItem

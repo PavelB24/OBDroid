@@ -1,18 +1,18 @@
-package ru.barinov.obdroid.base
+package ru.barinov.obdroid.ui.dashBoardFragment
 
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import androidx.core.view.MenuProvider
+import ru.barinov.obdroid.base.CommonMenuInflater
 
-open class BaseMenuProvider: MenuProvider {
-
+class DashBoardMenuProvider: MenuProvider, CommonMenuInflater {
 
     override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-        TODO("Not yet implemented")
+        super.inflateAndManageAnimation(menu, menuInflater, null)
     }
 
     override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-        TODO("Not yet implemented")
+       return true
     }
 }

@@ -5,7 +5,7 @@
     app:startDestination="@id/mainFragment">
     <fragment
         android:id="@+id/mainFragment"
-        android:name="ru.barinov.obdroid.DashFragment"
+        android:name="ru.barinov.obdroid.ui.dashBoardFragment.DashFragment"
         android:label="@string/dash_board">
         <action
             android:id="@+id/action_mainFragment_to_speedFragment"

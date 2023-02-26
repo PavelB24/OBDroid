@@ -6,10 +6,11 @@
     android:animateLayoutChanges="true"
     android:background="@drawable/fragment_common_background">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.constraintlayout.motion.widget.MotionLayout
+        android:id="@+id/motion_root"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:animateLayoutChanges="true">
+        app:layoutDescription="@xml/connections_layout_scene">
 
     <ProgressBar
         android:id="@+id/progress_bar"
@@ -17,14 +18,10 @@
         android:layout_height="match_parent"
         android:layout_margin="40dp"
         android:theme="@style/CircularProgress"
-        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
-
-
 
 
     <androidx.recyclerview.widget.RecyclerView
@@ -38,6 +35,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.motion.widget.MotionLayout>
 
 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

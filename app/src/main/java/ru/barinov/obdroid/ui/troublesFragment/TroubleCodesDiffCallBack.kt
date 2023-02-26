@@ -6,10 +6,10 @@ import ru.barinov.obdroid.ui.uiModels.TroubleCode
 class TroubleCodesDiffCallBack: DiffUtil.ItemCallback<TroubleCode>() {
 
     override fun areItemsTheSame(oldItem: TroubleCode, newItem: TroubleCode): Boolean {
-        TODO("Not yet implemented")
+       return oldItem.code == newItem.code && oldItem.detectionDate == newItem.detectionDate
     }
 
     override fun areContentsTheSame(oldItem: TroubleCode, newItem: TroubleCode): Boolean {
-        TODO("Not yet implemented")
+        return oldItem == newItem
     }
 }

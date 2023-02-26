@@ -6,14 +6,15 @@ import android.view.MenuItem
 import androidx.core.view.MenuProvider
 import androidx.core.view.get
 import ru.barinov.obdroid.R
+import ru.barinov.obdroid.base.CommonMenuInflater
 import ru.barinov.obdroid.domain.CommandCategory
 
 class SensorsFragmentMenuProvider(
     private val viewModel: SensorsViewModel
-) : MenuProvider {
+) : MenuProvider, CommonMenuInflater {
 
     override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-        menuInflater.inflate(R.menu.sensors_toolbar_menu, menu)
+        super.inflateAndManageAnimation(menu, menuInflater, R.menu.sensors_toolbar_menu)
         menu.getItem(1).isChecked = viewModel.getSavedFavsState()
         val savedSortItem = when (viewModel.getSavedSortState()) {
             1 -> 1
@@ -28,7 +29,6 @@ class SensorsFragmentMenuProvider(
             else -> 0
         }
         menu.getItem(0).subMenu?.get(savedSortItem)?.isChecked = true
-
     }
 
     override fun onMenuItemSelected(menuItem: MenuItem): Boolean {

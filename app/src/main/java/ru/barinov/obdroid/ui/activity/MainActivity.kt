@@ -3,14 +3,11 @@ package ru.barinov.obdroid.ui.activity
 import android.annotation.SuppressLint
 import android.graphics.drawable.AnimatedVectorDrawable
 import android.os.Bundle
-import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
 
 import android.widget.TextView
-import android.widget.Toolbar
-import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AlertDialog
 import com.google.android.material.navigation.NavigationView
 import androidx.navigation.findNavController
@@ -60,6 +57,14 @@ class MainActivity : AppCompatActivity() {
         )
         setSupportActionBar(binding.mainToolbar)
         setupToolbar()
+    }
+
+    fun hideToolbarOnScroll(){
+        binding.root.transitionToState(R.id.hide, 300)
+    }
+
+    fun showToolbarOnScroll(){
+        binding.root.transitionToState(R.id.normal, 300)
     }
 
     fun showAbout(){

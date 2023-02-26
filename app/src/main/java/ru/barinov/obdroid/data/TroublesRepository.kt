@@ -3,7 +3,9 @@ package ru.barinov.obdroid.data
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import androidx.paging.map
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import ru.barinov.obdroid.domain.TroubleCodeEntity
 import ru.barinov.obdroid.domain.TroubleCodeType
 import ru.barinov.obdroid.ui.troublesFragment.TroublesPagingSource
@@ -19,7 +21,6 @@ class TroublesRepository(private val dao: TroublesDao) {
 
     suspend fun getHistoryTroubles(
         time: Long,
-        type: TroubleCodeType,
         searchBy: String,
         category: TroubleCodeType
     ): Flow<PagingData<TroubleCode>> {
@@ -41,7 +42,8 @@ class TroublesRepository(private val dao: TroublesDao) {
     }
 
     suspend fun getAllKnownTroubles() = dao.getAllKnownTroubles()
-    suspend fun getAllKnownTroublesByType(type: TroubleCodeType, searchBy: String): Flow<PagingData<TroubleCode>> {
+
+    fun getAllKnownTroublesByType(type: TroubleCodeType, searchBy: String): Flow<PagingData<TroubleCode>> {
         return Pager(
             config = PagingConfig(
                 pageSize = TroublesPagingSource.PAGE_SIZE,
