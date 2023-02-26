@@ -52,29 +52,26 @@ class TroubleHistory : Fragment() {
     }
 
     private fun initViews() {
-        (requireParentFragment().requireParentFragment() as HomeFragment).hideBottomNav()
+        //to toolbar
         binding.apply {
             detectedTroublesRw.adapter = adapter
-            bottomHistoryKbPanel.visibility = View.VISIBLE
             clearCodesButton.visibility = View.GONE
-            bottomHistoryKbPanel.setOnItemSelectedListener {
-                when (it.itemId) {
-                    R.id.troubles_history_item -> {
-                        viewModel.changePageType(TroublePageType.DETECTED)
-                    }
-                    R.id.knowledge_base_item -> {
-                        viewModel.changePageType(TroublePageType.ALL_KNOWN)
-                    }
-                }
-                true
-            }
-            bottomHistoryKbPanel.selectedItemId = R.id.troubles_history_item
+//            bottomHistoryKbPanel.setOnItemSelectedListener {
+//                when (it.itemId) {
+//                    R.id.troubles_history_item -> {
+//                        viewModel.changePageType(TroublePageType.DETECTED)
+//                    }
+//                    R.id.knowledge_base_item -> {
+//                        viewModel.changePageType(TroublePageType.ALL_KNOWN)
+//                    }
+//                }
+//                true
+//            }
         }
     }
 
 
     override fun onDestroy() {
-        (requireParentFragment().requireParentFragment() as HomeFragment).showBottomNav()
         super.onDestroy()
     }
 }

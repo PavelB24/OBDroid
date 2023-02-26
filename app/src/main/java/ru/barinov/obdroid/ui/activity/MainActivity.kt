@@ -14,6 +14,7 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.drawerlayout.widget.DrawerLayout.LOCK_MODE_LOCKED_CLOSED
 import androidx.drawerlayout.widget.DrawerLayout.LOCK_MODE_UNLOCKED
 
@@ -57,14 +58,45 @@ class MainActivity : AppCompatActivity() {
         )
         setSupportActionBar(binding.mainToolbar)
         setupToolbar()
+        binding.root.addTransitionListener(object: MotionLayout.TransitionListener{
+            override fun onTransitionStarted(
+                motionLayout: MotionLayout?,
+                startId: Int,
+                endId: Int
+            ) {
+            }
+
+            override fun onTransitionChange(
+                motionLayout: MotionLayout?,
+                startId: Int,
+                endId: Int,
+                progress: Float
+            ) {
+            }
+
+            override fun onTransitionCompleted(motionLayout: MotionLayout?, currentId: Int) {
+                if(currentId == R.id.hide){
+                    binding.drawerLayout.setDrawerLockMode(LOCK_MODE_LOCKED_CLOSED)
+                } else unlockDrawer()
+            }
+
+            override fun onTransitionTrigger(
+                motionLayout: MotionLayout?,
+                triggerId: Int,
+                positive: Boolean,
+                progress: Float
+            ) {
+
+            }
+        })
     }
 
     fun hideToolbarOnScroll(){
-        binding.root.transitionToState(R.id.hide, 300)
+        binding.root.transitionToState(R.id.hide, 500)
     }
 
     fun showToolbarOnScroll(){
-        binding.root.transitionToState(R.id.normal, 300)
+        binding.root.transitionToState(R.id.normal, 500)
     }
 
     fun showAbout(){

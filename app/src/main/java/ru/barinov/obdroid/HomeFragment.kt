@@ -40,7 +40,7 @@ class HomeFragment : Fragment() {
             }
         }
 
-        binding.root.setTransitionListener(object: MotionLayout.TransitionListener{
+        binding.root.addTransitionListener(object: MotionLayout.TransitionListener{
             override fun onTransitionStarted(
                 motionLayout: MotionLayout?,
                 startId: Int,
@@ -57,14 +57,13 @@ class HomeFragment : Fragment() {
             }
 
             override fun onTransitionCompleted(motionLayout: MotionLayout?, currentId: Int) {
-//                if (Navigation.findNavController(host).currentDestination?.id != R.id.diagnosticFragment &&
-//                Navigation.findNavController(host).currentDestination?.id != R.id.mainFragment) {
+                binding.root.post {
                     if (currentId == R.id.normalBottom) {
                         (requireActivity() as MainActivity).showToolbarOnScroll()
                     } else {
                         (requireActivity() as MainActivity).hideToolbarOnScroll()
                     }
-//                }
+                }
             }
 
             override fun onTransitionTrigger(
@@ -78,13 +77,6 @@ class HomeFragment : Fragment() {
     }
 
 
-    fun hideBottomNav(){
-        binding.mainBottomNav.visibility = View.GONE
-    }
-
-    fun showBottomNav(){
-        binding.mainBottomNav.visibility = View.VISIBLE
-    }
 
     override fun onDestroy() {
         super.onDestroy()

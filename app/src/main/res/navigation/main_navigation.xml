@@ -45,5 +45,9 @@
     <fragment
         android:id="@+id/troubleHistory"
         android:name="ru.barinov.obdroid.ui.troublesFragment.TroubleHistory"
-        android:label="TroubleHistory" />
+        android:label="TroubleHistory" >
+        <action
+            android:id="@+id/action_troubleHistory_to_troubleDescriptionDialogFragment"
+            app:destination="@id/troubleDescriptionDialogFragment" />
+    </fragment>
 </navigation>

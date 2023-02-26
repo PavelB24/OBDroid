@@ -21,14 +21,18 @@
     </ConstraintSet>
 
     <Transition
+        android:id="@+id/bottom_handler"
+        app:duration="20"
         app:constraintSetEnd="@id/hideBottom"
-        app:duration="500"
+        app:layoutDuringTransition="ignoreRequest"
         app:constraintSetStart="@+id/normalBottom">
         <OnSwipe
             app:dragDirection="dragDown"
             app:dragScale="0.1"
-            app:maxAcceleration="10"
+            app:maxAcceleration="20"
             app:maxVelocity="1"
+            app:moveWhenScrollAtTop="@+id/main_bottom_nav"
             app:touchAnchorId="@+id/main_bottom_nav" />
+
     </Transition>
 </MotionScene>

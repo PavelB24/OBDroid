@@ -34,7 +34,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:barrierDirection="top"
-        app:constraint_referenced_ids="clear_codes_button, bottom_history_kb_panel"
+        app:constraint_referenced_ids="clear_codes_button"
         />
 
     <com.google.android.material.button.MaterialButton
@@ -52,14 +52,6 @@
         android:layout_marginBottom="60dp"
         />
 
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottom_history_kb_panel"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        style="@style/BottomNavStyle"
-        app:menu="@menu/troubles_history_bottom_menu"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
