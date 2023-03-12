@@ -1,6 +1,5 @@
 package ru.barinov.obdroid.data
 
-import android.util.Log
 import ru.barinov.obdroid.base.Command
 import ru.barinov.obdroid.domain.AtCommand
 import ru.barinov.obdroid.domain.AtCommandEntity
@@ -23,15 +22,15 @@ class CommandsRepository(
     suspend fun populateWithCommands(commands: List<AtCommandEntity>) =
         dao.populateWithAtCommands(commands)
 
-    fun getAllCommands() = dao.getAllCommands()
+    fun getAllCommandsByQuery(query: String) = dao.getAllCommandsByQuery(query)
 
-    fun getCommandsByCategory(category: CommandCategory) =
-        dao.getCommandsByCategory(category.ordinal)
+    fun getCommandsByCategory(category: CommandCategory, query: String) =
+        dao.getCommandsByCategory(category.ordinal, query)
 
-    fun getOnlyFavs() = dao.getOnlyFavs()
+    fun getOnlyFavs(query: String) = dao.getOnlyFavs(query)
 
-    fun getCommandsByCategoryOnlyFavs(category: CommandCategory) =
-        dao.getCommandsByCategoryOnlyFavs(category.ordinal)
+    fun getCommandsByCategoryOnlyFavs(category: CommandCategory, query: String) =
+        dao.getCommandsByCategoryOnlyFavs(category.ordinal, query)
 
     suspend fun handleFav(command: Command, isFav: Boolean) {
         if (command is PidCommand) {

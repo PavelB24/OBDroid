@@ -9,7 +9,7 @@ import androidx.appcompat.widget.AppCompatImageView
 import ru.barinov.obdroid.R
 import ru.barinov.obdroid.core.ObdBus
 
-interface CommonMenuInflater {
+abstract class ConnectionStateItemHolder {
 
 
     fun inflateAndManageAnimation(menu: Menu, menuInflater: MenuInflater, baseMenuId: Int?){

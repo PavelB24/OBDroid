@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/history_type_item"
+        android:title="History"
+        app:showAsAction="ifRoom"
+        android:checkable="true"
+        />
+
+    <item
+        android:id="@+id/trouble_type_item"
+        android:title="@string/title_trouble_type"
+        android:checkableBehavior="single"
+        app:showAsAction="collapseActionView">
+
+        <menu>
+            <group
+                android:id="@+id/sort_buttons_group"
+                android:checkableBehavior="single">
+            <item
+                android:id="@+id/all_troubles"
+                android:title="@string/all_troubles"
+                app:showAsAction="collapseActionView" />
+
+
+            <item
+                android:id="@+id/fuel_and_air_troubles"
+                android:title="@string/fuel_and_air_troubles"
+                app:showAsAction="collapseActionView" />
+
+            <item
+                android:id="@+id/ignition_troubles"
+                android:title="@string/ignition_troubles"
+                app:showAsAction="collapseActionView" />
+
+            <item
+                android:id="@+id/emission_troubles"
+                android:title="@string/emission_troubles"
+                app:showAsAction="collapseActionView" />
+
+            <item
+                android:id="@+id/ecu_and_aux_troubles"
+                android:title="@string/ecu_and_aux_troubles"
+                app:showAsAction="collapseActionView" />
+
+            <item
+                android:id="@+id/transmission_troubles"
+                android:title="@string/transmission_troubles"
+                app:showAsAction="collapseActionView" />
+
+            <item
+                android:id="@+id/chassis_troubles"
+                android:title="@string/chassis_troubles"
+                app:showAsAction="collapseActionView" />
+
+            <item
+                android:id="@+id/common_troubles"
+                android:title="@string/common_troubles"
+                app:showAsAction="collapseActionView" />
+
+            </group>
+
+        </menu>
+
+    </item>
+
+
+
+
+</menu>

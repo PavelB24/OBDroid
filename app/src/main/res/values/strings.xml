@@ -98,6 +98,16 @@
     <string name="trouble_history">Detected troubles history</string>
     <string name="troubles_data_base">Troubles data base</string>
     <string name="connection_state">Connection state</string>
+    <string name="search_item_menu_title">Search</string>
+    <string name="all_troubles">All</string>
+    <string name="fuel_and_air_troubles">Fuel and air</string>
+    <string name="ignition_troubles">Ignition</string>
+    <string name="emission_troubles">Emission</string>
+    <string name="ecu_and_aux_troubles">Ecu and aux</string>
+    <string name="transmission_troubles">Transmission</string>
+    <string name="chassis_troubles">Chassis</string>
+    <string name="common_troubles">Common</string>
+    <string name="title_trouble_type">Trouble code type</string>
 
 
     <string-array name="available_profiles" translatable="false">

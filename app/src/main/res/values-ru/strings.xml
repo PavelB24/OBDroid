@@ -44,7 +44,7 @@
     <string name="diesel_cat">Дизель</string>
     <string name="electric_cat">Электрика</string>
     <string name="oxygen_sensors_cat">Кислородные датчики</string>
-    <string name="vehicle_info_cat">Информация об автомобиле</string>
+    <string name="vehicle_info_cat">Об автомобиле</string>
     <string name="favorites_commands_toolbar_title">Избранное</string>
     <string name="categories">Категории</string>
     <string name="temperature">Температура</string>
@@ -97,6 +97,16 @@
     <string name="trouble_history">История ошибок</string>
     <string name="troubles_data_base">База данных ошибок</string>
     <string name="connection_state">Состояние подключения</string>
+    <string name="search_item_menu_title">Поиск</string>
+    <string name="all_troubles">Все</string>
+    <string name="fuel_and_air_troubles">Топливо и воздух</string>
+    <string name="ignition_troubles">Зажигание</string>
+    <string name="emission_troubles">Выхлоп</string>
+    <string name="ecu_and_aux_troubles">ЭБУ и доп. устройства</string>
+    <string name="transmission_troubles">Трансмиссия</string>
+    <string name="chassis_troubles">Шасси</string>
+    <string name="common_troubles">Общие</string>
+    <string name="title_trouble_type">Тип ошибки</string>
 
 
     <string-array name="shell_themes_arr">

@@ -39,7 +39,6 @@ class HomeFragment : Fragment() {
                 )
             }
         }
-
         binding.root.addTransitionListener(object: MotionLayout.TransitionListener{
             override fun onTransitionStarted(
                 motionLayout: MotionLayout?,
@@ -58,10 +57,12 @@ class HomeFragment : Fragment() {
 
             override fun onTransitionCompleted(motionLayout: MotionLayout?, currentId: Int) {
                 binding.root.post {
-                    if (currentId == R.id.normalBottom) {
-                        (requireActivity() as MainActivity).showToolbarOnScroll()
-                    } else {
-                        (requireActivity() as MainActivity).hideToolbarOnScroll()
+                    if (Navigation.findNavController(host).currentDestination?.id != R.id.troubleHistory) {
+                        if (currentId == R.id.normalBottom) {
+                            (requireActivity() as MainActivity).showToolbarOnScroll()
+                        } else {
+                            (requireActivity() as MainActivity).hideToolbarOnScroll()
+                        }
                     }
                 }
             }
@@ -76,6 +77,16 @@ class HomeFragment : Fragment() {
         })
     }
 
+
+    fun hideAndLockBottom(){
+        binding.root.getTransition(R.id.bottom_handler).isEnabled = false
+        binding.root.transitionToState(R.id.hideBottom)
+    }
+
+    fun showAndUnLockBottom(){
+        binding.root.getTransition(R.id.bottom_handler).isEnabled = true
+        binding.root.transitionToState(R.id.normalBottom)
+    }
 
 
     override fun onDestroy() {

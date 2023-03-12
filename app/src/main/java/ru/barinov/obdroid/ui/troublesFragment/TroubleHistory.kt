@@ -5,11 +5,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.barinov.obdroid.HomeFragment
-import ru.barinov.obdroid.R
+import ru.barinov.obdroid.core.getGrandParent
 import ru.barinov.obdroid.databinding.TroublesFragmentLayoutBinding
 
 class TroubleHistory : Fragment() {
@@ -27,6 +28,12 @@ class TroubleHistory : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = TroublesFragmentLayoutBinding.inflate(inflater, container, false)
+        requireActivity().addMenuProvider(
+            TroubleHistoryMenuProvider(viewModel),
+            viewLifecycleOwner,
+            Lifecycle.State.STARTED
+        )
+        getGrandParent<HomeFragment>()?.hideAndLockBottom()
         return binding.root
     }
 
@@ -70,8 +77,8 @@ class TroubleHistory : Fragment() {
         }
     }
 
-
     override fun onDestroy() {
         super.onDestroy()
+        getGrandParent<HomeFragment>()?.showAndUnLockBottom()
     }
 }

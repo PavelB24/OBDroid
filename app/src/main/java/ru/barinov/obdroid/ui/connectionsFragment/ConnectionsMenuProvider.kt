@@ -5,7 +5,6 @@ import android.annotation.SuppressLint
 import android.bluetooth.BluetoothDevice
 import android.content.Context
 import android.content.pm.PackageManager
-import android.os.Build
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -14,9 +13,8 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.MenuProvider
 import kotlinx.coroutines.*
-import ru.barinov.obdroid.BuildConfig
 import ru.barinov.obdroid.R
-import ru.barinov.obdroid.base.CommonMenuInflater
+import ru.barinov.obdroid.base.ConnectionStateItemHolder
 import ru.barinov.obdroid.ui.uiModels.BtConnectionItem
 import java.util.*
 
@@ -24,7 +22,7 @@ class ConnectionsMenuProvider(
     private val btHelper: BtHelper,
     private val context: Context,
     private val simpleConnectionI: ConnectionMenuInteract
-) : MenuProvider, CommonMenuInflater {
+) : MenuProvider, ConnectionStateItemHolder() {
 
 
     override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {

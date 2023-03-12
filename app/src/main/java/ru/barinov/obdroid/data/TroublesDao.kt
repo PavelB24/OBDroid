@@ -7,6 +7,12 @@ import ru.barinov.obdroid.domain.TroubleCodeEntity
 @Dao
 interface TroublesDao {
 
+    companion object{
+        const val searchQuery = "((code LIKE '%'|| :searchBy || '%') OR " +
+        " (description LIKE '%'|| :searchBy || '%') OR " +
+        " (rus_translate LIKE '%'|| :searchBy || '%')) "
+    }
+
     @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun insertTrouble(entity: TroubleCodeEntity)
 
@@ -21,10 +27,8 @@ interface TroublesDao {
     @Query("SELECT * FROM trouble_codes WHERE is_history == 0")
     suspend fun getAllKnownTroubles(): List<TroubleCodeEntity>
 
-    @Query("SELECT * FROM trouble_codes WHERE" +
-            " ((code LIKE '%'|| :searchBy || '%') OR " +
-            " (description LIKE '%'|| :searchBy || '%') OR " +
-            " (rus_translate LIKE '%'|| :searchBy || '%'))  " +
+    @Query("SELECT * FROM trouble_codes WHERE " +
+            searchQuery +
             " AND is_history == 0 AND type =:typeOrdinal  LIMIT :limit OFFSET :offset")
     suspend fun getAllKnownTroublesByType(
         limit: Int,
@@ -33,10 +37,8 @@ interface TroublesDao {
         searchBy: String
     ): List<TroubleCodeEntity>
 
-    @Query("SELECT * FROM trouble_codes WHERE" +
-            " ((code LIKE '%'|| :searchBy || '%') OR " +
-            " (description LIKE '%'|| :searchBy || '%') OR " +
-            " (rus_translate LIKE '%'|| :searchBy || '%'))  " +
+    @Query("SELECT * FROM trouble_codes WHERE " +
+            searchQuery +
             " AND is_history == 0 AND type != 10  LIMIT :limit OFFSET :offset")
     suspend fun getAllKnownTroubles(
         limit: Int,
@@ -45,12 +47,9 @@ interface TroublesDao {
     ): List<TroubleCodeEntity>
 
 
-    @Query("SELECT * FROM trouble_codes " +
-            " WHERE ((:searchBy ='') OR " +
-            " (code LIKE '%'|| :searchBy || '%') OR " +
-            " (description LIKE '%'|| :searchBy || '%') OR " +
-            " (rus_translate LIKE '%'|| :searchBy || '%'))  " +
-            "AND detection_time >=:timeBarrier AND is_history == 1 AND type != 10 " +
+    @Query("SELECT * FROM trouble_codes WHERE " +
+            searchQuery +
+            " AND detection_time >=:timeBarrier AND is_history == 1 AND type != 10 " +
             "LIMIT :limit " +
             "OFFSET :offset")
     suspend fun getHistoryTroublesByTime(

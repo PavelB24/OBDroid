@@ -22,6 +22,10 @@ interface CommandsDao {
         const val atQuery = "SELECT command as command_body, null as octal_value, null as command_section_hex," +
         "  category, command_desc_eng, command_desc_rus,  is_favorite, 0 as is_custom_command, measurement_unit," +
         " accessibility, is_dynamic, 0 as is_pid FROM at_commands"
+
+        const val searchQuery = "(:searchBy = ''" +
+                " OR ((command_desc_rus LIKE '%'|| :searchBy || '%')" +
+                " OR (command_desc_eng LIKE '%'|| :searchBy || '%')))"
     }
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
@@ -44,17 +48,17 @@ interface CommandsDao {
     @Query("SELECT COUNT(*) FROM pid_commands")
     fun count() : Int
 
-    @Query("$pidQuery WHERE category != 2 UNION $atQuery WHERE category != 2 AND accessibility == 1")
-    fun getAllCommands(): Flow<List<CommandEntity>>
+    @Query("$pidQuery WHERE $searchQuery AND category != 2 UNION $atQuery WHERE $searchQuery AND category != 2 AND accessibility == 1")
+    fun getAllCommandsByQuery(searchBy: String): Flow<List<CommandEntity>>
 
-    @Query("$pidQuery WHERE category != 2 AND is_favorite == 1 UNION $atQuery WHERE category != 2 AND is_favorite == 1")
-    fun getOnlyFavs(): Flow<List<CommandEntity>>
+    @Query("$pidQuery WHERE $searchQuery AND category != 2 AND is_favorite == 1 UNION $atQuery WHERE $searchQuery AND category != 2 AND is_favorite == 1")
+    fun getOnlyFavs(searchBy: String): Flow<List<CommandEntity>>
 
-    @Query("$pidQuery WHERE category =:categoryOrdinal UNION $atQuery WHERE category =:categoryOrdinal AND accessibility == 1")
-    fun getCommandsByCategory(categoryOrdinal: Int): Flow<List<CommandEntity>>
+    @Query("$pidQuery WHERE $searchQuery AND category =:categoryOrdinal UNION $atQuery WHERE $searchQuery AND category =:categoryOrdinal AND accessibility == 1")
+    fun getCommandsByCategory(categoryOrdinal: Int, searchBy: String): Flow<List<CommandEntity>>
 
-    @Query("$pidQuery WHERE category =:categoryOrdinal AND is_favorite == 1 UNION $atQuery WHERE category =:categoryOrdinal AND accessibility == 1 AND is_favorite == 1")
-    fun getCommandsByCategoryOnlyFavs(categoryOrdinal: Int): Flow<List<CommandEntity>>
+    @Query("$pidQuery WHERE $searchQuery AND category =:categoryOrdinal AND is_favorite == 1 UNION $atQuery WHERE $searchQuery AND category =:categoryOrdinal AND accessibility == 1 AND is_favorite == 1")
+    fun getCommandsByCategoryOnlyFavs(categoryOrdinal: Int, searchBy: String): Flow<List<CommandEntity>>
 
     @Query("UPDATE pid_commands SET is_favorite =:fav" +
             " WHERE command_section_hex =:section AND hex_value =:command")

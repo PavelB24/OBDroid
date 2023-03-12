@@ -5,11 +5,12 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import androidx.core.view.MenuProvider
 import androidx.navigation.NavController
-import androidx.navigation.fragment.findNavController
 import ru.barinov.obdroid.R
-import ru.barinov.obdroid.base.CommonMenuInflater
+import ru.barinov.obdroid.base.ConnectionStateItemHolder
 
-class TroublesMenuProvider(private val navController: NavController): MenuProvider, CommonMenuInflater {
+class TroublesMenuProvider(
+    private val navController: NavController
+) : MenuProvider, ConnectionStateItemHolder() {
 
     override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
         super.inflateAndManageAnimation(menu, menuInflater, R.menu.troubles_toolbar_menu)

@@ -3,6 +3,7 @@ package ru.barinov.obdroid.ui.sensorsFragment
 import android.os.Bundle
 import android.util.Log
 import android.view.*
+import android.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -10,6 +11,7 @@ import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.barinov.obdroid.HomeFragment
 import ru.barinov.obdroid.base.Command
+import ru.barinov.obdroid.base.ExtendedSearchListener
 import ru.barinov.obdroid.base.ItemInteractor
 import ru.barinov.obdroid.databinding.SensorsFragmentBinding
 import ru.barinov.obdroid.ui.activity.MainActivity

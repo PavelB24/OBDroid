@@ -5,10 +5,10 @@ import android.bluetooth.BluetoothClass
 import android.bluetooth.BluetoothDevice
 import androidx.appcompat.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
-import androidx.navigation.ui.setupWithNavController
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.scan
@@ -48,4 +48,12 @@ fun Toolbar.setupWithNavController(
         this, navController,
         AppBarConfiguration(fragmentIds, drawerLayout)
     )
+}
+
+fun <T: Fragment> Fragment.getGrandParent(): T?{
+    return requireParentFragment().requireParentFragment() as? T
+}
+
+fun <T: Fragment> Fragment.getParent(): T?{
+    return requireParentFragment() as? T
 }

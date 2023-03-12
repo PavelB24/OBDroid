@@ -12,6 +12,7 @@ import obdKotlin.core.FailOn
 import obdKotlin.core.SystemEventListener
 import obdKotlin.messages.Message
 import obdKotlin.source.BluetoothSource
+import obdKotlin.source.NonBlockingWiFiSource
 import obdKotlin.source.WiFiSource
 import ru.barinov.obdroid.preferences.Preferences
 import ru.barinov.obdroid.utils.ConnectionState
@@ -43,20 +44,40 @@ class ObdController(
             connectionWatcher.connectionState.onEach {
                 when (it) {
                     is ConnectionState.BtSocketObtained -> {
-                        core?.bindSource(BluetoothSource(it.socket))
+                        core?.let { obd ->
+                            obd.bindSource(BluetoothSource(it.socket))
+                            onStart()
+                        }
                     }
                     is ConnectionState.LinkPropertiesChanged -> TODO()
                     is ConnectionState.Lost -> TODO()
-                    is ConnectionState.OnAddressConfirmed -> TODO()
-                    ConnectionState.OnQuickWiFiSetUp -> {
-                        core?.bindSource(
-                            WiFiSource(
-                                InetSocketAddress(
-                                    prefs.wifiAddress,
-                                    prefs.wifiPort
+                    is ConnectionState.OnAddressConfirmed -> {
+                        core?.let { obd->
+                            obd.bindSource(
+                                WiFiSource(
+                                    it.network.socketFactory.createSocket(
+                                        /* host = */ "${prefs.wifiAddress}",
+                                        /* port = */ prefs.wifiPort
+                                    )
                                 )
                             )
-                        )
+                            onStart()
+                        }
+
+                    }
+
+                    ConnectionState.OnQuickWiFiSetUp -> {
+                        core?.let { obd ->
+                            obd.bindSource(
+                                NonBlockingWiFiSource(
+                                    InetSocketAddress(
+                                        prefs.wifiAddress,
+                                        prefs.wifiPort
+                                    )
+                                )
+                            )
+                            onStart()
+                        }
                     }
                     ConnectionState.UnAvailable -> TODO()
                     is ConnectionState.WifiConnected -> {
@@ -67,7 +88,7 @@ class ObdController(
         }
     }
 
-    private fun onStart(){
+    private fun onStart() {
 
     }
 
