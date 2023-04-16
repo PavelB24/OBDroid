@@ -2,6 +2,7 @@ package ru.barinov.obdroid.ui.utils
 
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import androidx.core.content.ContextCompat
 import ru.barinov.obdroid.service.ObdService
 
@@ -22,6 +23,7 @@ class ServiceCommander(private val context : Context) {
     }
 
     private fun sendMessageToService(extra : String){
+        Log.d("@@@", "TO FG")
         ContextCompat.startForegroundService(
             context,
             Intent(

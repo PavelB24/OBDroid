@@ -23,6 +23,7 @@ class TroublesMenuProvider(
                     R.id.action_diagnosticFragment_to_troubleHistory
                 )
             }
+            else -> {return false}
         }
         return true
     }

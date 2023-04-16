@@ -56,7 +56,7 @@ class ConnectionsMenuProvider(
             R.id.wf_connect -> {
                 simpleConnectionI.onWiFiSelected()
             }
-
+            else -> return false
         }
         return true
     }

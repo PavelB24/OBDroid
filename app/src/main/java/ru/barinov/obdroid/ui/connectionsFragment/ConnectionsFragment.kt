@@ -10,7 +10,6 @@ import android.os.Bundle
 import android.util.Log
 import android.view.*
 import android.widget.Toast
-import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
@@ -26,7 +25,6 @@ import ru.barinov.obdroid.core.ObdBus
 import ru.barinov.obdroid.core.simpleScan
 import ru.barinov.obdroid.databinding.ConnectionsLayoutBinding
 import ru.barinov.obdroid.domain.ConnectedEventType
-import ru.barinov.obdroid.ui.activity.MainActivity
 import ru.barinov.obdroid.ui.utils.CommonDialogUtil
 import ru.barinov.obdroid.utils.PermissionsChecker
 import java.util.*
@@ -125,9 +123,9 @@ class ConnectionsFragment : Fragment() {
             viewModel.eventBusFlow.simpleScan(2).collectLatest { (old, new)->
                 when (new) {
                     is ObdBus.ObdEvents.SuccessConnect -> {
-                        hideProgress()
+//                        hideProgress()
                         //with animations
-                        rebaseAfterConnect()
+                        notifyConnected()
                     }
                     is ObdBus.ObdEvents.ConnectionFailed -> {
                         hideProgress()
@@ -161,7 +159,10 @@ class ConnectionsFragment : Fragment() {
                         event.apply {
                             if (findNavController().currentDestination?.id != R.id.wifiSettingsDialog) {
                                 findNavController().navigate(
-                                    R.id.action_connectionsFragment_to_wifiSettingsDialog
+                                    R.id.action_connectionsFragment_to_wifiSettingsDialog,
+                                    Bundle().also {
+                                        it.putBoolean(WifiSettingsDialog.setUpKey, false)
+                                    }
                                 )
                             }
                         }
@@ -214,40 +215,41 @@ class ConnectionsFragment : Fragment() {
         }
     }
 
-    private fun rebaseAfterConnect() {
-        binding.motionRoot.addTransitionListener(object: MotionLayout.TransitionListener{
-            override fun onTransitionStarted(
-                motionLayout: MotionLayout?,
-                startId: Int,
-                endId: Int
-            ) {
-
-            }
-
-            override fun onTransitionChange(
-                motionLayout: MotionLayout?,
-                startId: Int,
-                endId: Int,
-                progress: Float
-            ) {
-
-            }
-
-            override fun onTransitionCompleted(motionLayout: MotionLayout?, currentId: Int) {
-                (requireActivity() as MainActivity).setupToolbar()
-            }
-
-            override fun onTransitionTrigger(
-                motionLayout: MotionLayout?,
-                triggerId: Int,
-                positive: Boolean,
-                progress: Float
-            ) {
-
-            }
-
-        })
-        binding.motionRoot.transitionToState(R.id.end)
+    private fun notifyConnected() {
+//        (requireActivity() as MainActivity).setupToolbar()
+//        binding.motionRoot.addTransitionListener(object: MotionLayout.TransitionListener{
+//            override fun onTransitionStarted(
+//                motionLayout: MotionLayout?,
+//                startId: Int,
+//                endId: Int
+//            ) {
+//
+//            }
+//
+//            override fun onTransitionChange(
+//                motionLayout: MotionLayout?,
+//                startId: Int,
+//                endId: Int,
+//                progress: Float
+//            ) {
+//
+//            }
+//
+//            override fun onTransitionCompleted(motionLayout: MotionLayout?, currentId: Int) {
+//
+//            }
+//
+//            override fun onTransitionTrigger(
+//                motionLayout: MotionLayout?,
+//                triggerId: Int,
+//                positive: Boolean,
+//                progress: Float
+//            ) {
+//
+//            }
+//
+//        })
+////        binding.motionRoot.transitionToState(R.id.end)
     }
 
     private fun onDeviceBounded(

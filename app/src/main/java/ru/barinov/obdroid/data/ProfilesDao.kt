@@ -38,4 +38,7 @@ interface ProfilesDao {
 
     @Query("UPDATE profiles SET protocol =:ordinal WHERE name == 'Auto'")
     suspend fun updateDefaultProtocol(ordinal: Int)
+
+    @Query("SELECT * FROM profiles WHERE is_selected == 1")
+    fun getSelectedProfile(): ProfileEntity
 }

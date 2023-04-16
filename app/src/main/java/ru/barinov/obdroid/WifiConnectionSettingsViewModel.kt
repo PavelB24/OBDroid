@@ -1,5 +1,6 @@
 package ru.barinov.obdroid
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import ru.barinov.obdroid.preferences.Preferences
 import ru.barinov.obdroid.ui.utils.ServiceCommander
@@ -35,6 +36,7 @@ class WifiConnectionSettingsViewModel(
             quickWiFiConnect()
         } else {
             if (shouldConnect) {
+                Log.d("@@@", "Connecting....")
                 connectWithWiFi()
             }
         }

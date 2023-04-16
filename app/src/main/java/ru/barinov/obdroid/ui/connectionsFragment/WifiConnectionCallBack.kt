@@ -20,10 +20,6 @@ class WifiConnectionCallBack(
     override fun onAvailable(network: Network) {
         super.onAvailable(network)
         val result = connManager.bindProcessToNetwork(network)
-        network.socketFactory.createSocket().also {
-            it.connect(InetSocketAddress("192.168.1.102", 35355))
-            it.getOutputStream().write("HELLO FROM PHONE".encodeToByteArray())
-        }
         onConnection.invoke(result, network)
         connectionWatcher.onChangeState(ConnectionState.WifiConnected(bssid, network))
     }

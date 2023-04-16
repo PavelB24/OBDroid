@@ -12,6 +12,7 @@ import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 import ru.barinov.obdroid.WifiConnectionSettingsViewModel
 import ru.barinov.obdroid.core.ObdController
+import ru.barinov.obdroid.core.RawDataProvider
 import ru.barinov.obdroid.data.*
 import ru.barinov.obdroid.ui.utils.ServiceCommander
 import ru.barinov.obdroid.utils.ConnectionWatcher
@@ -63,7 +64,7 @@ val mainModule = module {
     }
 
     single {
-        ObdController(get(), get())
+        ObdController(get(), get(), get())
     }
 
 
@@ -113,7 +114,7 @@ val mainModule = module {
     }
 
     viewModel {
-        ShellViewModel(get())
+        ShellViewModel(get(), get<ObdController>() as RawDataProvider)
     }
 
     viewModel {

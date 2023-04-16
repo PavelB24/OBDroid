@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.barinov.obdroid.*
 import ru.barinov.obdroid.ui.activity.MainActivity
@@ -39,15 +40,16 @@ class PermissionsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         if (permissionsUtil.hasNecessaryPermissions(requireContext())) {
             lifecycleScope.launchWhenStarted {
-                rebase(true)
+                rebase()
             }
         } else {
             subscribe()
             initStates()
+            lifecycleScope.launchWhenStarted {
+                (requireActivity() as MainActivity).hideToolbar()
+            }
         }
-        lifecycleScope.launchWhenStarted {
-            (requireActivity() as MainActivity).hideToolbar()
-        }
+
 
     }
 
@@ -55,7 +57,7 @@ class PermissionsFragment : Fragment() {
         with(binding) {
             onStartButton.setOnClickListener {
                 PermissionViewHelper.animateRebase(binding) {
-                    rebase(false)
+                    rebase()
                 }
             }
             headImage.setOnClickListener {
@@ -109,7 +111,7 @@ class PermissionsFragment : Fragment() {
                         PermissionViewHelper.apply {
                             if (hasAllPermissions(requireContext())) {
                                 animateRebase(binding) {
-                                    rebase(false)
+                                    rebase()
                                 }
                             }
                         }
@@ -179,16 +181,14 @@ class PermissionsFragment : Fragment() {
         }
     }
 
-    private fun rebase(skipped: Boolean) {
-        permissionsUtil.free()
+    private fun rebase() {
         Log.d("@@@", "REBASE")
+        permissionsUtil.free()
         (requireActivity() as MainActivity).apply {
             startService()
-            if(!skipped) {
-                setupToolbar()
-            }
             unlockDrawer()
             showToolbar()
+            setupToolbar()
         }
     }
 }

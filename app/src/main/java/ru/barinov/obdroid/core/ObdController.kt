@@ -1,7 +1,9 @@
 package ru.barinov.obdroid.core
 
+import android.util.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
@@ -11,9 +13,12 @@ import obdKotlin.core.Commander
 import obdKotlin.core.FailOn
 import obdKotlin.core.SystemEventListener
 import obdKotlin.messages.Message
+import obdKotlin.protocol.Protocol
 import obdKotlin.source.BluetoothSource
 import obdKotlin.source.NonBlockingWiFiSource
 import obdKotlin.source.WiFiSource
+import ru.barinov.obdroid.BuildConfig
+import ru.barinov.obdroid.data.ProfilesRepository
 import ru.barinov.obdroid.preferences.Preferences
 import ru.barinov.obdroid.utils.ConnectionState
 import ru.barinov.obdroid.utils.ConnectionWatcher
@@ -21,8 +26,9 @@ import java.net.InetSocketAddress
 
 class ObdController(
     private val prefs: Preferences,
-    private val connectionWatcher: ConnectionWatcher
-) {
+    private val connectionWatcher: ConnectionWatcher,
+    private val profilesRepository: ProfilesRepository
+): RawDataProvider {
 
     private var core: Commander? = null
     private var observeJob: Job? = null
@@ -39,25 +45,33 @@ class ObdController(
     }
 
     private fun observeConnections(scope: CoroutineScope) {
+        Log.d("@@@", "Observe....")
         observeJob?.cancel()
         observeJob = scope.launch {
             connectionWatcher.connectionState.onEach {
                 when (it) {
                     is ConnectionState.BtSocketObtained -> {
                         core?.let { obd ->
-                            obd.bindSource(BluetoothSource(it.socket))
+                            obd.bindSource(
+                                BluetoothSource(
+                                    it.socket
+                                )
+                            )
                             onStart()
                         }
                     }
-                    is ConnectionState.LinkPropertiesChanged -> TODO()
-                    is ConnectionState.Lost -> TODO()
+                    is ConnectionState.LinkPropertiesChanged -> {}
+                    is ConnectionState.Lost -> {}
                     is ConnectionState.OnAddressConfirmed -> {
+                        Log.d("@@@", "OnAddressConfirmed....")
                         core?.let { obd->
                             obd.bindSource(
                                 WiFiSource(
                                     it.network.socketFactory.createSocket(
-                                        /* host = */ "${prefs.wifiAddress}",
-                                        /* port = */ prefs.wifiPort
+                                        "192.168.1.113",
+                                        35355
+//                                        /* host = */ "${prefs.wifiAddress}",
+//                                        /* port = */ prefs.wifiPort
                                     )
                                 )
                             )
@@ -79,7 +93,7 @@ class ObdController(
                             onStart()
                         }
                     }
-                    ConnectionState.UnAvailable -> TODO()
+                    ConnectionState.UnAvailable -> {}
                     is ConnectionState.WifiConnected -> {
 
                     }
@@ -88,12 +102,29 @@ class ObdController(
         }
     }
 
-    private fun onStart() {
-
+    private suspend fun onStart()  = core?.apply {
+        profilesRepository.getSelectedProfile().let {
+            if (Protocol.values()[it.protocol] == Protocol.AUTOMATIC) {
+                startWithAuto(commandCsvToList(it.atCommandChain))
+            } else {
+                start(
+                    Protocol.values()[it.protocol],
+                    commandCsvToList(it.atCommandChain)
+                )
+            }
+        }
     }
 
-    private fun startAuto() {
 
+    private fun commandCsvToList(csv: String?): List<String>?{
+        return try{
+            csv?.split(",")
+        }catch (e: Exception){
+            if(BuildConfig.DEBUG) {
+                e.printStackTrace()
+            }
+            null
+        }
     }
 
 
@@ -102,8 +133,12 @@ class ObdController(
             ?: throw IllegalStateException("Core is not initialised yet")
     }
 
-    fun getRawFlow(): SharedFlow<String?> {
+    override fun getRawDataFlow(): SharedFlow<String?> {
         return core?.rawDataFlow ?: throw IllegalStateException("Core is not initialised yet")
+    }
+
+    override fun sendCommand(command: String) {
+        core?.sendCommand(command)
     }
 
 
@@ -116,6 +151,8 @@ class ObdController(
     fun disconnect() {
         core?.disconnect()
     }
+
+
 
 
     inner class CoreEventListener(
@@ -141,6 +178,7 @@ class ObdController(
         }
 
         override fun onWorkModeChanged(workMode: WorkMode) {
+            Log.d("@@@", "$workMode")
         }
     }
 

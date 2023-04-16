@@ -13,6 +13,6 @@ class DashBoardMenuProvider: MenuProvider, ConnectionStateItemHolder() {
     }
 
     override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-       return true
+       return false
     }
 }

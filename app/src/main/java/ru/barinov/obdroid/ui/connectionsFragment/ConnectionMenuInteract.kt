@@ -4,6 +4,7 @@ import android.bluetooth.BluetoothSocket
 
 interface ConnectionMenuInteract {
 
+
    fun onBtSelected(
       address: String,
       socket: BluetoothSocket

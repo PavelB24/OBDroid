@@ -1,15 +1,20 @@
 package ru.barinov.obdroid
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.onEach
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.barinov.obdroid.databinding.ShellFragmentLayoutBinding
 import ru.barinov.obdroid.ui.ShellViewModel
+import java.text.SimpleDateFormat
+import java.util.*
 
 class ShellFragment : Fragment() {
 
@@ -34,10 +39,18 @@ class ShellFragment : Fragment() {
 
     private fun subscribe() {
         lifecycleScope.launchWhenStarted {
-//            viewModel.rawDataFlow.onEach {
-//
-//            }.collect()
+            viewModel.rawDataFlow.onEach { raw->
+                raw?.let {
+                    handleRaw(it)
+                }
+            }.collect()
         }
+    }
+
+    private fun handleRaw(raw: String) {
+        val currText = binding.hexInput.text
+        val date = viewModel.getCurrentTimeAsString()
+        binding.hexInput.text = "$currText\n$date OBD: $raw"
     }
 
     private fun initViews() {
@@ -46,7 +59,16 @@ class ShellFragment : Fragment() {
             viewModel.getSavedBackgroundId(),
             null
         )
-        binding.sendButton.setOnClickListener {  }
+        binding.sendButton.setOnClickListener {
+            val userInput = binding.usersEt.text
+            if(!userInput.isNullOrEmpty()) {
+                val currText = binding.hexInput.text.toString()
+                val date = viewModel.getCurrentTimeAsString()
+                binding.hexInput.text = "$currText\n$date User: $userInput"
+                viewModel.sendCommand(userInput.toString())
+                binding.usersEt.text?.clear()
+            }
+        }
 
     }
 

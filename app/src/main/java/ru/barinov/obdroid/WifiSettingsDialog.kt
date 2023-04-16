@@ -26,7 +26,11 @@ class WifiSettingsDialog : DialogFragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        quickSetUp = requireArguments().getBoolean(setUpKey)
+        quickSetUp = try{
+            requireArguments().getBoolean(setUpKey)
+        } catch (e: Exception){
+            false
+        }
     }
 
     override fun onCreateView(
@@ -41,6 +45,7 @@ class WifiSettingsDialog : DialogFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // Do not create a new Fragment when the Activity is re-created such as orientation changes.
+        retainInstance = true
         setStyle(STYLE_NORMAL, R.style.DialogTheme)
     }
 
@@ -75,7 +80,7 @@ class WifiSettingsDialog : DialogFragment() {
                     viewModel.isConnectedToNetwork(),
                     quickSetUp
                 )
-                dismiss()
+                dialog?.cancel()
             }
         }
     }

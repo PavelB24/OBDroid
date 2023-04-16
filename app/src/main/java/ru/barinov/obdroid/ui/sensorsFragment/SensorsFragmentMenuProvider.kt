@@ -46,6 +46,7 @@ class SensorsFragmentMenuProvider(
                 R.id.cat_info -> onCategoryChanged(CommandCategory.VEHICLE_INFO)
                 R.id.cat_turbo -> onCategoryChanged(CommandCategory.TURBO_CHARGER)
                 R.id.fav_toolbar_button -> onFavButtonClicked(menuItem.isChecked)
+                else -> {return false}
             }
         }
         return true

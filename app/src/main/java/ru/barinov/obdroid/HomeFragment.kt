@@ -1,7 +1,6 @@
 package ru.barinov.obdroid
 
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.fragment.app.Fragment
@@ -33,49 +32,47 @@ class HomeFragment : Fragment() {
         lifecycleScope.launchWhenStarted {
             (requireActivity() as MainActivity).apply {
                 hideAbout()
-                getToolbar().setupWithNavController(
-                    Navigation.findNavController(host),
-                    getDrawer()
-                )
+                reconfigToolbar(Navigation.findNavController(host))
             }
         }
-        binding.root.addTransitionListener(object: MotionLayout.TransitionListener{
-            override fun onTransitionStarted(
-                motionLayout: MotionLayout?,
-                startId: Int,
-                endId: Int
-            ) {
-            }
-
-            override fun onTransitionChange(
-                motionLayout: MotionLayout?,
-                startId: Int,
-                endId: Int,
-                progress: Float
-            ) {
-            }
-
-            override fun onTransitionCompleted(motionLayout: MotionLayout?, currentId: Int) {
-                binding.root.post {
-                    if (Navigation.findNavController(host).currentDestination?.id != R.id.troubleHistory) {
-                        if (currentId == R.id.normalBottom) {
-                            (requireActivity() as MainActivity).showToolbarOnScroll()
-                        } else {
-                            (requireActivity() as MainActivity).hideToolbarOnScroll()
-                        }
-                    }
-                }
-            }
-
-            override fun onTransitionTrigger(
-                motionLayout: MotionLayout?,
-                triggerId: Int,
-                positive: Boolean,
-                progress: Float
-            ) {
-            }
-        })
+//        binding.root.addTransitionListener(object: MotionLayout.TransitionListener{
+//            override fun onTransitionStarted(
+//                motionLayout: MotionLayout?,
+//                startId: Int,
+//                endId: Int
+//            ) {
+//            }
+//
+//            override fun onTransitionChange(
+//                motionLayout: MotionLayout?,
+//                startId: Int,
+//                endId: Int,
+//                progress: Float
+//            ) {
+//            }
+//
+//            override fun onTransitionCompleted(motionLayout: MotionLayout?, currentId: Int) {
+//                binding.root.post {
+//                    if (Navigation.findNavController(host).currentDestination?.id != R.id.troubleHistory) {
+//                        if (currentId == R.id.normalBottom) {
+//                            (requireActivity() as MainActivity).showToolbarOnScroll()
+//                        } else {
+//                            (requireActivity() as MainActivity).hideToolbarOnScroll()
+//                        }
+//                    }
+//                }
+//            }
+//
+//            override fun onTransitionTrigger(
+//                motionLayout: MotionLayout?,
+//                triggerId: Int,
+//                positive: Boolean,
+//                progress: Float
+//            ) {
+//            }
+//        })
     }
+
 
 
     fun hideAndLockBottom(){
@@ -93,7 +90,7 @@ class HomeFragment : Fragment() {
         super.onDestroy()
         (requireActivity() as MainActivity).apply {
             showAbout()
-            getToolbar().setupWithNavController(findNavController(), getDrawer())
+            reconfigToolbar(findNavController())
         }
     }
 

@@ -1,8 +1,8 @@
 package ru.barinov.obdroid.ui.activity
 
-import android.annotation.SuppressLint
 import android.graphics.drawable.AnimatedVectorDrawable
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
@@ -17,6 +17,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.drawerlayout.widget.DrawerLayout.LOCK_MODE_LOCKED_CLOSED
 import androidx.drawerlayout.widget.DrawerLayout.LOCK_MODE_UNLOCKED
+import androidx.navigation.NavController
+import androidx.navigation.Navigation
+import androidx.navigation.ui.setupActionBarWithNavController
 
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.barinov.obdroid.BuildConfig
@@ -34,18 +37,18 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        @SuppressLint("SetTextI18n")
-        binding.navView.getHeaderView(0)
-            .findViewById<TextView>(R.id.version_tv).text = "ver. ${BuildConfig.VERSION_NAME}"
-
         val navController = findNavController(R.id.container)
         val drawerLayout: DrawerLayout = binding.drawerLayout
         val navView: NavigationView = binding.navView
 
         navView.menu.findItem(R.id.shellFragment).isVisible = viewModel.shouldShowTerminal()
-        navView.getHeaderView(0).findViewById<TextView>(R.id.terminal_switch).text =
+        navView.getHeaderView(0).findViewById<TextView>(R.id.app_name_title).text =
             resources.getString(R.string.app_name)
+
+        navView.getHeaderView(0).findViewById<TextView>(R.id.version_tv).setText(
+            "ver. ${BuildConfig.VERSION_NAME}"
+        )
+
         drawerLayout.setDrawerLockMode(LOCK_MODE_LOCKED_CLOSED)
         navView.setupWithNavController(navController)
 
@@ -56,82 +59,88 @@ class MainActivity : AppCompatActivity() {
                     .drawable as AnimatedVectorDrawable
             )
         )
-        setSupportActionBar(binding.mainToolbar)
-        setupToolbar()
-        binding.root.addTransitionListener(object: MotionLayout.TransitionListener{
-            override fun onTransitionStarted(
-                motionLayout: MotionLayout?,
-                startId: Int,
-                endId: Int
-            ) {
-            }
-
-            override fun onTransitionChange(
-                motionLayout: MotionLayout?,
-                startId: Int,
-                endId: Int,
-                progress: Float
-            ) {
-            }
-
-            override fun onTransitionCompleted(motionLayout: MotionLayout?, currentId: Int) {
-                if(currentId == R.id.hide){
-                    binding.drawerLayout.setDrawerLockMode(LOCK_MODE_LOCKED_CLOSED)
-                } else unlockDrawer()
-            }
-
-            override fun onTransitionTrigger(
-                motionLayout: MotionLayout?,
-                triggerId: Int,
-                positive: Boolean,
-                progress: Float
-            ) {
-
-            }
-        })
+//        setSupportActionBar(binding.mainToolbar)
+        if (navController.currentDestination?.id != R.id.permissionsFragment) {
+            setupToolbar()
+        }
+//        binding.root.addTransitionListener(object : MotionLayout.TransitionListener {
+//            override fun onTransitionStarted(
+//                motionLayout: MotionLayout?,
+//                startId: Int,
+//                endId: Int
+//            ) {
+//            }
+//
+//            override fun onTransitionChange(
+//                motionLayout: MotionLayout?,
+//                startId: Int,
+//                endId: Int,
+//                progress: Float
+//            ) {
+//            }
+//
+//            override fun onTransitionCompleted(motionLayout: MotionLayout?, currentId: Int) {
+//                if (currentId == R.id.hide) {
+//                    binding.drawerLayout.setDrawerLockMode(LOCK_MODE_LOCKED_CLOSED)
+//                } else unlockDrawer()
+//            }
+//
+//            override fun onTransitionTrigger(
+//                motionLayout: MotionLayout?,
+//                triggerId: Int,
+//                positive: Boolean,
+//                progress: Float
+//            ) {
+//
+//            }
+//        })
     }
 
-    fun hideToolbarOnScroll(){
-        binding.root.transitionToState(R.id.hide, 500)
-    }
 
-    fun showToolbarOnScroll(){
-        binding.root.transitionToState(R.id.normal, 500)
-    }
+//    fun hideToolbarOnScroll() {
+//        binding.root.transitionToState(R.id.hide, 500)
+//    }
+//
+//    fun showToolbarOnScroll() {
+//        binding.root.transitionToState(R.id.normal, 500)
+//    }
 
-    fun showAbout(){
+    fun showAbout() {
         binding.navView.menu.getItem(4).isVisible = true
     }
 
-    fun hideAbout(){
+    fun hideAbout() {
         binding.navView.menu.getItem(4).isVisible = false
     }
 
-    fun hideToolbar(){
-        binding.mainToolbar.visibility = View.GONE
+    fun hideToolbar() {
+        supportActionBar?.hide()
     }
 
-    fun showToolbar(){
-        binding.mainToolbar.visibility = View.VISIBLE
+    fun showToolbar() {
+        supportActionBar?.show()
     }
 
-    fun getToolbar() = binding.mainToolbar
+    fun reconfigToolbar(navController: NavController) {
+        setupActionBarWithNavController(navController, binding.drawerLayout)
+    }
 
-    fun setupToolbar(){
-        if(PermissionsChecker.hasNecessaryPermissions(this)) {
+    fun setupToolbar() {
+        if (PermissionsChecker.hasNecessaryPermissions(this)) {
             val navController = findNavController(R.id.container)
             val graph = navController.navInflater.inflate(R.navigation.root_navigation)
             graph.setStartDestination(
-                if (viewModel.isObdConnected())
-                    R.id.homeFragment
-                else R.id.connectionsFragment
+                R.id.homeFragment
             )
             val current = navController.currentDestination?.id
             navController.graph = graph
-            binding.mainToolbar.setupWithNavController(navController, binding.drawerLayout)
+
             unlockDrawer()
+
+            setupActionBarWithNavController(navController, binding.drawerLayout)
+//            binding.mainToolbar.setupWithNavController(navController, binding.drawerLayout)
             current?.let {
-                if(it != R.id.permissionsFragment) {
+                if (it != R.id.permissionsFragment && it != R.id.homeFragment) {
                     navController.navigate(it)
 //                    if(it == R.id.homeFragment){
 //                        val innerController = findNavController(R.id.container2)
@@ -171,7 +180,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun startService(){
+    fun startService() {
         viewModel.startService()
     }
 
@@ -183,11 +192,19 @@ class MainActivity : AppCompatActivity() {
         binding.navView.menu.getItem(3).isVisible = viewModel.shouldShowTerminal()
     }
 
-    fun getDrawer() = binding.drawerLayout
 
 
     override fun onSupportNavigateUp(): Boolean {
+        Log.d("@@@", "onSupportNavigateUp")
         val navController = findNavController(R.id.container)
+        if(navController.currentDestination?.id == R.id.homeFragment) {
+            binding.apply {
+                if (drawerLayout.isOpen){
+                    drawerLayout.close()
+                } else drawerLayout.open()
+
+            }
+        }
         return if (onBackPressedDispatcher.hasEnabledCallbacks()) {
             onBackPressedDispatcher.onBackPressed()
             true

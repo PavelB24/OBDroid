@@ -42,6 +42,7 @@ class ObdService : Service() {
     override fun onCreate() {
         super.onCreate()
         createNotificationChannel()
+        Log.d("@@@", "Creating")
         controller.create(serviceScope)
 
     }

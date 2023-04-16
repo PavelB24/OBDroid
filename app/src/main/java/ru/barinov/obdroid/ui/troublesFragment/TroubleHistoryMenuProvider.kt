@@ -34,6 +34,7 @@ class TroubleHistoryMenuProvider(
             R.id.transmission_troubles -> toolbarActionHandler.onTroubleTypeChanged(TroubleCodeType.TRANSMISSION)
             R.id.chassis_troubles -> toolbarActionHandler.onTroubleTypeChanged(TroubleCodeType.CHASSIS)
             R.id.common_troubles -> toolbarActionHandler.onTroubleTypeChanged(TroubleCodeType.COMMON)
+            else -> {return false}
         }
         return true
     }
